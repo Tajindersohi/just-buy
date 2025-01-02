@@ -1,10 +1,18 @@
 require("dotenv").config();
 const express = require('express')
 const app = express();
+const cors = require('cors');
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  credentials: true, 
+}));
+
+app.use(express.json());
+
 const port = process.env.PORT || 3000;
 const connect = require('./DB/connect');
-const product_routes = require('./routes/product')
-console.log(process.env.PORT);
+const routes = require('./routes/index')
 const start = async() =>{
   try {
     await connect();
@@ -17,5 +25,5 @@ const start = async() =>{
 }
 start();
 
-app.use("/api/products/", product_routes)
+app.use("/api", routes)
 

@@ -1,15 +1,15 @@
 import {createAsyncThunk } from '@reduxjs/toolkit';
-import axiosInstance from '../axiosInstance';
-import { loginUser, logoutUser } from './reducers';
+import { loginUser, logoutUser } from './authSlice';
+import apiConstants from '../../api/Constants';
 
 export const login = createAsyncThunk(
   'auth/login',
   async (credentials, { dispatch, rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post('/login', credentials);
+      const response = await apiConstants.adminLogin(credentials);
       console.log("response",response);
       const { token, user } = response.data;
-      localStorage.setItem('token', token); 
+      localStorage.setItem('token', token);
       dispatch(loginUser(user)); 
       return { token };
     } catch (error) {
@@ -18,11 +18,21 @@ export const login = createAsyncThunk(
   }
 );
 
+export const create = createAsyncThunk(
+  'auth/register',
+  async (credentials, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await apiConstants.registerUser(credentials);
+      return response.data
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Registeration failed');
+    }
+  }
+);
 
-export const logout = createAsyncThunk('auth/logout', async (_, { dispatch }) => {
-  console.log("state");
 
-  localStorage.removeItem('token'); // Remove token from localStorage
-  dispatch(logoutUser()); // Update Redux state
+export const logout = createAsyncThunk('admin/logout', async (_, { dispatch }) => {
+  localStorage.removeItem('token'); 
+  dispatch(logoutUser());
 });
 

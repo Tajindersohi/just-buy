@@ -1,19 +1,23 @@
 import React from "react";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
-// import Footer from "../components/Footer";
-// import Sidebar from "../components/Sidebar";
+import { Box, Container, Grid } from "@mui/material";
 
 const GeneralLayout = ({ children }) => {
     return (
-        <div>
+            <Container fixed>
             <Header />
-            <div style={{ display: "flex" }}>
-                {/* <Sidebar /> */}
-                <main style={{ flex: 1, padding: "20px" }}>{children}</main>
-            </div>
-            <Footer/>
-        </div>
+            {/* Main Layout */}
+            <Grid container spacing={2} mt={2}>
+              <Grid item xs={12}>
+                  {children}
+              </Grid>
+            </Grid>
+      
+            <Box mt={4}>
+              <Footer />
+            </Box>
+          </Container>
     );
 };
 
