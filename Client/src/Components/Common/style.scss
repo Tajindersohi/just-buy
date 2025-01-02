@@ -1,0 +1,41 @@
+/* ThemeButton.css */
+.theme-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .theme-button--primary {
+    background-color: rgb(12, 131, 31) !important;
+    color: white !important;
+  }
+  
+  .theme-button--secondary {
+    background-color: #1976d2 !important;
+    color: white !important;
+  }
+  
+  .theme-button--danger {
+    background-color: rgb(209, 53, 53) !important;
+    color: white !important;
+  }
+  
+  
+  .theme-button:disabled {
+    background-color: #e0e0e0;
+    color: #6c757d;
+    cursor: not-allowed;
+  }
+
+  .theme-button--primary:hover {
+    background-color: lighten(rgb(0, 0, 0), 30%) !important;
+    color: white;
+  }
+  
+  .theme-button--danger:hover {
+    background-color: lighten(rgb(209, 53, 53), 10%) !important;
+    color: white;
+  }
