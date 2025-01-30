@@ -1,23 +1,21 @@
-import { useNotifier } from "../../Components/Common/Notifier";
+let showNotifierInstance = null;
 
-export const useNotifierUtils = () => {
-  const { showNotifier } = useNotifier();
+export const setNotifierInstance = (notifier) => {
+  showNotifierInstance = notifier;
+};
 
-  const success = (msg, duration = 2000) => {
-    showNotifier({ type: 'success', msg, duration });
-  };
+export const showSuccess = (msg, duration = 2000) => {
+  showNotifierInstance?.({ type: "success", msg, duration });
+};
 
-  const error = (msg, duration = 2000) => {
-    showNotifier({ type: 'error', msg, duration });
-  };
+export const showError = (msg, duration = 2000) => {
+  showNotifierInstance?.({ type: "error", msg, duration });
+};
 
-  const info = (msg, duration = 2000) => {
-    showNotifier({ type: 'info', msg, duration });
-  };
+export const showInfo = (msg, duration = 2000) => {
+  showNotifierInstance?.({ type: "info", msg, duration });
+};
 
-  const warning = (msg, duration = 2000) => {
-    showNotifier({ type: 'warning', msg, duration });
-  };
-
-  return { success, error, info, warning };
+export const showWarning = (msg, duration = 2000) => {
+  showNotifierInstance?.({ type: "warning", msg, duration });
 };

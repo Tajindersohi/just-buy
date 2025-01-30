@@ -1,19 +1,37 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Products } from '../../Assets/Constants/ProductConstant';
-
-const initialState = { ...Products, filter: false, filterBy: null };
 
 const productSlice = createSlice({
   name: 'product',
-  initialState, // Use the correct property name
+  initialState: {
+    products: [],
+    categories : [],
+    isLoading: false,
+    error: null,
+  },
   reducers: {
-    getProducts(state, action) {
-      state.filter = true;
-      state.filterBy = action.payload;
+    gettingProducts: (state) => {
+      state.isLoading = true;
+    },
+    gettingProductsFailed: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+    getProducts: (state, action) => {
+      console.log("actionaction",action.payload);
+      state.isLoading = false;
+      state.categories = action.payload;
+    },
+    addNewProduct: (state, action) => {
+      state.products.push(action.payload);
     },
   },
 });
 
-export const { getProducts } = productSlice.actions;
+export const {
+  gettingProducts,
+  gettingProductsFailed,
+  getProducts,
+  addNewProduct,
+} = productSlice.actions;
 
 export default productSlice.reducer;

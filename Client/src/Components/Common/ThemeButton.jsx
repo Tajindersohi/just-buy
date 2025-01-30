@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './style.scss';
 import { Button } from '@mui/material';
 
-const ThemeButton = ({ label, onClick, variant = 'primary',icon, disabled = false }) => {
+const ThemeButton = ({ label, onClick , variant = 'primary',icon, disabled = false }) => {
   return (
     <Button
       className={`text-capitalize theme-button theme-button--${variant}`}

@@ -1,9 +1,9 @@
 import React from "react";
 import { Box, Grid, Typography, Link } from "@mui/material";
-import Constant from "./Constant"; // Import the constant file
+import Constant from "./Constant"; 
 
 const Footer = () => {
-  const [usefulLinks, categories] = Constant; // Destructure the constants
+  const [usefulLinks, categories] = Constant; 
 
   return (
     <Box sx={{ padding: "40px 20px", backgroundColor: "#f9f9f9" }}>

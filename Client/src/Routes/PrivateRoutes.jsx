@@ -1,5 +1,6 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import AdminLayout from "../Pages/Admin/AdminLayout";
 
 const PrivateRoute = ({ user }) => {
   const token = localStorage.getItem("token");
@@ -7,7 +8,7 @@ const PrivateRoute = ({ user }) => {
   if (!token) {
     return <Navigate to="admin/login" />;
   }
-  return <Outlet />;
+  return <AdminLayout><Outlet /></AdminLayout>;
 };
 
 export default PrivateRoute;

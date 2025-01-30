@@ -5,9 +5,11 @@ import Product from "./Product";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import LoadingIndicator from "../../Components/Common/LoadingIndicator";
+import { Products } from "../../Assets/Constants/ProductConstant";
 
 const Home = () => {
-  const product = useSelector((state) => state.product);
+  const product = Products
+  // const product = useSelector((state) => state.product);
   const [cart,setCart] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 6;
@@ -48,7 +50,7 @@ const Home = () => {
   
   return (
     <Box>
-            <LoadingIndicator/>
+          <LoadingIndicator/>
 
       <Typography variant="h4" gutterBottom>
         Category
@@ -86,9 +88,7 @@ const Home = () => {
       </Typography>
       <Grid container spacing={3}>
         {product.bestSellingProducts.map((product, idx) => (
-          <>
-          <Product product={product} cart={cart} handleAddItem={handleAddItem} handleSubItem={handleSubItem}/>
-          </>
+          <Product key={idx} product={product} cart={cart} handleAddItem={handleAddItem} handleSubItem={handleSubItem}/>
           // <Grid item xs={6} sm={4} md={3} lg={2.4} key={idx}>
           //   <Box
           //     sx={{

@@ -3,7 +3,9 @@ import { Box, Button, TextField, Typography, Paper } from '@mui/material';
 import { create, login } from '../../store/redux/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useNotifierUtils } from '../../Assets/Constants/showNotifier';
+import { showError, showSuccess } from '../../Assets/Constants/showNotifier';
+// import { useshowNotifier } from '../../Assets/Constants/showNotifier';
+// import { showError, showSuccess } from '../../Assets/Constants/showNotifier';
 
 export default function AdminLogin() {
     const user = useSelector((state)=>state.auth.user)
@@ -13,7 +15,7 @@ export default function AdminLogin() {
     const [passwordError, setPasswordError] = useState(false);
     const [type, setType] = useState(true);
     const navigate = useNavigate()
-    const { success, error } = useNotifierUtils();
+    // const { success, error } = useshowNotifier();
 
     useEffect(()=>{
         if(user) navigate('/admin/dashboard') 
@@ -36,13 +38,13 @@ export default function AdminLogin() {
         try {
             if(type){
                 await dispatch(login(credentials)).unwrap();
-                success("Login Successfull");
+                showSuccess("Login Successfull");
             }else{
                 await dispatch(create(credentials)).unwrap();
-                success("Register Successfull");
+                showSuccess("Register Successfull");
             }
         } catch (err) {
-          error(err);
+          showError(err);
           console.error('Login failed:', err);
         }   
     }

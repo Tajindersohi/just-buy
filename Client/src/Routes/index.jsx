@@ -6,11 +6,12 @@ import Login from "../Pages/Admin/Login";
 import PrivateRoute from "./PrivateRoutes";
 import Dashboard from "../Pages/Admin/Dashboard";
 import { useSelector } from "react-redux";
+import Logout from "../Pages/Admin/Logout/Logout";
 const Home = lazy(() => import("../Pages/Home"));
 const About = lazy(() => import("../Pages/About"));
 const Contact = lazy(() => import("../Pages/Contact"));
 const NotFound = lazy(() => import("../Pages/NotFound"));
-const ProductList = lazy(() => import("../Pages/Admin/Products/ProductList"));
+const ProductList = lazy(() => import("../Pages/Admin/Products"));
 
 const AppRoutes = () => {
     const user = useSelector((state) => state.auth);
@@ -37,8 +38,9 @@ const AppRoutes = () => {
     const adminRoutes = () => {
         return (
             <>
-                <Route path="/admin/dashboard" element={<Dashboard />} />
                 <Route path="/admin/products" element={<ProductList />} />
+                <Route path="/admin/dashboard" element={<Dashboard />} />
+                <Route path="/admin/logout" element={<Logout />} />
             </>
         )
     }

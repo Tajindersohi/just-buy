@@ -1,19 +1,18 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Box } from '@mui/material';
-import { useCallback } from 'react';
 
-const LoadingContext = createContext();
+const LoadingContext = createContext(); // Create Context
 
 export default function LoadingIndicatorProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const showLoading = useCallback(({loading = false}) => {
+  const showLoading = useCallback(({ loading = false }) => {
     setIsLoading(loading);
   }, []);
 
   return (
-    <LoadingContext.Provider showLoading={showLoading}>
+    <LoadingContext.Provider value={{ showLoading }}> {/* Pass an object */}
       {children}
       {isLoading && (
         <Box
@@ -25,8 +24,8 @@ export default function LoadingIndicatorProvider({ children }) {
           position="fixed"
           top={0}
           left={0}
-          bgcolor="rgba(255, 255, 255, 0.8)" 
-          zIndex={1300} 
+          bgcolor="rgba(255, 255, 255, 0.8)"
+          zIndex={1300}
         >
           <CircularProgress size="3rem" />
         </Box>
@@ -35,7 +34,11 @@ export default function LoadingIndicatorProvider({ children }) {
   );
 }
 
+// Custom hook to use LoadingContext
 export const useLoading = () => {
   const context = useContext(LoadingContext);
+  if (!context) {
+    throw new Error('useLoading must be used within a LoadingIndicatorProvider');
+  }
   return context;
 };
