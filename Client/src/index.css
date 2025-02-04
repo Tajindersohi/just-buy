@@ -11,3 +11,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.button{
+  text-transform: capitalize !important;
+}
+
+.css-113d811-MuiFormLabel-root-MuiInputLabel-root.Mui-focused{
+  /* color: red !important; */
+}
+.MuiInputBase-root{
+  border: red !important;
+}
+.MuiOutlinedInput-root{
+  border: red !important;
+
+}

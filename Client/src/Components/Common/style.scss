@@ -1,11 +1,9 @@
 /* ThemeButton.css */
 .theme-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
+    // padding: 10px 20px !important;
+    border-radius: 5px !important;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s !important;
   }
   
   .theme-button--primary {
@@ -32,6 +30,7 @@
 
   .theme-button--primary:hover {
     background-color: lighten(rgb(0, 0, 0), 30%) !important;
+    // background-color: #02cfac !important;
     color: white;
   }
   

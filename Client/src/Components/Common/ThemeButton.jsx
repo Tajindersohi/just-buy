@@ -4,14 +4,16 @@ import PropTypes from 'prop-types';
 import './style.scss';
 import { Button } from '@mui/material';
 
-const ThemeButton = ({ label, onClick , variant = 'primary',icon, disabled = false }) => {
+const ThemeButton = ({ label, onClick , variant = 'primary',icon, disabled = false, fullWidth = false }) => {
   return (
     <Button
-      className={`text-capitalize theme-button theme-button--${variant}`}
+      className={`text-capitalize button theme-button theme-button--${variant}`}
       onClick={onClick}
       disabled={disabled}
       variant='contained'
       startIcon={icon}
+      fullWidth = {fullWidth}
+      // size='large'
     >
       {label}
     </Button>

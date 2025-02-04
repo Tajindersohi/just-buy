@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   isAuthenticated: false,
   user: null,
-  sent:false
+  sent:false,
+  message:""
 };
 
 const authSlice = createSlice({
@@ -15,7 +16,8 @@ const authSlice = createSlice({
       state.user = action.payload;
     },
     sentLoginOtp(state,action){
-      state.sent = action.payload
+      state.sent = action.payload.sent
+      state.message = action.payload.message;
     }
   },
 });

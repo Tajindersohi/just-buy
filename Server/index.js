@@ -1,7 +1,11 @@
 require("dotenv").config();
-const express = require('express')
+const express = require('express');
 const app = express();
 const cors = require('cors');
+const path = require("path");
+const multer = require("multer");
+const { uploadImage } = require('./controllers/upload/upload');
+
 app.use(cors({
   origin: 'http://localhost:3000',
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
@@ -10,20 +14,33 @@ app.use(cors({
 
 app.use(express.json());
 
-const port = process.env.PORT || 3000;
+// Serve uploads folder correctly
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+const port = process.env.PORT || 6000;
 const connect = require('./DB/connect');
-const routes = require('./routes/index')
-const start = async() =>{
+const routes = require('./routes/index');
+
+const start = async () => {
   try {
     await connect();
     app.listen(port, () => {
-      console.log(`Example app listening on port ${port}`)
-    })
+      console.log(`Server running on port ${port}`);
+    });
   } catch (error) {
     console.log(error);
   }
-}
+};
 start();
 
-app.use("/api", routes)
+// Ensure uploads are stored in the correct directory
+const storage = multer.diskStorage({
+  destination: path.join(__dirname, "uploads"), // Save in "uploads" folder inside the server directory
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Unique file name
+  }
+});
 
+const upload = multer({ storage });
+app.use("/api/upload-image", upload.single('image'), uploadImage)
+app.use("/api", routes);

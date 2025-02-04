@@ -1,36 +1,83 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button, Snackbar, Alert, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { useDispatch } from 'react-redux';
+import { uploadImage } from '../../store/redux/uploadThunk';
+import { showError, showSuccess } from '../../Assets/Constants/showNotifier';
 
 const ImageUploader = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [error, setError] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const dispatch = useDispatch();
+  console.log("selectedImage",selectedImage);
 
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
 
-    if (file) {
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-      if (!validTypes.includes(file.type)) {
-        setError('Only JPEG, JPG, and PNG files are allowed.');
-        setOpenSnackbar(true);
-        setSelectedImage(null);
-        return;
-      }
+// const handleImageUpload = async (event) => {
+//     const file = event.target.files[0];
+//     if (!file) return;
+//     console.log("datadata",file);
 
-      setError('');
-      setOpenSnackbar(false);
-      setSelectedImage(URL.createObjectURL(file));
-    }
-  };
+//     const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+//     if (!validTypes.includes(file.type)) {
+//         setError('Only JPEG, JPG, and PNG files are allowed.');
+//         setOpenSnackbar(true);
+//         setSelectedImage(null);
+//         return;
+//     }
+
+//     try {
+//         dispatch(uploadImage({file:file}))
+//     } catch (error) {
+//         // setError('Error uploading image');
+//         setOpenSnackbar(true);
+//     }
+// };
+const handleImageUpload = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+  if (!validTypes.includes(file.type)) {
+      setError('Only JPEG, JPG, and PNG files are allowed.');
+      setOpenSnackbar(true);
+      setSelectedImage(null);
+      return;
+  }
+
+  const formData = new FormData();
+  formData.append('image', file);
+
+  try {
+      const response = await fetch('http://localhost:5000/api/upload-image', {
+          method: 'POST',
+          body: formData
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+          setSelectedImage(`http://localhost:5000${data.imageUrl}`);
+          showSuccess(data.message)
+          setError('');
+      } else {
+          showError(data.message);
+          setError(data.message);
+          setOpenSnackbar(true);
+        }
+      } catch (error) {
+    showError(error);
+      setError('Error uploading image');
+      setOpenSnackbar(true);
+  }
+};
+
 
   const handleRemoveImage = () => {
     setSelectedImage(null);
   };
 
   return (
-    <Box display="flex" flexDirection="row" alignItems="center" gap={2}>
+    <Box display="flex" flexDirection="row" alignItems="center" gap={2} height={'70px'}>
       {!selectedImage && 
       <>
         <input
@@ -41,7 +88,7 @@ const ImageUploader = () => {
           id="image-upload"
         />
         <label htmlFor="image-upload">
-          <Button variant="outlined" color='secondary' component="span" size='small'>
+          <Button variant="outlined" className="button" color='secondary' component="span" size='small'>
             Choose Image
           </Button>
         </label>

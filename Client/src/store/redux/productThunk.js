@@ -3,18 +3,23 @@ import {
   getProducts,
   gettingProducts,
   gettingProductsFailed,
-  addNewProduct
+  addNewProduct,
+  addNewCategory
 } from './productSlice';
 import apiConstants from '../../api/Constants';
+import { showError, showSuccess } from '../../Assets/Constants/showNotifier';
+
 export const getProductsList = createAsyncThunk(
   '/product',
   async (data, { dispatch, rejectWithValue }) => {
     try {
       dispatch(gettingProducts()); 
       const response = await apiConstants.product.productList(data);
-      console.log('response.data', response);
-      const list = response.data;
-      dispatch(getProducts(list)); 
+      const list = response.data.data;
+      if(response.data.success){
+        showSuccess(response.data.message);
+        dispatch(getProducts(list)); 
+      }
       return { list };
     } catch (err) {
       dispatch(gettingProductsFailed(err.response?.data?.message || 'Get Products failed')); // Dispatch error
@@ -24,12 +29,29 @@ export const getProductsList = createAsyncThunk(
 );
 
 export const addProduct = createAsyncThunk(
-  'product/add',
+  'product/create-product',
   async (data, { dispatch, rejectWithValue }) => {
     try {
       dispatch(gettingProducts()); // Show loading
-      const response = await apiConstants.product.addProduct(data);
+      const response = await apiConstants.product.createProduct(data);
       dispatch(addNewProduct(response)); // Add product to the list
+      showSuccess(response.message);
+      return { response };
+    } catch (error) {
+      showError(error);
+      dispatch(gettingProductsFailed(error.response?.data?.message || 'Add Product failed')); // Dispatch error
+      return rejectWithValue(error.response?.data?.message || 'Add Product failed');
+    }
+  }
+);
+
+export const addCategory = createAsyncThunk(
+  'product/create-caterory',
+  async (data, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(gettingProducts());
+      const response = await apiConstants.product.createCategory(data);
+      dispatch(addNewCategory(response)); 
       return { response };
     } catch (error) {
       dispatch(gettingProductsFailed(error.response?.data?.message || 'Add Product failed')); // Dispatch error

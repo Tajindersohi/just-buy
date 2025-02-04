@@ -11,9 +11,9 @@ import LoadingIndicator from './Components/Common/LoadingIndicator';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Provider store={store}>
-    <PersistGate loading={<LoadingIndicator/>} persistor={persistor}>
-      <App />
-    </PersistGate>
+      <PersistGate loading={<LoadingIndicator/>} persistor={persistor}>
+        <App />
+      </PersistGate>
   </Provider>
 );
 

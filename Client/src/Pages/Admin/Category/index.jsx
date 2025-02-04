@@ -25,7 +25,7 @@ const ITEM_PADDING_TOP = 8;
       },
     },
   };
-export default function ProductList() {
+export default function Category() {
   const dispatch = useDispatch();
   const { showLoading } = useLoading();
   const errorMsg = useSelector((state) => state.product.error); 
@@ -115,7 +115,7 @@ export default function ProductList() {
       <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
         <Box>
             <Typography variant="h4" gutterBottom>
-                Products
+                Category
             </Typography>
         </Box>
         <Box display={'flex'} gap={2}>
@@ -130,7 +130,7 @@ export default function ProductList() {
           ))
         :
         <>
-          <Categories />
+          <Categories allCategories={allCategories} />
         </>
         }
             <CommonModal open={openAddProduct} handleClose={handleProductClose} handleSubmit={handleSubmit} header='Add Product' buttonTitle="Add">

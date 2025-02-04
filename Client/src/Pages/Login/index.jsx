@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import CommonModal from '../../Components/Common/CommonModal';
 import ThemeButton from '../../Components/Common/ThemeButton';
 import LoginIcon from '@mui/icons-material/Login';
-import { Grid, TextField } from '@mui/material';
+import { Box, Button, FilledInput, FormControl, Grid, InputAdornment, InputLabel, OutlinedInput, TextField, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginWithOtp, sendOtp } from '../../store/redux/thunks';
 import { showError } from '../../Assets/Constants/showNotifier';
@@ -34,6 +34,7 @@ export default function Login() {
                 return;
             }
             dispatch(sendOtp({ phoneNumber: number }));
+            setModalType('otp');
         } else {
             await dispatch(loginWithOtp({ phoneNumber: number, otp }));
         }
@@ -48,6 +49,9 @@ export default function Login() {
         }
     }, [userState.sent, userState.isAuthenticated, handleClose]);
 
+    const handleChangeNumber = () => {
+        setModalType('phone');
+    }
     return (
         <>
             <ThemeButton label="Login" onClick={handleOpen} variant="primary" icon={<LoginIcon />} />
@@ -58,40 +62,57 @@ export default function Login() {
                 header="Login or Sign Up"
                 buttonTitle="Send OTP"
                 handleSubmit={handleSentOtp}
+                loginModal = {true}
             >
-                <Grid container>
-                    <Grid item xs={12} textAlign="center">
-                        <TextField 
-                            value={number} 
-                            sx={{ borderRadius: "10px" }} 
-                            type="number" 
-                            onChange={(e) => handleChange('number', e.target.value)} 
-                            variant="outlined" 
-                            placeholder="Enter Mobile Number"
-                        />
+                <Box fullWidth width={'500px'} >
+                    <Grid container>
+                        <Grid item xs={12} textAlign="center">
+                            <FormControl fullWidth sx={{ my: 1 }}>
+                                <InputLabel htmlFor="filled-adornment-amount">Enter Mobile Number</InputLabel>
+                                <OutlinedInput
+                                    value={number} 
+                                    onChange={(e) => handleChange('number', e.target.value)} 
+                                    id="filled-adornment-amount"
+                                    startAdornment={<InputAdornment position="start">+91</InputAdornment>}
+                                    label="Enter Mobile Number"
+                                    type='number'
+                                />
+                            </FormControl>
+                        </Grid>
                     </Grid>
-                </Grid>
+                </Box>
             </CommonModal>
 
             <CommonModal
                 open={modalType === 'otp'}
                 handleClose={handleClose}
-                header="Enter OTP"
+                header="OTP Verification"
                 buttonTitle="Login"
                 handleSubmit={handleSentOtp}
             >
-                <Grid container>
-                    <Grid item xs={12} textAlign="center">
-                        <TextField 
-                            value={otp} 
-                            sx={{ borderRadius: "10px" }} 
-                            type="number" 
-                            onChange={(e) => handleChange('otp', e.target.value)} 
-                            variant="outlined" 
-                            placeholder="Enter OTP"
-                        />
+                <Box>
+                    {/* <Grid container> */}
+                        <Grid item xs={12} textAlign="center">
+                            <Box display={'flex'} flexDirection={'column'} gap={1} justifyContent={"space-between"} minWidth={"310px"} minHeight={"120px"} alignItems={'center'}>
+                                <TextField 
+                                    value={otp}
+                                    sx={{ borderRadius: "10px" }} 
+                                    type="number" 
+                                    fullWidth
+                                    onChange={(e) => handleChange('otp', e.target.value)} 
+                                    variant="outlined" 
+                                    placeholder="Enter OTP"
+                                />
+                                {userState.message && 
+                                <Typography  variant='p'>{userState.message} sent to <b>+{number}</b></Typography>}
+                                <Box display={'flex'} alignItems={'center'}>
+                                    <Button variant='text' className='button'>Resend</Button> 
+                                    <Typography>or</Typography>
+                                    <Button variant='text' className='button' onClick={handleChangeNumber}>Change Number ?</Button>
+                                </Box>
+                            </Box>
                     </Grid>
-                </Grid>
+                </Box>
             </CommonModal>
         </>
     );

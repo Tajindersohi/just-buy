@@ -17,11 +17,14 @@ const productSlice = createSlice({
       state.error = action.payload;
     },
     getProducts: (state, action) => {
-      console.log("actionaction",action.payload);
       state.isLoading = false;
       state.categories = action.payload;
     },
     addNewProduct: (state, action) => {
+      state.products.push(action.payload);
+    },
+    addNewCategory: (state, action) => {
+      console.log("statettetet",state, action);
       state.products.push(action.payload);
     },
   },
@@ -32,6 +35,7 @@ export const {
   gettingProductsFailed,
   getProducts,
   addNewProduct,
+  addNewCategory
 } = productSlice.actions;
 
 export default productSlice.reducer;

@@ -53,9 +53,7 @@ const handleLoginWithOtp = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, 'your_secret_token', { expiresIn: '1h' });
-
-    res.json({ token, user });
-
+    res.json({ token, user ,message:"Login Successfully"});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -75,10 +73,9 @@ const sentLoginOtp = async (req, res) => {
       { lastOtp, otpExpiryDate },
       { new: true, upsert: true, projection: { phoneNumber: 1, lastOtp: 1 } }
     );
-    res.json({sent:true});
-
+    res.json({success:true,sent:true, message:"Please enter a verification code"});
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({success:false, message: error.message });
   }
 };
 

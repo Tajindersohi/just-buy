@@ -1,19 +1,44 @@
 import React, {  useState } from "react";
 import { Box, Button, Grid, Typography } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Product from "./Product";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import LoadingIndicator from "../../Components/Common/LoadingIndicator";
+import LoadingIndicator, { useLoading } from "../../Components/Common/LoadingIndicator";
 import { Products } from "../../Assets/Constants/ProductConstant";
+import { getProductsList } from "../../store/redux/productThunk";
+import { showError } from "../../Assets/Constants/showNotifier";
+import { useEffect } from "react";
 
 const Home = () => {
   const product = Products
+  const { showLoading } = useLoading();
   // const product = useSelector((state) => state.product);
   const [cart,setCart] = useState([]);
+  const errorMsg = useSelector((state) => state.product.error); 
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 6;
+  const dispatch = useDispatch();
+  
+  useEffect(() => {
+    getList();
+  }, []);
 
+  const getList = async () => {
+    showLoading({ loading: true }); 
+    try {
+      await dispatch(getProductsList());
+      console.log("errorMsg",errorMsg);
+      if(errorMsg && errorMsg.length){
+        showError(errorMsg);
+      }
+    } catch (err) {
+      showError(err);
+      console.error('Error fetching products:', err);
+    } finally {
+      showLoading({ loading: false }); 
+    }
+  };
   const handleNext = () => {
     setStartIndex((prevIndex) =>
       Math.min(prevIndex + itemsPerPage, product.categories.length - itemsPerPage)
@@ -89,55 +114,6 @@ const Home = () => {
       <Grid container spacing={3}>
         {product.bestSellingProducts.map((product, idx) => (
           <Product key={idx} product={product} cart={cart} handleAddItem={handleAddItem} handleSubItem={handleSubItem}/>
-          // <Grid item xs={6} sm={4} md={3} lg={2.4} key={idx}>
-          //   <Box
-          //     sx={{
-          //       position: "relative",
-          //       textAlign: "center",
-          //       border: "1px solid #ddd",
-          //       borderRadius: "10px",
-          //       transition:"height 2s",
-          //       overflow: "hidden",
-          //     }}
-          //   >
-          //     <Box
-          //       sx={{
-          //         backgroundImage: `url(${product.img})`,
-          //         backgroundSize: "cover",
-          //         width: "100%",
-          //         height: "200px",
-          //       }}
-          //     />
-          //     <Box mt={2} px={2} textAlign={'left'} >
-          //       <Box minHeight={"60px"}>
-          //         <Typography>{product.title}</Typography>
-
-          //       </Box>
-          //         <Typography textAlign={'left'} color="#6f7478">
-          //           (22g)
-          //         </Typography>
-          //     </Box>
-          //     <Box mx={2} mt={2}>
-          //       <Typography textAlign="left"  color="#6f7478" sx={{ textDecoration: "line-through" }}>${product.totalPrice}</Typography>
-          //       <Box display="flex" mb={2} gap={2} justifyContent="space-between" alignItems="center">
-          //         <Typography >
-          //         ${product.currentPrice}
-          //         </Typography>
-          //       {cart.length > 0 && cart.find((item) => item.id == product.id) && <Box>
-          //         {cart.find((item) => item.id == product.id).count}
-          //       </Box>}
-          //         <Button
-          //             size="small"
-          //             variant="outlined"
-          //             color='success'
-          //             onClick={()=>handleAddItem(product.id)}
-          //           >
-          //             Add
-          //           </Button>
-          //       </Box>
-          //     </Box>
-          //   </Box>
-          // </Grid>
         ))}
       </Grid>
     </Box>

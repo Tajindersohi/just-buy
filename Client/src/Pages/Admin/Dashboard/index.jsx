@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../../store/redux/thunks';
@@ -21,9 +21,12 @@ export default function Dashboard() {
   };
 
   return (
-    <Box>
-      <Button onClick={()=>handleLogout()}>Logout</Button>
-      Welcome to the dashboard
+    <Box p={3}>
+        <Typography variant="h4" gutterBottom>
+            Dashboard
+        </Typography>
+        {/* <Button onClick={()=>handleLogout()}>Logout</Button> */}
+        Welcome to the dashboard
     </Box>
   );
 }

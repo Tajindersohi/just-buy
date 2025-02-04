@@ -17,12 +17,12 @@ const getProductsList = async (req, res) => {
                         imageUrl: product.imageUrl,
                         price: product.price,
                         discount: product.discount,
-                    })),
+                    })),    
                 };
             })
         );
 
-        res.status(200).json(result); 
+        res.status(200).json({data:result,success:true,message:"Product fetched successfully"}); 
     } catch (err) {
         console.error('Error fetching products:', err);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -31,17 +31,10 @@ const getProductsList = async (req, res) => {
 
 const addNewProduct = async (req, res) => {
     try {
-        const { category, price, name, imageUrl, discount } = req.body;
-
-        let categoryRecord = await ProductCategory.findOne({ name: category });
-        
-        if (!categoryRecord) {
-            categoryRecord = await ProductCategory.create({ name: category });
-        }
-
+        const { categoryId, price, productName, imageUrl, discount } = req.body;
         const newProduct = await Product.create({
-            category_id: categoryRecord._id,
-            name: name,
+            category_id:categoryId ,
+            name: productName,
             imageUrl,
             price,
             discount,
@@ -53,8 +46,22 @@ const addNewProduct = async (req, res) => {
         });
     } catch (err) {
         console.error('Error adding new product:', err);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: err });
     }
 };
 
-module.exports = { getProductsList, addNewProduct };
+const addNewCategory = async (req, res) => {
+    try {
+        const { category, imageUrl } = req.body;
+        let categoryRecord = await ProductCategory.create({ name: category, imageUrl: imageUrl });
+        res.status(201).json({
+            message: 'Category created successfully',
+            product: categoryRecord,
+        });
+    } catch (err) {
+        console.error('Error adding new product:', err);
+        res.status(500).json({ message: err });
+    }
+};
+
+module.exports = { getProductsList, addNewProduct, addNewCategory };

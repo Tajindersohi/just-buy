@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { Button, Grid, Grid2, IconButton, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import ThemeButton from './ThemeButton';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -19,7 +20,7 @@ const style = {
 };
 
 
-export default function CommonModal({open, handleClose, children, handleSubmit, header = "", buttonTitle="Submit"}) {
+export default function CommonModal({open, handleClose, children, handleSubmit, header = "", buttonTitle="Submit", loginModal=false}) {
   return (
     <div>
       <Modal
@@ -29,25 +30,32 @@ export default function CommonModal({open, handleClose, children, handleSubmit, 
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Box width={'100%'}>
+          <Box width={'100%'} >
               <Box position="relative" display="flex" justifyContent="center" alignItems="center">
-                <Typography variant="h5"><b>{header}</b></Typography>
-                {/* <IconButton 
+                <Typography variant="h5" color='#02cfac' ><b>{header}</b></Typography>
+                <IconButton 
                   onClick={handleClose} 
                   sx={{ position: 'absolute', right: 0 }}
                 >
                   <CloseIcon />
-                </IconButton> */}
+                </IconButton>
               </Box>
 
 
             <Box my={4}>
                   {children}
             </Box>
-            <Box display={'flex'} justifyContent={'center'} gap={4} mt={2} >
-                <Button variant='contained' color='error' onClick={handleClose}>Close</Button>
-                <Button variant='contained'onClick={handleSubmit}>{buttonTitle}</Button>
-            </Box>
+            {!loginModal &&
+                <Box display={'flex'} justifyContent={'center'} gap={4} mt={2} >
+                    <Button variant='contained' color='error' onClick={handleClose}>Close</Button>
+                    <ThemeButton  label={buttonTitle} onClick={handleSubmit}  variant = 'primary' />
+                </Box>
+            }
+            {loginModal && 
+                <Box >
+                  <ThemeButton  label={"Continue"} onClick={handleSubmit}  variant = 'primary' fullWidth={true}/>
+                </Box>
+            }
           </Box>
         </Box>
       </Modal>
