@@ -6,26 +6,32 @@ import IconButton from '@mui/material/IconButton';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { ListItem } from '@mui/material';
 
-
-
-const rows = [
-  { id: 1, category: 'Snow' },
-  { id: 2, category: 'Lannister' },
-  { id: 3, category: 'Lannister' },
-  { id: 4, category: 'Stark' },
-  { id: 5, category: 'Targaryen' },
-  { id: 6, category: 'Melisandre' },
-  { id: 7, category: 'Clifford' },
-  { id: 8, category: 'Frances' },
-  { id: 9, category: 'Roxie' },
-];
-
 const paginationModel = { page: 0, pageSize: 5 };
 
 export default function Categories({allCategories}) {
   const navigate = useNavigate();
   const columns = [
     { field: 'id', headerName: 'ID', width: 230 },
+    {
+      field: 'imageUrl',
+      headerName: 'Icon',
+      width: 330,
+      renderCell: (params) => (
+        <>
+        <img
+        src={params.row.imageUrl}
+        alt="Preview"
+        style={{
+          width: '40px',
+          height: '40px',
+          borderRadius:"50%", 
+          objectFit: 'cover',
+          border: '1px solid #ccc',
+        }}
+      />
+        </>
+      ),
+    },
     { field: 'category', headerName: 'Name', width: 330 },
     {
       field: 'products',

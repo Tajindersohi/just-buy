@@ -5,34 +5,13 @@ import { useDispatch } from 'react-redux';
 import { uploadImage } from '../../store/redux/uploadThunk';
 import { showError, showSuccess } from '../../Assets/Constants/showNotifier';
 
-const ImageUploader = () => {
-  const [selectedImage, setSelectedImage] = useState(null);
+const ImageUploader = ({selectedImage, setSelectedImage}) => {
   const [error, setError] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const dispatch = useDispatch();
   console.log("selectedImage",selectedImage);
 
 
-// const handleImageUpload = async (event) => {
-//     const file = event.target.files[0];
-//     if (!file) return;
-//     console.log("datadata",file);
-
-//     const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-//     if (!validTypes.includes(file.type)) {
-//         setError('Only JPEG, JPG, and PNG files are allowed.');
-//         setOpenSnackbar(true);
-//         setSelectedImage(null);
-//         return;
-//     }
-
-//     try {
-//         dispatch(uploadImage({file:file}))
-//     } catch (error) {
-//         // setError('Error uploading image');
-//         setOpenSnackbar(true);
-//     }
-// };
 const handleImageUpload = async (event) => {
   const file = event.target.files[0];
   if (!file) return;

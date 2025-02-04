@@ -11,6 +11,7 @@ const getProductsList = async (req, res) => {
                 return {
                     category: category.name,
                     id: category._id,
+                    imageUrl: category.imageUrl,
                     products: products.map(product => ({
                         id:product._id,
                         name: product.name,

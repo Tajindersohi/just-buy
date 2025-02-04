@@ -25,7 +25,7 @@ export const NotifierProvider = ({ children }) => {
     <NotifierContext.Provider value={{ showNotifier }}>
       {children}
       <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         open={notifier.open}
         onClose={handleClose}
         TransitionComponent={Fade}

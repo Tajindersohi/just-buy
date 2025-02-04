@@ -33,22 +33,38 @@ export default function ProductList() {
   const allCategories = useSelector((state) => state.product);
   const [openAddProduct, setOpenAddProduct] = React.useState(false);
   const [openAddCategory, setOpenAddCategory] = React.useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [newProduct, setNewProduct] = React.useState({
       categoryId:"",
       productName:"",
       price:0,
-      imageUrl:"www.myImage.com",
+      imageUrl:selectedImage,
       discount:0 
   });
   const [newCategory, setNewCategory] = React.useState({
       category:"",
-      imageUrl:"www.myImage.com",
+      imageUrl:selectedImage,
   });
 
 
   useEffect(() => {
     getList();
   }, []);
+
+  useEffect(() => {
+    if(openAddProduct){
+      setNewProduct((prev) => ({
+          ...prev,
+          imageUrl: selectedImage, 
+      }));
+    }
+    if(openAddCategory){
+      setNewCategory((prev) => ({
+          ...prev,
+          imageUrl: selectedImage, 
+      }));
+    }
+  }, [selectedImage]);
 
   const getList = async () => {
     setLoading(true)
@@ -111,11 +127,11 @@ export default function ProductList() {
     };
 
   return (
-    <Box p={3}>
-      <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
+    <Box maxWidth={'1200px'} p={3}>
+      <Box mb={2} display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
         <Box>
-            <Typography variant="h4" gutterBottom>
-                Products
+            <Typography variant="h5" gutterBottom>
+                Categories
             </Typography>
         </Box>
         <Box display={'flex'} gap={2}>
@@ -184,7 +200,7 @@ export default function ProductList() {
                     <Grid item xs={6}>
                         <Box display={'flex'} m={0.5} alignItems={'center'}>
                             <Typography mr={2}>Product Image: </Typography>
-                            <ImageUploader/>
+                            <ImageUploader selectedImage={selectedImage} setSelectedImage={setSelectedImage}/>
                         </Box>
                     </Grid>
                 </Grid>
@@ -197,7 +213,7 @@ export default function ProductList() {
                     <Grid item xs={12}>
                         <Box display={'flex'} m={0} alignItems={'center'}>
                             <Typography mr={2}>Category Logo: </Typography>
-                            <ImageUploader/>
+                            <ImageUploader selectedImage={selectedImage} setSelectedImage={setSelectedImage}/>
                         </Box>
                     </Grid>
                 </Grid>

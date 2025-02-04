@@ -39,10 +39,8 @@ const AppRoutes = () => {
     const adminRoutes = () => {
         return (
             <>
-                <Route path="/admin/products" element={<ProductList />} />
-                <Route path="/admin/category:id" element={<ProductList />} />
+                <Route path="/admin/categories" element={<ProductList />} />
                 <Route path="/admin/dashboard" element={<Dashboard />} />
-                <Route path="/admin/category" element={<Category />} />
                 <Route path="/admin/logout" element={<Logout />} />
             </>
         )

@@ -25,3 +25,7 @@ code {
   border: red !important;
 
 }
+.MuiDataGrid-columnHeader{
+  background-color: rgb(216, 215, 215);
+
+}

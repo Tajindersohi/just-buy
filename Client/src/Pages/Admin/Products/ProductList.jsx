@@ -3,26 +3,33 @@ import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 
 const columns = [
-  { field: 'name', headerName: 'Name', width: 90 },
-  { field: 'name', headerName: 'Name', width: 90 },
+  { field: 'imageUrl', headerName: 'Icon',
+    renderCell: (params) => (
+      <img
+      src={params.row.imageUrl}
+      alt="Preview"
+      style={{
+        width: '50px',
+        height: '50px',
+        borderRadius:"50%", 
+        objectFit: 'cover',
+        border: '1px solid #ccc',
+      }}
+    />
+    ),
+    width: 300 },
+  { field: 'name', headerName: 'Name', width: 300 },
   {
     field: 'price',
     headerName: 'Price',
-    width: 150,
+    width: 220,
     editable: true,
   },
   {
     field: 'discount',
     headerName: 'Discount',
-    width: 150,
+    width: 300,
     editable: true,
-  },
-  {
-    field: 'imageUrl',
-    headerName: 'Image',
-    // type: 'number',
-    // width: 110,
-    // editable: true,
   }
 ];
 

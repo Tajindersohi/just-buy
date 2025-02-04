@@ -18,7 +18,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import AdbIcon from '@mui/icons-material/Adb';
 import icons from '../../../Assets/Icons/Icons';
 
@@ -26,11 +26,12 @@ const drawerWidth = 220;
 
 export default function AdminLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
+  console.log("handle",location);
 
   const menuItems = [
     { name: 'Dashboard', route: '/admin/dashboard', icon: <DashboardIcon /> },
-    { name: 'Products', route: '/admin/products', icon: <InventoryIcon /> },
-    { name: 'Categories', route: '/admin/category', icon: <InventoryIcon /> },
+    { name: 'Categories', route: '/admin/categories', icon: <InventoryIcon /> },
     { name: 'Logout', route: '/admin/logout', icon: <ExitToAppIcon /> },
   ];
 
@@ -57,7 +58,8 @@ export default function AdminLayout({ children }) {
             component={Link}
             to={item.route}
             sx={{
-              color:'#000',
+              color:(location.pathname == item.route ? 'primary.contrastText' : '#000'),
+              backgroundColor:(location.pathname == item.route ? '#0C8342' : 'none'),
               '&:hover': {
                 backgroundColor: '#0C8342',
                 color: 'primary.contrastText',
