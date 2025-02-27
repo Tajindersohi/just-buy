@@ -1,4 +1,4 @@
-import axiosInstance from './axiosInstance';
+import axiosInstance from '../axiosInstance';
 
 const apiConstants = {
     admin:{
@@ -6,9 +6,10 @@ const apiConstants = {
         registerUser: async (data) => await axiosInstance.post('/admin/register', data),
     },
     product:{
-        productList: async () => await axiosInstance.get('/products'),
-        createProduct: async (data) => await axiosInstance.post('/products/create-product',data),
-        createCategory: async (data) => await axiosInstance.post('/products/create-category',data),
+        categoryList: async () => await axiosInstance.get('/category'),
+        createProduct: async (data) => await axiosInstance.post('/category/create-product',data),
+        createCategory: async (data) => await axiosInstance.post('/category/create-category',data),
+        getCategoryProducts: async (data) => await axiosInstance.post('/category/products',data),
     },
     user:{
         sentOtp: async (data) => await axiosInstance.post('/sent-otp',data),

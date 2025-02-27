@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Box, Typography, Button, Snackbar, Alert, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch } from 'react-redux';
-import { uploadImage } from '../../store/redux/uploadThunk';
 import { showError, showSuccess } from '../../Assets/Constants/showNotifier';
 
 const ImageUploader = ({selectedImage, setSelectedImage}) => {

@@ -7,7 +7,7 @@ import PrivateRoute from "./PrivateRoutes";
 import Dashboard from "../Pages/Admin/Dashboard";
 import { useSelector } from "react-redux";
 import Logout from "../Pages/Admin/Logout/Logout";
-import Category from "../Pages/Admin/Category";
+import ProductDetails from "../Pages/Admin/Products/ProductDetails";
 const Home = lazy(() => import("../Pages/Home"));
 const About = lazy(() => import("../Pages/About"));
 const Contact = lazy(() => import("../Pages/Contact"));
@@ -40,6 +40,7 @@ const AppRoutes = () => {
         return (
             <>
                 <Route path="/admin/categories" element={<ProductList />} />
+                <Route path="/products/:id" element={<ProductDetails />} />
                 <Route path="/admin/dashboard" element={<Dashboard />} />
                 <Route path="/admin/logout" element={<Logout />} />
             </>

@@ -1,12 +1,8 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import { IconButton } from '@mui/material';
-import { Link } from 'react-router-dom'; // Use react-router-dom Link
 
 const columns = [
-  { field: 'id', headerName: 'Id', width: 300 },
   {
     field: 'imageUrl',
     headerName: 'Icon',
@@ -27,22 +23,30 @@ const columns = [
   },
   { field: 'name', headerName: 'Name', width: 300 },
   {
-    field: 'products',
-    headerName: 'Products',
-    renderCell: (params) => (
-      <IconButton component={Link} to={`/products/${params.row.id}`}>
-        <VisibilityIcon />
-      </IconButton>
-    ),
+    field: 'price',
+    headerName: 'Price',
+    width: 220,
+    editable: true,
+  },
+  {
+    field: 'discount',
+    headerName: 'Discount',
     width: 300,
+    editable: true,
   },
 ];
 
-export default function ProductList({ list }) {
+export default function ProductsGrid({ list = [] }) {
+  // Ensure `id` field exists for DataGrid
+  const rows = list.map((item) => ({
+    ...item,
+    id: item._id, // MUI DataGrid requires `id`
+  }));
+
   return (
     <Box sx={{ height: 400, width: '100%' }}>
       <DataGrid
-        rows={list}
+        rows={rows}
         columns={columns}
         initialState={{
           pagination: {

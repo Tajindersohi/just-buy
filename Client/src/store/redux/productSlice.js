@@ -12,30 +12,21 @@ const productSlice = createSlice({
     gettingProducts: (state) => {
       state.isLoading = true;
     },
-    gettingProductsFailed: (state, action) => {
+    getProductsFailed: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },
-    getProducts: (state, action) => {
+    getProductsSuccess: (state, action) => {
       state.isLoading = false;
-      state.categories = action.payload;
-    },
-    addNewProduct: (state, action) => {
-      state.products.push(action.payload);
-    },
-    addNewCategory: (state, action) => {
-      console.log("statettetet",state, action);
-      state.products.push(action.payload);
-    },
+      state.products = action.payload;
+    }
   },
 });
 
 export const {
   gettingProducts,
-  gettingProductsFailed,
-  getProducts,
-  addNewProduct,
-  addNewCategory
+  getProductsFailed,
+  getProductsSuccess
 } = productSlice.actions;
 
 export default productSlice.reducer;

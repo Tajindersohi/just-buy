@@ -1,5 +1,5 @@
 import axios from "axios";
-import { showError } from "../Assets/Constants/showNotifier";
+import { showError } from "././Assets/Constants/showNotifier";
 const axiosInstance = axios.create({
   baseURL: "http://localhost:5000/api",
   timeout: 10000,

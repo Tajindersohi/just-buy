@@ -6,15 +6,18 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import LoadingIndicator, { useLoading } from "../../Components/Common/LoadingIndicator";
 import { Products } from "../../Assets/Constants/ProductConstant";
-import { getProductsList } from "../../store/redux/productThunk";
+import { getCategoryList } from "../../store/redux/categoryThunk";
 import { showError } from "../../Assets/Constants/showNotifier";
 import { useEffect } from "react";
+import ImageSlider from "../../Components/ImageSlider";
+import ValidationForm from "./ValidationForm";
 
 const Home = () => {
   const product = Products
   const { showLoading } = useLoading();
-  // const product = useSelector((state) => state.product);
+  const productsss = useSelector((state) => state.category);
   const [cart,setCart] = useState([]);
+  console.log("productsss",productsss);
   const errorMsg = useSelector((state) => state.product.error); 
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 6;
@@ -27,7 +30,7 @@ const Home = () => {
   const getList = async () => {
     showLoading({ loading: true }); 
     try {
-      await dispatch(getProductsList());
+      await dispatch(getCategoryList());
       console.log("errorMsg",errorMsg);
       if(errorMsg && errorMsg.length){
         showError(errorMsg);
@@ -75,37 +78,39 @@ const Home = () => {
   
   return (
     <Box>
-          <LoadingIndicator/>
-
+      <LoadingIndicator/>
       <Typography variant="h4" gutterBottom>
         Category
       </Typography>
       <Box display="flex" flexDirection="row" sx={{overFlow:"overlay"}} gap={3}>
-        <Button  onClick={handlePrev} disabled={startIndex === 0} size="small">
+        {/* <Button  onClick={handlePrev} disabled={startIndex === 0} size="small">
           <ArrowBackIosIcon/>
-        </Button>
-      {product.categories.slice(startIndex, startIndex + itemsPerPage).map((category, idx) => (
-          <Box key={idx} display="flex" alignItems="center" flexDirection="column" gap={2}>
-            <Box
-              borderRadius="50%"
-              sx={{
-                backgroundImage: `url(${category.img})`,
-                backgroundSize: "cover",
-                width: "150px",
-                height: "150px",
-              }}
-            />
-            <Typography>{category.title}</Typography>
-          </Box>
-        ))}
-        
-        <Button
+        </Button> */}
+        <ImageSlider>
+          {productsss.categories.map((category, idx) => (
+
+              // <Box key={idx} display="flex" alignItems="center" flexDirection="column" gap={2}>
+                <Box
+                  borderRadius="50%"
+                  sx={{
+                    backgroundImage: `url(${category.imageUrl})`,
+                    backgroundSize: "cover",
+                    width: "145px",
+                    height: "145px",
+                  }}
+                />
+              //   <Typography>{category.category}</Typography>
+              // </Box>
+            ))}
+        </ImageSlider>
+
+        {/* <Button
           size="small"
           onClick={handleNext}
-          disabled={startIndex + itemsPerPage >= product.categories.length}
+          disabled={startIndex + itemsPerPage >= productsss.categories.length}
         >
-        <ArrowForwardIosIcon/>
-        </Button>
+          <ArrowForwardIosIcon/>
+        </Button> */}
       </Box>
 
       <Typography variant="h4" gutterBottom mt={4}>
@@ -116,6 +121,7 @@ const Home = () => {
           <Product key={idx} product={product} cart={cart} handleAddItem={handleAddItem} handleSubItem={handleSubItem}/>
         ))}
       </Grid>
+      <ValidationForm/>
     </Box>
   );
 };

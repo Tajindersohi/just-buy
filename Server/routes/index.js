@@ -9,7 +9,7 @@ const { upload } = require('../middlewares/upload');
 const router = express.Router();
 
 // Correctly use .use for middleware-like routing
-router.use("/products", productRoutes);
+router.use("/category", productRoutes);
 router.use("/admin", adminRoutes);
 router.use("/login", handleLoginWithOtp)
 router.use("/sent-otp", sentLoginOtp)

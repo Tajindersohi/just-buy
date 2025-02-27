@@ -50,7 +50,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 export default function CategoriesAccordions() {
   const [expanded, setExpanded] = React.useState('');
-  const allCategories = useSelector((state) => state.product);
+  const allCategories = useSelector((state) => state.category);
   console.log("allCategories",allCategories);
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
@@ -77,7 +77,7 @@ export default function CategoriesAccordions() {
                     border: '1px solid #ccc',
                   }}
                 />
-                <Typography color='#0c8342' component="h5" variant='h6'>{category.category}</Typography>
+                <Typography color='#0c8342' component="h5" variant='h6'>{category.name}</Typography>
               </Box>
                 <Box>
                   <IconButton onClick={(e)=>handleDelete(e)}>
@@ -87,7 +87,7 @@ export default function CategoriesAccordions() {
             </Box>
           </AccordionSummary>
           <AccordionDetails>
-            <ProductList list={category.products}/>
+            <ProductList list={category.subcategories}/>
           </AccordionDetails>
         </Accordion>
       })}
