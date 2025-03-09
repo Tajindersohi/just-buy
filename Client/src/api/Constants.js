@@ -7,16 +7,30 @@ const apiConstants = {
     },
     product:{
         categoryList: async () => await axiosInstance.get('/category'),
-        createProduct: async (data) => await axiosInstance.post('/category/create-product',data),
-        createCategory: async (data) => await axiosInstance.post('/category/create-category',data),
+        createProduct: async (data) =>
+            await axiosInstance.post("/category/create-product", data, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }),
+        createCategory: async (data) => 
+            await axiosInstance.post("/category/create-category", data, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }),
         getCategoryProducts: async (data) => await axiosInstance.post('/category/products',data),
     },
     user:{
         sentOtp: async (data) => await axiosInstance.post('/sent-otp',data),
         login: async (data) => await axiosInstance.post('/login',data),
+        getMe: async () => await axiosInstance.post('/me'),
     },
     upload:{
         image: async (data) => await axiosInstance.post('/upload-image',data),
+    },
+    home:{
+        getHome: async () => await axiosInstance.get('/home'),
     }
 };
 

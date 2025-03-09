@@ -1,33 +1,54 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import CircularProgress from '@mui/material/CircularProgress';
-import { Box } from '@mui/material';
+import React, { createContext, useContext, useState, useCallback } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
+import LinearProgress from "@mui/material/LinearProgress";
+import { Box } from "@mui/material";
 
-const LoadingContext = createContext(); // Create Context
+const LoadingContext = createContext();
 
 export default function LoadingIndicatorProvider({ children }) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingState, setLoadingState] = useState({
+    isLoading: false,
+    type: "circular", // Default type
+    progress: 0, // Default progress (for determinate)
+  });
 
-  const showLoading = useCallback(({ loading = false }) => {
-    setIsLoading(loading);
+  const showLoading = useCallback(({ loading = false, type = "circular", progress = 0 }) => {
+    setLoadingState({ isLoading: loading, type, progress });
   }, []);
 
   return (
-    <LoadingContext.Provider value={{ showLoading }}> {/* Pass an object */}
+    <LoadingContext.Provider value={{ showLoading }}>
       {children}
-      {isLoading && (
+      {loadingState.isLoading && (
         <Box
           height="100vh"
           width="100%"
           display="flex"
-          justifyContent="center"
+          // justifyContent="center"
           alignItems="center"
           position="fixed"
           top={0}
           left={0}
-          bgcolor="rgba(255, 255, 255, 0.8)"
+          // bgcolor="rgba(255, 255, 255, 0.8)"
           zIndex={1300}
+          flexDirection="column"
         >
-          <CircularProgress size="3rem" />
+          {loadingState.type === "circular" ? (
+            <CircularProgress size="3rem" />
+          ) : (
+            <Box width="100%">
+              <LinearProgress
+                sx={{
+                  backgroundColor: "rgb(120, 153, 125) !important",
+                  "& .MuiLinearProgress-bar": {
+                    backgroundColor: "rgb(12, 131, 32) !important",
+                  },
+                }}
+                variant="determinate"
+                value={loadingState.progress}
+              />
+            </Box>
+          )}
         </Box>
       )}
     </LoadingContext.Provider>
@@ -37,8 +58,5 @@ export default function LoadingIndicatorProvider({ children }) {
 // Custom hook to use LoadingContext
 export const useLoading = () => {
   const context = useContext(LoadingContext);
-  if (!context) {
-    throw new Error('useLoading must be used within a LoadingIndicatorProvider');
-  }
   return context;
 };

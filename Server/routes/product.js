@@ -5,11 +5,12 @@ const {
     addNewProduct,
     addNewCategory,
     getCategoryProducts
-} = require('../controllers/products/product')
+} = require('../controllers/products/product');
+const upload = require('../middlewares/uploadMiddleware');
 
 router.get("/", getCategoryList);
-router.post("/create-product", addNewProduct);
-router.post("/create-category", addNewCategory);
+router.post("/create-product", upload.single("media"), addNewProduct);
+router.post("/create-category", upload.single("media"),addNewCategory);
 router.post("/products", getCategoryProducts);
 
 module.exports = router;

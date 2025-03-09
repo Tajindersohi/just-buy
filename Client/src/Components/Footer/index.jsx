@@ -1,14 +1,14 @@
 import React from "react";
 import { Box, Grid, Typography, Link } from "@mui/material";
 import Constant from "./Constant"; 
+import { useSelector } from "react-redux";
 
 const Footer = () => {
-  const [usefulLinks, categories] = Constant; 
-
+  const [usefulLinks] = Constant; 
+  const category = useSelector((state) => state.home.categories);
   return (
     <Box sx={{ padding: "40px 20px", backgroundColor: "#f9f9f9" }}>
       <Grid container spacing={4}>
-        {/* Useful Links Section */}
         <Grid item xs={12} sm={6} md={4}>
           <Typography variant="h6" fontWeight={700} color="primary">
             Useful Links
@@ -43,9 +43,9 @@ const Footer = () => {
             </Link>
           </Box>
           <Box sx={{ display:"grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",gap: "10px 30px" }}>
-            {categories.map((category, index) => (
+            {category.map((item, index) => (
               <Link key={index} href="#" color="inherit" underline="none" sx={{ fontSize: "14px" }}>
-                {category}
+                {item.name}
               </Link>
             ))}
           </Box>

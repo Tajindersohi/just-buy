@@ -1,64 +1,54 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import { Button, Grid, Grid2, IconButton, Typography } from '@mui/material';
+import React from 'react';
+import { Box, Modal, IconButton, Typography, Button, useMediaQuery, useTheme } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ThemeButton from './ThemeButton';
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  minWidth: 300,
-  // width:'100%',
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 2,
-  border: '5px solid #0c831f30',
-  borderRadius:'10px', 
+
+const CommonModal = ({ open, handleClose, children, handleSubmit, header = "", buttonTitle = "Submit", loginModal = false, loading = false }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: isMobile ? '90%' : 'auto',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 3,
+    borderRadius: '10px',
+    outline: 'none'
+  };
+
+  return (
+    <Modal open={open} onClose={handleClose}>
+      <Box sx={modalStyle}>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6" color="#02cfac"><b>{header}</b></Typography>
+          <IconButton onClick={handleClose}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+
+        <Box mt={3}>
+          {children}
+        </Box>
+
+        {!loginModal && (
+          <Box display="flex" justifyContent="center" gap={2} mt={3}>
+            <Button variant="contained" color="error" onClick={handleClose}>Close</Button>
+            <ThemeButton label={buttonTitle} onClick={handleSubmit} variant="primary" />
+          </Box>
+        )}
+
+        {loginModal && (
+          <Box mt={3}>
+            <ThemeButton label="Continue" onClick={handleSubmit} variant="primary" fullWidth disabled={loading} loading={loading} />
+          </Box>
+        )}
+      </Box>
+    </Modal>
+  );
 };
 
-
-export default function CommonModal({open, handleClose, children, handleSubmit, header = "", buttonTitle="Submit", loginModal=false}) {
-  return (
-    <div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Box width={'100%'} >
-              <Box position="relative" display="flex" justifyContent="center" alignItems="center">
-                <Typography variant="h5" color='#02cfac' ><b>{header}</b></Typography>
-                <IconButton 
-                  onClick={handleClose} 
-                  sx={{ position: 'absolute', right: 0 }}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-
-
-            <Box my={4}>
-                  {children}
-            </Box>
-            {!loginModal &&
-                <Box display={'flex'} justifyContent={'center'} gap={4} mt={2} >
-                    <Button variant='contained' color='error' onClick={handleClose}>Close</Button>
-                    <ThemeButton  label={buttonTitle} onClick={handleSubmit}  variant = 'primary' />
-                </Box>
-            }
-            {loginModal && 
-                <Box >
-                  <ThemeButton  label={"Continue"} onClick={handleSubmit}  variant = 'primary' fullWidth={true}/>
-                </Box>
-            }
-          </Box>
-        </Box>
-      </Modal>
-    </div>
-  );
-}
+export default CommonModal;

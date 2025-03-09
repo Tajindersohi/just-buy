@@ -1,70 +1,110 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Chip, Grid, Typography } from "@mui/material";
+import { Box, Button, Chip, Grid, Skeleton, Typography, useMediaQuery } from "@mui/material";
 
-const Product = ({product,handleAddItem,cart,handleSubItem}) => {
-const [productCount,setProductCount] = useState(0);
+const Product = ({ product, handleAddItem, cart, handleSubItem }) => {
+  const [productCount, setProductCount] = useState(0);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const isMobile = useMediaQuery("(max-width:600px)");
+  const isTablet = useMediaQuery("(max-width:900px)");
 
-useEffect(()=>{
-  let addedProduct =  cart.find((item) => item.id === product.id)
-  if(addedProduct){
-    setProductCount(addedProduct.count);
-  }else{
-    setProductCount(0);
-  }
-},[cart])
+  useEffect(() => {
+    const addedProduct = cart.find((item) => item.id === product._id);
+    setProductCount(addedProduct ? addedProduct.count : 0);
+  }, [cart, product._id]);
+
+  const getCurrentPrice = (discount, total) => total - (discount * total) / 100;
 
   return (
-          <Grid item xs={6} sm={4} md={3} lg={2.4} key={product.id}>
-            <Box
-              sx={{
-                position: "relative",
-                textAlign: "center",
-                border: "1px solid #ddd",
-                borderRadius: "10px",
-                transition:"height 2s",
-                overflow: "hidden",
-              }}
-            >
-              <Box
-                sx={{
-                  backgroundImage: `url(${product.img})`,
-                  backgroundSize: "cover",
-                  width: "100%",
-                  height: "200px",
-                }}
-              />
-              <Box mt={2} px={2} textAlign={'left'} >
-                <Box minHeight={"60px"}>
-                  <Typography>{product.title}</Typography>
+    <Grid item xs={6} sm={4} md={3} lg={2} key={product._id}>
+      <Box
+        sx={{
+          position: "relative",
+          textAlign: "center",
+          width: "100%",
+          border: "1px solid #ddd",
+          borderRadius: "10px",
+          cursor: "pointer",
+          overflow: "hidden",
+          padding: 1.5,
+          backgroundColor: "#fff",
+          maxHeight: isMobile ? "220px" : isTablet ? "250px" : "280px",
+          maxWidth: isMobile ? "180px" : isTablet ? "200px" : "200px",
+        }}
+      >
+        <Box
+          sx={{
+            width: "100%",
+            height: isMobile ? "100px" : isTablet ? "120px" : "150px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {!imageLoaded && (
+            <Skeleton
+              variant="rectangular"
+              width="100%"
+              height="100%"
+              sx={{ borderRadius: "10px" }}
+            />
+          )}
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            style={{
+              display: imageLoaded ? "block" : "none",
+              width: "100%",
+              height: "100%",
+              maxHeight: "100%",
+              objectFit: "contain",
+            }}
+            onLoad={() => setImageLoaded(true)}
+            onError={() => setImageLoaded(true)}
+          />
+        </Box>
 
-                </Box>
-                  <Typography textAlign={'left'} color="#6f7478">
-                    (22g)
-                  </Typography>
-              </Box>
-              <Box mx={2} mt={2}>
-                <Typography textAlign="left"  color="#6f7478" sx={{ textDecoration: "line-through" }}>${product.totalPrice}</Typography>
-                <Box display="flex" mb={2} gap={2} justifyContent="space-between" alignItems="center">
-                  <Typography >
-                  ${product.currentPrice}
-                  </Typography>
-                {productCount> 0 ? <Box>
-                    <Chip sx={{borderRadius: "5px" }} Filled color="success" label={<Typography display={'flex'} gap={1}><Box  onClick={()=>handleSubItem(product.id)} sx={{cursor:'pointer'}}>-</Box>{productCount}<Box onClick={()=>handleAddItem(product.id)} sx={{cursor:'pointer'}}>+</Box></Typography>} />
-                </Box>
-                :
-                  <Button
-                      size="small"
-                      variant="outlined"
-                      color='success'
-                      onClick={()=>handleAddItem(product.id)}
-                    >
-                      Add
-                    </Button>
+        <Box mt={1} px={1} textAlign="left">
+          <Typography fontSize={isMobile ? "12px" : "14px"} fontWeight="bold" noWrap>
+            {product.name.length <= 30 ? product.name : `${product.name.substring(0, 30)}...`}
+          </Typography>
+          <Typography fontSize="12px" color="#6f7478">
+            {product.quantity || "(22g)"}
+          </Typography>
+        </Box>
+
+        <Box mx={1} mt={1}>
+          <Box display="flex" justifyContent="left" alignItems="center">
+          <Typography fontSize="12px" color="#6f7478" sx={{ textDecoration: "line-through" }}>
+            ${product.price}
+          </Typography>
+          </Box>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography fontSize="14px">${getCurrentPrice(product.discount, product.price)}</Typography>
+            {productCount > 0 ? (
+              <Chip
+                sx={{ borderRadius: "5px", fontSize: "12px", px: 1 }}
+                color="success"
+                label={
+                  <Box display="flex" gap={1} alignItems="center">
+                    <Box onClick={() => handleSubItem(product._id)} sx={{ cursor: "pointer", px: 1 }}>
+                      -
+                    </Box>
+                    {productCount}
+                    <Box onClick={() => handleAddItem(product._id)} sx={{ cursor: "pointer", px: 1 }}>
+                      +
+                    </Box>
+                  </Box>
                 }
-                </Box>
-              </Box>
-            </Box>
-          </Grid>
+              />
+            ) : (
+              <Button size="small" variant="outlined" color="success" sx={{ fontSize: "12px" }} onClick={() => handleAddItem(product._id)}>
+                Add
+              </Button>
+            )}
+          </Box>
+        </Box>
+      </Box>
+    </Grid>
   );
 };
 

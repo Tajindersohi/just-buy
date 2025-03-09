@@ -30,9 +30,9 @@ export default function AdminLayout({ children }) {
   console.log("handle",location);
 
   const menuItems = [
-    { name: 'Dashboard', route: '/admin/dashboard', icon: <DashboardIcon /> },
-    { name: 'Categories', route: '/admin/categories', icon: <InventoryIcon /> },
-    { name: 'Logout', route: '/admin/logout', icon: <ExitToAppIcon /> },
+    { name: 'Dashboard', route: '/admin/dashboard', icon: <DashboardIcon />, relatedRoute:[] },
+    { name: 'Categories', route: '/admin/categories', icon: <InventoryIcon /> , relatedRoute:["/products"]},
+    { name: 'Logout', route: '/admin/logout', icon: <ExitToAppIcon /> , relatedRoute:[]},
   ];
 
   const handleDrawerToggle = () => {
@@ -58,12 +58,16 @@ export default function AdminLayout({ children }) {
             component={Link}
             to={item.route}
             sx={{
-              color:(location.pathname == item.route ? 'primary.contrastText' : '#000'),
-              backgroundColor:(location.pathname == item.route ? '#0C8342' : 'none'),
+              color:((location.pathname === item.route ||  item.relatedRoute.some(route => location.pathname.startsWith(route))) ? 'primary.contrastText' : '#000'),
+              backgroundColor: (location.pathname === item.route || 
+              item.relatedRoute.some(route => location.pathname.startsWith(route)))
+              ? '#0C8342' 
+              : 'none',
               '&:hover': {
-                backgroundColor: '#0C8342',
-                color: 'primary.contrastText',
+              backgroundColor: '#0C8342',
+              color: 'primary.contrastText',
               },
+
               borderRadius: 1,
               margin: 1,
             }}

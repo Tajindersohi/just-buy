@@ -34,7 +34,6 @@ const getCategoryList = async (req, res) => {
         }, {});
 
         let categoryTree = getNestedCategories(categoriesWithProducts);
-        console.log(categoryTree);
         const attachProductsToCategories = (categories) => {
             return categories.map(category => ({
                 ...category,
@@ -45,7 +44,7 @@ const getCategoryList = async (req, res) => {
 
         categoryTree = attachProductsToCategories(categoryTree);
 
-        res.status(200).json({ data: categoryTree, success: true, message: "Products fetched successfully" });
+        res.status(200).json({ data: categoryTree, success: true, message: "Categories fetched successfully" });
     } catch (err) {
         console.error('Error fetching products:', err);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -76,10 +75,10 @@ const getCategoryProducts = async (req, res) => {
     }
 };
 
-
 const addNewProduct = async (req, res) => {
     try {
-        const { categoryId, price, productName, imageUrl, discount } = req.body;
+        const { categoryId, price, productName, discount } = JSON.parse(req.body.data);
+        const imageUrl = req.file ? `${process.env.APP_URL}/uploads/${req.file.filename}` : null;
         const newProduct = await Product.create({
             category_id:categoryId ,
             name: productName,
@@ -87,20 +86,20 @@ const addNewProduct = async (req, res) => {
             price,
             discount,
         });
-
         res.status(201).json({
-            message: 'Product added successfully',
+            message: "Product added successfully",
             product: newProduct,
         });
     } catch (err) {
-        console.error('Error adding new product:', err);
-        res.status(500).json({ message: err });
+        console.error("Error adding new product:", err);
+        res.status(500).json({ message: err.message });
     }
 };
 
 const addNewCategory = async (req, res) => {
     try {
-        const { category, imageUrl, parentCategory } = req.body;
+        const { category, parentCategory } = JSON.parse(req.body.data);
+        const imageUrl = req.file ? `${process.env.APP_URL}/uploads/${req.file.filename}` : null;
         let categoryRecord = await ProductCategory.create({ name: category, imageUrl: imageUrl, parentCategory: parentCategory});
         res.status(201).json({
             message: 'Category created successfully',

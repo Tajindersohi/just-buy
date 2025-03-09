@@ -1,55 +1,64 @@
 import React, {  useState } from "react";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Skeleton, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import Product from "./Product";
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import LoadingIndicator, { useLoading } from "../../Components/Common/LoadingIndicator";
-import { Products } from "../../Assets/Constants/ProductConstant";
-import { getCategoryList } from "../../store/redux/categoryThunk";
 import { showError } from "../../Assets/Constants/showNotifier";
 import { useEffect } from "react";
-import ImageSlider from "../../Components/ImageSlider";
-import ValidationForm from "./ValidationForm";
+import { getHomeDetails } from "../../store/redux/homeThunk";
+import { showLoading } from "../../Assets/Constants/showLoading";
+import ImageSlider from "../../Components/Common/ImageSlider";
+import { addToCart } from "../../store/redux/authSlice";
+import { getMe } from "../../store/redux/thunks";
 
 const Home = () => {
-  const product = Products
-  const { showLoading } = useLoading();
-  const productsss = useSelector((state) => state.category);
+  const productsss = useSelector((state) => state.home);
   const [cart,setCart] = useState([]);
-  console.log("productsss",productsss);
-  const errorMsg = useSelector((state) => state.product.error); 
-  const [startIndex, setStartIndex] = useState(0);
-  const itemsPerPage = 6;
+  const [progress ,setProgress] = useState(0);
+  const userState = useSelector((state) => state.user);
+  const errorMsg = useSelector((state) => state.product.error);
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
+    dispatch(getMe());
     getList();
   }, []);
 
+  useEffect(() => {
+    dispatch(addToCart({ cart })); 
+  }, [cart, dispatch]); 
+
   const getList = async () => {
-    showLoading({ loading: true }); 
+    let interval;
     try {
-      await dispatch(getCategoryList());
-      console.log("errorMsg",errorMsg);
-      if(errorMsg && errorMsg.length){
+      setProgress(0);
+      showLoading(true, "linear", 0); 
+  
+      interval = setInterval(() => {
+        setProgress((prev) => {
+          const newProgress = prev < 90 ? prev + 5 : prev; 
+          showLoading(true, "linear", newProgress);
+          return newProgress;
+        });
+      }, 300);
+  
+      await dispatch(getHomeDetails()); 
+  
+      if (errorMsg && errorMsg.length) {
         showError(errorMsg);
       }
+  
+      clearInterval(interval); 
+      setProgress(100);
+      showLoading(true, "linear", 100); 
     } catch (err) {
       showError(err);
-      console.error('Error fetching products:', err);
+      console.error("Error fetching products:", err);
     } finally {
-      showLoading({ loading: false }); 
+      clearInterval(interval); 
+      setTimeout(() => {
+        showLoading(false, "linear", 0); 
+      }, 500);
     }
-  };
-  const handleNext = () => {
-    setStartIndex((prevIndex) =>
-      Math.min(prevIndex + itemsPerPage, product.categories.length - itemsPerPage)
-    );
-  };
-
-  const handlePrev = () => {
-    setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPage, 0));
   };
 
   const handleAddItem = (id) => {
@@ -78,50 +87,43 @@ const Home = () => {
   
   return (
     <Box>
-      <LoadingIndicator/>
-      <Typography variant="h4" gutterBottom>
-        Category
+      <Typography variant="h5" disableGutterBottom>
+        <b>Category</b>
       </Typography>
-      <Box display="flex" flexDirection="row" sx={{overFlow:"overlay"}} gap={3}>
-        {/* <Button  onClick={handlePrev} disabled={startIndex === 0} size="small">
-          <ArrowBackIosIcon/>
-        </Button> */}
-        <ImageSlider>
-          {productsss.categories.map((category, idx) => (
-
-              // <Box key={idx} display="flex" alignItems="center" flexDirection="column" gap={2}>
-                <Box
-                  borderRadius="50%"
-                  sx={{
-                    backgroundImage: `url(${category.imageUrl})`,
-                    backgroundSize: "cover",
-                    width: "145px",
-                    height: "145px",
-                  }}
-                />
-              //   <Typography>{category.category}</Typography>
-              // </Box>
-            ))}
-        </ImageSlider>
-
-        {/* <Button
-          size="small"
-          onClick={handleNext}
-          disabled={startIndex + itemsPerPage >= productsss.categories.length}
-        >
-          <ArrowForwardIosIcon/>
-        </Button> */}
-      </Box>
-
-      <Typography variant="h4" gutterBottom mt={4}>
-        Best Selling Products
+      {progress != 100 && <Grid container spacing={2}>
+        {Array.from({ length:5 }, (_, i) => i).map((product, idx) => (
+          <Grid item xs={6} sm={4} md={3} lg={2.4} key={product._id}>
+            <Skeleton
+            variant="circular"
+            width="200px"
+            height="200px"
+          />
+          </Grid>
+        ))}
+        </Grid>
+      }
+      <ImageSlider categories={productsss.categories}/>
+      <Typography variant="h5" gutterBottom mt={4}>
+        <b>Best Selling Products</b>
       </Typography>
+      {progress != 100 && <Grid container spacing={3}>
+        {Array.from({ length: 20 }, (_, i) => i).map((product, idx) => (
+          <Grid item xs={6} sm={4} md={3} lg={2.4} key={product._id}>
+            <Skeleton
+            variant="rectangular"
+            width="200px"
+            height="200px"
+            sx={{ borderRadius: "10px" }}
+          />
+          </Grid>
+        ))}
+        </Grid>
+      }
       <Grid container spacing={3}>
-        {product.bestSellingProducts.map((product, idx) => (
+        {productsss.products.map((product, idx) => (
           <Product key={idx} product={product} cart={cart} handleAddItem={handleAddItem} handleSubItem={handleSubItem}/>
         ))}
       </Grid>
-      <ValidationForm/>
     </Box>
   );
 };

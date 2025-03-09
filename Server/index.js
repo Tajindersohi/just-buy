@@ -37,7 +37,7 @@ start();
 const storage = multer.diskStorage({
   destination: path.join(__dirname, "uploads"), // Save in "uploads" folder inside the server directory
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Unique file name
+    cb(null, Date.now() + path.extname(file.originalname));
   }
 });
 

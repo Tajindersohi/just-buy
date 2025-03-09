@@ -1,7 +1,7 @@
 import {createAsyncThunk } from '@reduxjs/toolkit';
 import { loginUser, logoutUser } from './adminAuthSlice';
 import apiConstants from '../../api/Constants';
-import { loginOrSignup, sentLoginOtp } from './authSlice';
+import { gettingUserInfo, gettingUserInfoFailed, loginOrSignup, sentLoginOtp } from './authSlice';
 import { showError, showSuccess } from '../../Assets/Constants/showNotifier';
 
 export const login = createAsyncThunk(
@@ -9,7 +9,6 @@ export const login = createAsyncThunk(
   async (credentials, { dispatch, rejectWithValue }) => {
     try {
       const response = await apiConstants.admin.login(credentials);
-      console.log("response",response);
       const { token, user } = response.data;
       localStorage.setItem('token', token);
       dispatch(loginUser(user)); 
@@ -37,7 +36,6 @@ export const sendOtp = createAsyncThunk(
   async (credentials, { dispatch, rejectWithValue }) => {
     try {
       const response = await apiConstants.user.sentOtp(credentials);
-      console.log("response",response);
       const { sent,message } = response.data;
       if(response.status == 200){
         showSuccess(response.data.message)
@@ -58,6 +56,7 @@ export const loginWithOtp = createAsyncThunk(
     try {
       const response = await apiConstants.user.login(credentials);
       if(response.status == 200){
+        localStorage.clear();
         const { token, user} = response.data;
         showSuccess(response.data.message)
         localStorage.setItem('token', token);
@@ -78,4 +77,30 @@ export const logout = createAsyncThunk('admin/logout', async (_, { dispatch }) =
   dispatch(logoutUser());
 });
 
-
+export const getMe = createAsyncThunk(
+  '/getMe',
+  async (credentials, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(gettingUserInfo());
+      const token = localStorage.getItem('token')
+      if(token){
+        // showLoading(true)
+        const response = await apiConstants.user.getMe({token:token});
+        if(response.status == 200){
+          const {user} = response.data;
+          showSuccess(response.data.message)
+          localStorage.setItem('token', token);
+          dispatch(loginOrSignup(user)); 
+        }else{
+          dispatch(gettingUserInfoFailed());
+          showError(response?.data?.message || 'Errow while sending code')
+        }
+        // showLoading(false)
+        return response.data
+      }
+    }catch(error){
+      // showLoading(false)
+      return rejectWithValue(error.response?.data?.message || 'failed');
+    }
+  }
+);

@@ -106,7 +106,6 @@ export default function AdminLogin() {
                     {type ? 'Login' : 'Register'}
                 </Button>
                 <Button onClick={()=> setType(!type)}>{type ? 'Register ?' : 'Login ?'}</Button>
-
             </Paper>
         </Box>
     );

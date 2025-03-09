@@ -1,6 +1,6 @@
-import { Box, Grid, TextField, Typography } from "@mui/material";
+import { Box, Grid, Skeleton, TextField, Typography } from "@mui/material";
 import React from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ThemeButton from "../../../Components/Common/ThemeButton";
 import CommonModal from "../../../Components/Common/CommonModal";
 import ImageUploader from "../../../Components/Common/ImageUploader";
@@ -12,30 +12,39 @@ import { useEffect } from "react";
 import { addProduct } from "../../../store/redux/categoryThunk";
 import ProductsGrid from "./ProductsGrid";
 import { getProductsList } from "../../../store/redux/productThunk";
-const variants = ['h1', 'h3', 'body1', 'caption'];
+import { Breadcrumbs } from "@mui/material";
+import MediaUploader from "../../../Components/Common/MediaUploader";
+const variants = ['h1', 'h1', 'h1', 'h1'];
 
 function ProductDetails() {
   const dispatch = useDispatch();
   const { id } = useParams(); 
   const [openAddProduct, setOpenAddProduct] = React.useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [loading, setLoading] = useState(false);
   const productList = useSelector((state)=>state.product);
+  const [selectedMedia, setSelectedMedia] = useState(null);
   const [newProduct, setNewProduct] = React.useState({
     categoryId:id,
     productName:"",
     price:0,
-    imageUrl:selectedImage,
     discount:0 
 });
 
-console.log("productListproductList",productList);
 useEffect(()=>{
   getProducts();
 },[])
 
-const getProducts = async() => {
-  await dispatch(getProductsList({id:id}))
-}
+const getProducts = async () => {
+  setLoading(true)
+  try {
+    await dispatch(getProductsList({id:id}))
+  } catch (err) {
+    console.error('Error fetching products:', err);
+  } finally {
+    setLoading(false)
+  }
+};
   useEffect(() => {
     if(openAddProduct){
       setNewProduct((prev) => ({
@@ -47,7 +56,10 @@ const getProducts = async() => {
 
     const handleSubmit = async() => {
       try{
-            dispatch(addProduct(newProduct))
+        const formData = new FormData();
+        formData.append("data", JSON.stringify(newProduct));
+        formData.append("media", selectedMedia.file);
+        dispatch(addProduct(formData))
       }catch(err){
         showError(err)
       }finally{
@@ -73,9 +85,13 @@ const getProducts = async() => {
     <Box maxWidth={'1200px'} p={3}>
 
       <Box mb={2} display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
-        <Box>
-            <h1>Products</h1>
-        </Box>
+      <Breadcrumbs separator="›" aria-label="breadcrumb">
+        <Link to="/admin/categories" style={{ textDecoration: 'none', color: '#0c8342', fontWeight: 'bold' }}>
+          Categories
+        </Link>
+        <Typography color="textPrimary" sx={{ fontWeight: 'bold' }}>Products</Typography>
+      </Breadcrumbs>
+
         <Box display={'flex'} gap={2}>
             <ThemeButton label = {'Product'} onClick={handleProduct} variant = 'primary'  icon={<AddIcon/>}/>
         </Box>
@@ -109,13 +125,23 @@ const getProducts = async() => {
               <Grid item xs={6}>
                   <Box display={'flex'} m={0.5} alignItems={'center'}>
                       <Typography mr={2}>Product Image: </Typography>
-                      <ImageUploader selectedImage={selectedImage} setSelectedImage={setSelectedImage}/>
+                      <MediaUploader selectedMedia={selectedMedia} setSelectedMedia ={setSelectedMedia } />
+
+                      {/* <ImageUploader selectedImage={selectedImage} setSelectedImage={setSelectedImage}/> */}
                   </Box>
               </Grid>
           </Grid>
       </CommonModal>
+      {loading ? variants.map((variant) => (
+            <Typography component="div" key={variant} variant={variant}>
+              {loading && <Skeleton />}
+            </Typography>
+          ))
+        :
       <ProductsGrid list={productList.products}/>
+      }
     </Box>
+    
   );
 }
 

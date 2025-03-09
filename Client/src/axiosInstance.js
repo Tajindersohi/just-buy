@@ -1,5 +1,6 @@
 import axios from "axios";
-import { showError } from "././Assets/Constants/showNotifier";
+import { showError, showSuccess } from "././Assets/Constants/showNotifier";
+import { Navigate } from "react-router-dom";
 const axiosInstance = axios.create({
   baseURL: "http://localhost:5000/api",
   timeout: 10000,
@@ -17,19 +18,22 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
+    showError(error?.response || "")
     return Promise.reject(error);
   }
 );
 
 axiosInstance.interceptors.response.use(
   (response) => {
+    showSuccess(response?.success)
     return response;
   },
   (err) => {
     if (err.response && err.response.status === 401) {
-      showError("Unauthorized access. Please login again."); // ✅ Now it works!
-      console.log("Unauthorized");
+      localStorage.clear();
+      window.location.href = "/";
     }
+    showError(err?.response || "Unprocessable")
     return Promise.reject(err);
   }
 );

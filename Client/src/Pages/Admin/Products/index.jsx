@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, Checkbox, FormControlLabel } from '@mui/material';
+import { Box, Breadcrumbs, Checkbox, FormControlLabel } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { addCategory, getCategoryList } from '../../../store/redux/categoryThunk';
 import Categories from './Categories';
@@ -12,6 +12,8 @@ import CommonModal from '../../../Components/Common/CommonModal';
 import AddIcon from '@mui/icons-material/Add';
 import { FormControl, Grid, InputLabel, MenuItem, OutlinedInput, Select, TextField, Typography } from '@mui/material';
 import ImageUploader from '../../../Components/Common/ImageUploader';
+import CategoriesAccordions from './CategoriesAccordions';
+import MediaUploader from '../../../Components/Common/MediaUploader';
 
 const variants = ['h1', 'h3', 'body1', 'caption'];
 const ITEM_HEIGHT = 48;
@@ -26,7 +28,6 @@ const ITEM_PADDING_TOP = 8;
   };
 export default function ProductList() {
   const dispatch = useDispatch();
-  const { showLoading } = useLoading();
   const errorMsg = useSelector((state) => state.category.error); 
   const [loading, setLoading] = useState(false);
   const allCategories = useSelector((state) => state.category);
@@ -34,7 +35,6 @@ export default function ProductList() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [newCategory, setNewCategory] = React.useState({
       category:"",
-      imageUrl:selectedImage,
       isParentCategory:false,
       parentCategory:null
   });
@@ -44,16 +44,8 @@ console.log("allCategories",allCategories);
     getList();
   }, []);
 
-  useEffect(() => {
-      setNewCategory((prev) => ({
-          ...prev,
-          imageUrl: selectedImage, 
-      }));
-  }, [selectedImage]);
-
   const getList = async () => {
     setLoading(true)
-    // showLoading({ loading: true }); 
     try {
       await dispatch(getCategoryList());
       console.log("errorMsg",errorMsg);
@@ -71,7 +63,10 @@ console.log("allCategories",allCategories);
 
     const handleSubmit = async() => {
       try{
-          dispatch(addCategory(newCategory))
+        const formData = new FormData();
+        formData.append("data", JSON.stringify(newCategory));
+        formData.append("media", selectedImage.file);
+        dispatch(addCategory(formData))
       }catch(err){
         showError(err)
       }finally{
@@ -93,11 +88,12 @@ console.log("allCategories",allCategories);
   return (
     <Box maxWidth={'1200px'} p={3}>
       <Box mb={2} display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
-        <Box>
-            <Typography variant="h5" gutterBottom>
-                Categories
-            </Typography>
-        </Box>
+      <Breadcrumbs separator="›" aria-label="breadcrumb">
+        {/* <Link to="/admin/categories" style={{ textDecoration: 'none', color: '#0c8342', fontWeight: 'bold' }}>
+          Categories
+        </Link> */}
+        <Typography color="textPrimary" sx={{ fontWeight: 'bold' }}>Categories</Typography>
+      </Breadcrumbs>
         <Box display={'flex'} gap={2}>
             <ThemeButton label = {'Category'} onClick={handleCategory} variant = 'primary'  icon={<AddIcon/>}/>
         </Box>
@@ -109,7 +105,8 @@ console.log("allCategories",allCategories);
           ))
         :
         <>
-          <Categories />
+          {/* <Categories /> */}
+          <CategoriesAccordions/>
         </>
         }
           <CommonModal open={openAddCategory} handleClose={handleCategoryClose} handleSubmit={handleSubmit} header='Add Category' buttonTitle="Submit">
@@ -147,7 +144,8 @@ console.log("allCategories",allCategories);
                   <Grid item xs={12}>
                       <Box display={'flex'} m={0} alignItems={'center'}>
                           <Typography mr={2}>Category Logo: </Typography>
-                          <ImageUploader selectedImage={selectedImage} setSelectedImage={setSelectedImage}/>
+                          <MediaUploader selectedMedia={selectedImage} setSelectedMedia={setSelectedImage}/>
+                          {/* <ImageUploader selectedImage={selectedImage} setSelectedImage={setSelectedImage}/> */}
                       </Box>
                   </Grid>
               </Grid>

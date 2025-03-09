@@ -4,23 +4,42 @@ const initialState = {
   isAuthenticated: false,
   user: null,
   sent:false,
-  message:""
+  isFetching:false,
+  message:"",
+  cart:[],
 };
 
-const authSlice = createSlice({
-  name: 'auth',
+const userSlice = createSlice({
+  name: 'user',
   initialState,
   reducers: {
     loginOrSignup(state, action) {
       state.isAuthenticated = true;
       state.user = action.payload;
     },
-    sentLoginOtp(state,action){
-      state.sent = action.payload.sent
+    sentLoginOtp(state, action) {
+      state.sent = action.payload.sent;
       state.message = action.payload.message;
-    }
+    },
+    resetOtpSent(state) { 
+      state.sent = false;
+      state.message = "";
+    },
+    addToCart(state,action){
+      state.cart = action.payload.cart
+    },
+    gettingUserInfo(state){
+      state.isAuthenticated = false;
+      state.user = null;
+      state.isFetching = true;
+    },
+    gettingUserInfoFailed(state){
+      state.isAuthenticated = false;
+      state.user = null;
+      state.isFetching = false;
+    },
   },
 });
 
-export const { loginOrSignup, sentLoginOtp } = authSlice.actions;
-export default authSlice.reducer;
+export const { loginOrSignup, sentLoginOtp, resetOtpSent, addToCart, gettingUserInfoFailed, gettingUserInfo } = userSlice.actions;
+export default userSlice.reducer;

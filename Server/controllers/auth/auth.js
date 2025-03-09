@@ -9,7 +9,12 @@ const handleLogin = async (req,res) => {
         if(!user){
             return res.status(401).json({message:'Invalid Credentials'});
         }
-        const token = jwt.sign({id: user._id}, 'your_secret_token',{expiresIn: '1h'});
+        const token = jwt.sign(
+          { id: user._id, role: "admin" },
+          process.env.JWT_SECRET,
+          { expiresIn: "1h" }
+        );
+
         res.json({token:token, user:user})
     } catch (error) {
         res.status(500).json({message:error.message});
@@ -23,8 +28,8 @@ const createUser = async (req,res) => {
       if (existingUser) {
         return res.status(400).json({ message: 'User already exists' });
       }
-  
-      const user = new User({ email, password });
+      const userRole = 'admin';
+      const user = new User({ email, password, userRole });
       await user.save();
   
       res.status(201).json({ message: 'User registered successfully' });
@@ -39,7 +44,7 @@ const handleLoginWithOtp = async (req, res) => {
     const { phoneNumber, otp } = req.body;
     let currentTime = new Date();
 
-    let user = await productUser.findOne({ phoneNumber, lastOtp: otp });
+    let user = await User.findOne({ phoneNumber, lastOtp: otp });
 
     if (!user) {
       return res.status(401).json({ message: 'Invalid OTP' });
@@ -52,7 +57,11 @@ const handleLoginWithOtp = async (req, res) => {
       return res.status(401).json({ message: 'OTP Expired' });
     }
 
-    const token = jwt.sign({ id: user._id }, 'your_secret_token', { expiresIn: '1h' });
+    const token = jwt.sign(
+      { id: user._id, role: "client" },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
     res.json({ token, user ,message:"Login Successfully"});
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -67,10 +76,10 @@ const sentLoginOtp = async (req, res) => {
     // const lastOtp = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
     const lastOtp = 123456;
     let otpExpiryDate = new Date();
-
-    let user = await productUser.findOneAndUpdate(
+    const userRole = 'admin';
+    let user = await User.findOneAndUpdate(
       { phoneNumber }, 
-      { lastOtp, otpExpiryDate },
+      { lastOtp, otpExpiryDate, userRole },
       { new: true, upsert: true, projection: { phoneNumber: 1, lastOtp: 1 } }
     );
     res.json({success:true,sent:true, message:"Please enter a verification code"});
@@ -79,5 +88,16 @@ const sentLoginOtp = async (req, res) => {
   }
 };
 
+const handleGetMe = async (req, res) => {
+  try {
+     const user = await User.findById(req.user.id).select('-password'); 
+     if (!user) {
+         return res.status(404).json({ message: 'User not found' });
+     }
+     res.json({ user, message: "User fetched successfully" });
+    } catch (error) {
+     res.status(500).json({ message: 'Server error' });
+   }
+};
 
-module.exports = {handleLogin, createUser, handleLoginWithOtp, sentLoginOtp}
+module.exports = {handleLogin, createUser, handleLoginWithOtp, sentLoginOtp, handleGetMe}

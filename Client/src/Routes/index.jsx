@@ -15,15 +15,14 @@ const NotFound = lazy(() => import("../Pages/NotFound"));
 const ProductList = lazy(() => import("../Pages/Admin/Products"));
 
 const AppRoutes = () => {
-    const user = useSelector((state) => state.auth);
-    const token = localStorage.getItem("token");
+    const user = useSelector((state) => state.auth.user);
 
     const commonRoutes = () => {
         return (
             <>
                 <Route
                     element={
-                        token ? <Navigate to="/admin/dashboard" /> : <Outlet />
+                        user ? <Navigate to="/admin/dashboard" /> : <Outlet />
                     }
                 >
                     <Route path="/admin/login" element={<Login />} />
