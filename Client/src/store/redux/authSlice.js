@@ -38,8 +38,12 @@ const userSlice = createSlice({
       state.user = null;
       state.isFetching = false;
     },
+    logoutClient(state) {
+      state.isAuthenticated = false;
+      state.user = null;
+    },
   },
 });
 
-export const { loginOrSignup, sentLoginOtp, resetOtpSent, addToCart, gettingUserInfoFailed, gettingUserInfo } = userSlice.actions;
+export const { loginOrSignup, sentLoginOtp, resetOtpSent, addToCart, gettingUserInfoFailed, gettingUserInfo, logoutClient } = userSlice.actions;
 export default userSlice.reducer;

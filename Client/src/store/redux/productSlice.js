@@ -7,6 +7,7 @@ const productSlice = createSlice({
     categories : [],
     isLoading: false,
     error: null,
+    categoryName:null,
   },
   reducers: {
     gettingProducts: (state) => {
@@ -18,7 +19,18 @@ const productSlice = createSlice({
     },
     getProductsSuccess: (state, action) => {
       state.isLoading = false;
-      state.products = action.payload;
+      state.categoryName = action.payload.categoryName
+      state.products = action.payload.list;
+    },
+    deletingProduct: (state, action) => {
+      state.isLoading = true;
+    },
+    deleteProductSuccess: (state, action) => {
+      state.isLoading = false;
+      state.products = state.products.filter(item => item._id != action.payload);
+    },
+    deletingProductFailed: (state, action) => {
+      state.isLoading = false;
     }
   },
 });
@@ -26,7 +38,10 @@ const productSlice = createSlice({
 export const {
   gettingProducts,
   getProductsFailed,
-  getProductsSuccess
+  getProductsSuccess,
+  deletingProduct,
+  deletingProductFailed,
+  deleteProductSuccess
 } = productSlice.actions;
 
 export default productSlice.reducer;

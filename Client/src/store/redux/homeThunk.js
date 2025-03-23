@@ -13,7 +13,6 @@ export const getHomeDetails = createAsyncThunk(
       dispatch(gettingHome()); 
       const response = await apiConstants.home.getHome(data);
       const list = response.data.data;
-      console.log("datadatadata",list);
       if(response.data.success){
         dispatch(getHomeSuccess(list)); 
       }

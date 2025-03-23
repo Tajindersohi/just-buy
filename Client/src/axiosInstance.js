@@ -25,7 +25,7 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    showSuccess(response?.success)
+    showSuccess(response?.data?.message || "Success")
     return response;
   },
   (err) => {

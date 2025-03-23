@@ -38,7 +38,7 @@ const MediaUploader = ({ selectedMedia, setSelectedMedia }) => {
             id="media-upload"
           />
           <label htmlFor="media-upload">
-            <Button variant="outlined" color='secondary' component="span" size='small'>
+            <Button variant="outlined" color='secondary' component="span" size='small' sx={{textTransform:'capitalize'}}>
               Choose Media
             </Button>
           </label>
@@ -60,7 +60,7 @@ const MediaUploader = ({ selectedMedia, setSelectedMedia }) => {
           >
           {selectedMedia.type === 'image' ? (
             <img
-              src={selectedMedia.previewUrl}
+              src={selectedMedia.previewUrl || selectedMedia}
               alt="Preview"
               style={{
                 width: '100%',  
@@ -73,7 +73,7 @@ const MediaUploader = ({ selectedMedia, setSelectedMedia }) => {
             />
           ) : (
             <video
-              src={selectedMedia.previewUrl}
+              src={selectedMedia.previewUrl || selectedMedia}
               controls
               style={{
                 width: '100%', 
@@ -88,7 +88,7 @@ const MediaUploader = ({ selectedMedia, setSelectedMedia }) => {
 
           <IconButton
             sx={{
-              position: 'absolute',
+              // position: 'absolute',
               backgroundColor: 'grey',
               '&:hover': {
                 backgroundColor: 'red',
@@ -101,7 +101,6 @@ const MediaUploader = ({ selectedMedia, setSelectedMedia }) => {
             <CloseIcon sx={{ color: '#fff' }} />
           </IconButton>
           </Box>
-
       )}
     </Box>
   );

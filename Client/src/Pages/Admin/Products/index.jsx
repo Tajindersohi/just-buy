@@ -86,12 +86,9 @@ console.log("allCategories",allCategories);
       }));
     };
   return (
-    <Box maxWidth={'1200px'} p={3}>
+    <Box maxWidth={'1200px'} height={'100vh'} p={3}>
       <Box mb={2} display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
       <Breadcrumbs separator="›" aria-label="breadcrumb">
-        {/* <Link to="/admin/categories" style={{ textDecoration: 'none', color: '#0c8342', fontWeight: 'bold' }}>
-          Categories
-        </Link> */}
         <Typography color="textPrimary" sx={{ fontWeight: 'bold' }}>Categories</Typography>
       </Breadcrumbs>
         <Box display={'flex'} gap={2}>
@@ -105,11 +102,10 @@ console.log("allCategories",allCategories);
           ))
         :
         <>
-          {/* <Categories /> */}
           <CategoriesAccordions/>
         </>
         }
-          <CommonModal open={openAddCategory} handleClose={handleCategoryClose} handleSubmit={handleSubmit} header='Add Category' buttonTitle="Submit">
+          <CommonModal open={openAddCategory} handleClose={handleCategoryClose} handleSubmit={handleSubmit} header='Add Category' buttonTitle="Submit" startIcon ={<AddIcon/>}>
               <Grid container spacing={1}>
                   <Grid item xs={12}>
                       <TextField sx={{width:"100%"}} onChange={(e)=>handleChange('category', e.target.value,'category')} variant='outlined' label='Enter Category name'/>
@@ -145,7 +141,6 @@ console.log("allCategories",allCategories);
                       <Box display={'flex'} m={0} alignItems={'center'}>
                           <Typography mr={2}>Category Logo: </Typography>
                           <MediaUploader selectedMedia={selectedImage} setSelectedMedia={setSelectedImage}/>
-                          {/* <ImageUploader selectedImage={selectedImage} setSelectedImage={setSelectedImage}/> */}
                       </Box>
                   </Grid>
               </Grid>

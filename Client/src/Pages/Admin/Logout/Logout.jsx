@@ -11,8 +11,7 @@ const Logout = () => {
   useEffect(() => {
     const performLogout = async () => {
       try {
-        await dispatch(logout());
-        showSuccess('Logout Successfully');
+        dispatch(logout());
         navigate('/');
       } catch (err) {
         showError(err.message || 'Logout failed');

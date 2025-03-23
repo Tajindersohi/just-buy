@@ -14,6 +14,7 @@ import ProductsGrid from "./ProductsGrid";
 import { getProductsList } from "../../../store/redux/productThunk";
 import { Breadcrumbs } from "@mui/material";
 import MediaUploader from "../../../Components/Common/MediaUploader";
+import appTheme from "../../../Assets/Theme";
 const variants = ['h1', 'h1', 'h1', 'h1'];
 
 function ProductDetails() {
@@ -30,7 +31,6 @@ function ProductDetails() {
     price:0,
     discount:0 
 });
-
 useEffect(()=>{
   getProducts();
 },[])
@@ -83,7 +83,6 @@ const getProducts = async () => {
     };
   return (
     <Box maxWidth={'1200px'} p={3}>
-
       <Box mb={2} display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
       <Breadcrumbs separator="›" aria-label="breadcrumb">
         <Link to="/admin/categories" style={{ textDecoration: 'none', color: '#0c8342', fontWeight: 'bold' }}>
@@ -96,7 +95,7 @@ const getProducts = async () => {
             <ThemeButton label = {'Product'} onClick={handleProduct} variant = 'primary'  icon={<AddIcon/>}/>
         </Box>
       </Box>
-      <CommonModal open={openAddProduct} handleClose={handleProductClose} handleSubmit={handleSubmit} header='Add Product' buttonTitle="Add">
+      <CommonModal open={openAddProduct} handleClose={handleProductClose} handleSubmit={handleSubmit} header='Add Product' buttonTitle="Add" startIcon ={<AddIcon/>}>
           <Grid container spacing={1}>
               <Grid item xs={6}>
                   <TextField  
@@ -132,6 +131,11 @@ const getProducts = async () => {
               </Grid>
           </Grid>
       </CommonModal>
+        {/* {productList?.categoryName?.name && (
+          <Typography variant="h5" fontWeight={700} color={`${appTheme.colors.primary}80`}>
+            Products of <br /> {productList.categoryName.name}
+          </Typography>
+        )} */}
       {loading ? variants.map((variant) => (
             <Typography component="div" key={variant} variant={variant}>
               {loading && <Skeleton />}

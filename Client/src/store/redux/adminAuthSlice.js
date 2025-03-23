@@ -13,12 +13,12 @@ const adminAuthSlice = createSlice({
       state.isAuthenticated = true;
       state.user = action.payload;
     },
-    logoutUser(state) {
+    logoutAdmin(state) {
       state.isAuthenticated = false;
       state.user = null;
     },
   },
 });
 
-export const { loginUser, logoutUser } = adminAuthSlice.actions;
+export const { loginUser, logoutAdmin } = adminAuthSlice.actions;
 export default adminAuthSlice.reducer;

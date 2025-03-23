@@ -3,7 +3,6 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../../store/redux/thunks';
 import { useNavigate } from 'react-router-dom';
-import { showError, showSuccess } from '../../../Assets/Constants/showNotifier';
 
 export default function Dashboard() {
   const dispatch = useDispatch(); 
@@ -12,16 +11,14 @@ export default function Dashboard() {
   const handleLogout = async () => {
     try {
       await dispatch(logout()).unwrap();
-      showSuccess('Logout Successfully');
       navigate('/admin/login');
     } catch (err) {
-      showError(err);
       console.error('Logout failed:', err);
     }
   };
 
   return (
-    <Box p={3}>
+    <Box p={3} height={'100vh'}>
         <Typography variant="h4" gutterBottom>
             Dashboard
         </Typography>

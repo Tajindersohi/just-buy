@@ -1,5 +1,6 @@
 const ProductCategory = require('../../models/productCategory');
 const Product = require('../../models/product');
+const productCategory = require('../../models/productCategory');
 
 const getNestedCategories = (categories, parentId = null) => {
     return categories
@@ -59,6 +60,7 @@ const getCategoryProducts = async (req, res) => {
         }
 
         const productsList = await Product.find({ category_id: id }).lean();
+        const categoryName = await productCategory.findById(id,{name:1, _id:0});
         
         if (!productsList.length) {
             return res.status(404).json({success:true, list: [], message: 'No products found for this category' });
@@ -67,7 +69,8 @@ const getCategoryProducts = async (req, res) => {
         res.status(200).json({
             message: 'Products fetched successfully',
             list: productsList,
-            success:true
+            categoryName:categoryName,
+            success:true,
         });
     } catch (err) {
         console.error('Error fetching products:', err);
@@ -111,4 +114,18 @@ const addNewCategory = async (req, res) => {
     }
 };
 
-module.exports = { getCategoryList, addNewProduct, addNewCategory, getCategoryProducts };
+const deleteProduct = async (req, res) => {
+    try {
+        const id = req.params.id;
+        let response = await Product.deleteOne({_id:id});
+        res.status(201).json({
+            message: 'Product deleted successfully',
+            success:true,
+        });
+    } catch (err) {
+        console.error('Error adding new product:', err);
+        res.status(500).json({ message: err });
+    }
+};
+
+module.exports = { getCategoryList, addNewProduct, addNewCategory, getCategoryProducts, deleteProduct };

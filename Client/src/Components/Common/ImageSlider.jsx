@@ -60,7 +60,6 @@ const ImageSlider = ({ categories }) => {
 
   return (
     <Box display="flex" alignItems="center" position="relative">
-      {/* Left Button - Hidden at Start */}
       {!isAtStart && (
         <Button
           onClick={() => scroll("left")}
@@ -111,7 +110,6 @@ const ImageSlider = ({ categories }) => {
         ))}
       </Box>
 
-      {/* Right Button - Hidden at End */}
       {!isAtEnd && (
         <Button
           onClick={() => scroll("right")}

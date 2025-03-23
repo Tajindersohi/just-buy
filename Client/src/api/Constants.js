@@ -20,6 +20,7 @@ const apiConstants = {
                 },
             }),
         getCategoryProducts: async (data) => await axiosInstance.post('/category/products',data),
+        deleteProduct: async (id) => await axiosInstance.delete(`/category/products/${id}`),
     },
     user:{
         sentOtp: async (data) => await axiosInstance.post('/sent-otp',data),

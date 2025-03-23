@@ -2,11 +2,11 @@ import React from 'react';
 import { Box, Modal, IconButton, Typography, Button, useMediaQuery, useTheme } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ThemeButton from './ThemeButton';
-
-const CommonModal = ({ open, handleClose, children, handleSubmit, header = "", buttonTitle = "Submit", loginModal = false, loading = false }) => {
+import appTheme from '../../Assets/Theme';
+import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
+const CommonModal = ({ open, handleClose, children, handleSubmit, header = "", buttonTitle = "Submit", loginModal = false, loading = false, isDeleteModel = false, startIcon =null }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
   const modalStyle = {
     position: 'absolute',
     top: '50%',
@@ -24,9 +24,9 @@ const CommonModal = ({ open, handleClose, children, handleSubmit, header = "", b
     <Modal open={open} onClose={handleClose}>
       <Box sx={modalStyle}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6" color="#02cfac"><b>{header}</b></Typography>
-          <IconButton onClick={handleClose}>
-            <CloseIcon />
+          <Typography variant="h6" color={appTheme.heading.primary} ><b>{header}</b></Typography>
+          <IconButton onClick={handleClose} >
+            <CancelRoundedIcon sx={{fontSize:30 , color:appTheme.colors.textSecondary}} />
           </IconButton>
         </Box>
 
@@ -36,8 +36,8 @@ const CommonModal = ({ open, handleClose, children, handleSubmit, header = "", b
 
         {!loginModal && (
           <Box display="flex" justifyContent="center" gap={2} mt={3}>
-            <Button variant="contained" color="error" onClick={handleClose}>Close</Button>
-            <ThemeButton label={buttonTitle} onClick={handleSubmit} variant="primary" />
+            <ThemeButton label={"Close"} variant="secondary" onClick={handleClose} color="error"/>
+            <ThemeButton label={buttonTitle} onClick={handleSubmit} variant= {isDeleteModel ? "danger" : "primary"} disabled={loading} loading={loading} icon = { startIcon  || null} />
           </Box>
         )}
 

@@ -1,8 +1,7 @@
 import {createAsyncThunk } from '@reduxjs/toolkit';
-import { loginUser, logoutUser } from './adminAuthSlice';
+import { loginUser, logoutAdmin } from './adminAuthSlice';
 import apiConstants from '../../api/Constants';
-import { gettingUserInfo, gettingUserInfoFailed, loginOrSignup, sentLoginOtp } from './authSlice';
-import { showError, showSuccess } from '../../Assets/Constants/showNotifier';
+import { gettingUserInfo, gettingUserInfoFailed, loginOrSignup, sentLoginOtp, logoutClient } from './authSlice';
 
 export const login = createAsyncThunk(
   'auth/login',
@@ -38,13 +37,10 @@ export const sendOtp = createAsyncThunk(
       const response = await apiConstants.user.sentOtp(credentials);
       const { sent,message } = response.data;
       if(response.status == 200){
-        showSuccess(response.data.message)
         dispatch(sentLoginOtp({sent:sent,message:message})); 
       }else{
-        showError(response?.data?.message || 'Errow while sending code')
       }
     } catch (error) {
-      showError(error.response?.data?.message || 'failed');
       return rejectWithValue(error.response?.data?.message || 'failed');
     }
   }
@@ -58,11 +54,9 @@ export const loginWithOtp = createAsyncThunk(
       if(response.status == 200){
         localStorage.clear();
         const { token, user} = response.data;
-        showSuccess(response.data.message)
         localStorage.setItem('token', token);
         dispatch(loginOrSignup(user)); 
       }else{
-        showError(response?.data?.message || 'Errow while sending code')
       }
       return response.data
     } catch (error) {
@@ -74,7 +68,12 @@ export const loginWithOtp = createAsyncThunk(
 
 export const logout = createAsyncThunk('admin/logout', async (_, { dispatch }) => {
   localStorage.removeItem('token'); 
-  dispatch(logoutUser());
+  dispatch(logoutAdmin());
+});
+
+export const logoutUser = createAsyncThunk('/logout', async (_, { dispatch }) => {
+  localStorage.removeItem('token'); 
+  dispatch(logoutClient());
 });
 
 export const getMe = createAsyncThunk(
@@ -88,18 +87,14 @@ export const getMe = createAsyncThunk(
         const response = await apiConstants.user.getMe({token:token});
         if(response.status == 200){
           const {user} = response.data;
-          showSuccess(response.data.message)
           localStorage.setItem('token', token);
           dispatch(loginOrSignup(user)); 
         }else{
           dispatch(gettingUserInfoFailed());
-          showError(response?.data?.message || 'Errow while sending code')
         }
-        // showLoading(false)
         return response.data
       }
     }catch(error){
-      // showLoading(false)
       return rejectWithValue(error.response?.data?.message || 'failed');
     }
   }
