@@ -99,6 +99,45 @@ const addNewProduct = async (req, res) => {
     }
 };
 
+const updateProduct = async (req, res) => {
+    try {
+        const { _id, price, productName, discount } = JSON.parse(req.body.data);
+
+        if (!_id) {
+            return res.status(400).json({ message: "Product ID is required" });
+        }
+
+        const updateData = {
+            name: productName,
+            price,
+            discount,
+        };
+
+        if (req.file) {
+            updateData.imageUrl = `${process.env.APP_URL}/uploads/${req.file.filename}`;
+        }
+
+        const updatedProduct = await Product.findOneAndUpdate(
+            { _id },
+            updateData,
+            { new: true } 
+        );
+
+        if (!updatedProduct) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        res.status(200).json({
+            message: "Product updated successfully",
+            product: updatedProduct,
+        });
+    } catch (err) {
+        console.error("Error updating product:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+
 const addNewCategory = async (req, res) => {
     try {
         const { category, parentCategory } = JSON.parse(req.body.data);
@@ -128,4 +167,4 @@ const deleteProduct = async (req, res) => {
     }
 };
 
-module.exports = { getCategoryList, addNewProduct, addNewCategory, getCategoryProducts, deleteProduct };
+module.exports = { getCategoryList, addNewProduct, addNewCategory, getCategoryProducts, deleteProduct, updateProduct };

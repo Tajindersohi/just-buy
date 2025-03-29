@@ -13,6 +13,12 @@ const apiConstants = {
                     "Content-Type": "multipart/form-data",
                 },
             }),
+        updateProduct: async (data) =>
+            await axiosInstance.post("/category/update-product", data, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }),
         createCategory: async (data) => 
             await axiosInstance.post("/category/create-category", data, {
                 headers: {

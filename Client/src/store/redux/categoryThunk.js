@@ -4,7 +4,8 @@ import {
   gettingProducts,
   gettingProductsFailed,
   addNewProduct,
-  addNewCategory
+  addNewCategory,
+  updateSingleProduct
 } from './categorySlice';
 import apiConstants from '../../api/Constants';
 

@@ -3,16 +3,14 @@ import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Grid, IconButton, TextField, ThemeProvider, Typography, useMediaQuery } from '@mui/material';
-import { Link } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CommonModal from '../../../Components/Common/CommonModal';
 import { useState } from 'react';
-import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import appTheme from '../../../Assets/Theme';
 import dataGridTheme from '../../../Components/Common/dataGridTheme';
 import EditIcon from '@mui/icons-material/Edit';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteProduct } from '../../../store/redux/productThunk';
+import { deleteProduct,updateSingleProduct } from '../../../store/redux/productThunk';
 import DeleteModal from '../../../Components/Common/DeleteModal';
 import MediaUploader from '../../../Components/Common/MediaUploader';
 import { showError } from '../../../Assets/Constants/showNotifier';
@@ -27,10 +25,10 @@ export default function ProductsGrid({ list = [] }) {
   const [openAddProduct, setOpenAddProduct] = React.useState(false);
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [newProduct, setNewProduct] = React.useState({
-    categoryId: null,
+    _id: null,
     productName:"",
     price:0,
-    discount:0 
+    discount:0,
 });
 
   const columns = [
@@ -43,7 +41,6 @@ export default function ProductsGrid({ list = [] }) {
           alt="Preview"
           style={{
             width: '50px',
-            height: '50px',
             borderRadius: '50%',
             objectFit: 'cover',
             border: '1px solid #ccc',
@@ -95,7 +92,7 @@ export default function ProductsGrid({ list = [] }) {
 
   const handleEditProduct = (product) => {
     setOpenAddProduct(true);
-    setNewProduct({categoryId:product._id,productName:product.name, price:product.price, discount:product.discount });
+    setNewProduct({_id:product._id,productName:product.name, price:product.price, discount:product.discount});
     setSelectedMedia(product.imageUrl)
   }
   console.log("ssssss",selectedMedia);
@@ -108,7 +105,7 @@ export default function ProductsGrid({ list = [] }) {
       const formData = new FormData();
       formData.append("data", JSON.stringify(newProduct));
       formData.append("media", selectedMedia.file);
-      // dispatch(addProduct(formData))
+      dispatch(updateSingleProduct(formData))
     }catch(err){
       showError(err)
     }finally{

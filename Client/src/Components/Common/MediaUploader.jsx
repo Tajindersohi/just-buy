@@ -58,32 +58,32 @@ const MediaUploader = ({ selectedMedia, setSelectedMedia }) => {
             maxWidth: '500px',
           }}
           >
-          {selectedMedia.type === 'image' ? (
-            <img
-              src={selectedMedia.previewUrl || selectedMedia}
-              alt="Preview"
-              style={{
-                width: '100%',  
-                maxWidth: '400px',  
-                height: 'auto', 
-                maxHeight: '300px',   
-                objectFit: 'contain',   
-                border: '1px solid #ccc',
-              }}
-            />
-          ) : (
+          {selectedMedia.type === 'video' ? (
             <video
-              src={selectedMedia.previewUrl || selectedMedia}
-              controls
-              style={{
-                width: '100%', 
-                maxWidth: '400px',
-                height: 'auto',
-                maxHeight: '300px', 
-                objectFit: 'contain',
-                border: '1px solid #ccc',
-              }}
-            />
+            src={selectedMedia.previewUrl || selectedMedia}
+            controls
+            style={{
+              width: '100%', 
+              maxWidth: '400px',
+              height: 'auto',
+              maxHeight: '300px', 
+              objectFit: 'contain',
+              border: '1px solid #ccc',
+            }}
+          />
+          ) : (
+            <img
+            src={selectedMedia.previewUrl || selectedMedia}
+            alt="Preview"
+            style={{
+              width: '100%',  
+              maxWidth: '400px',  
+              height: 'auto', 
+              maxHeight: '300px',   
+              objectFit: 'contain',   
+              border: '1px solid #ccc',
+            }}
+          />
           )}
 
           <IconButton

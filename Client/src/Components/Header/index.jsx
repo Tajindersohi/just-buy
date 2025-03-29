@@ -30,7 +30,6 @@ function Header() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [openDrawer, setOpenDrawer] = useState(false);
-console.log("authStateauthState",authState, userState);
   return (
     <AppBar 
       position="static"

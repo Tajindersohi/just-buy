@@ -31,7 +31,15 @@ const productSlice = createSlice({
     },
     deletingProductFailed: (state, action) => {
       state.isLoading = false;
-    }
+    },
+    updateProduct: (state, action) => {
+      const index = state.products.findIndex(item => item._id === action.payload._id);
+      if (index !== -1) {
+        state.products[index] = action.payload;
+      } else {
+        state.products.push(action.payload);
+      }
+    },
   },
 });
 
@@ -41,7 +49,8 @@ export const {
   getProductsSuccess,
   deletingProduct,
   deletingProductFailed,
-  deleteProductSuccess
+  deleteProductSuccess,
+  updateProduct
 } = productSlice.actions;
 
 export default productSlice.reducer;
