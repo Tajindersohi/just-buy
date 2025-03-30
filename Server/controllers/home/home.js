@@ -13,6 +13,68 @@ const getNestedCategories = (categories, parentId = null) => {
         }));
 };
 
+
+const getParentCategoriesWithProducts = async () => {
+    try {
+        const categoriesWithProducts = await ProductCategory.aggregate([
+            {
+                $match: { parentCategory: null }
+            },
+            {
+                $lookup: {
+                    from: 'productcategories', // Ensure correct collection name
+                    localField: '_id',
+                    foreignField: 'parentCategory',
+                    as: 'subcategories'
+                }
+            },
+            {
+                $addFields: {
+                    subcategoryIds: {
+                        $map: { input: "$subcategories", as: "sub", in: "$$sub._id" }
+                    }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'subcategoryIds',
+                    foreignField: 'category_id', // Products are linked to subcategories
+                    as: 'products'
+                }
+            },
+            {
+                $project: {
+                    subcategoryIds: 0 
+                }
+            }
+        ]);
+
+        return categoriesWithProducts;
+    } catch (error) {
+        console.error("Error fetching categories with products:", error);
+        throw error;
+    }
+};
+
+const getProductSummary = async () => {
+    try {
+        const result = await Product.aggregate([
+            {
+                $group: {
+                    _id: "$category_id",
+                    totalProducts: { $sum: 1 },
+                    avgPrice: { $avg: "$price" }
+                }
+            }
+        ]);
+        return result;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
 const getHome = async (req, res) => {
     try {
         const categoriesWithProducts = await ProductCategory.find().populate('parentCategory').lean();
@@ -43,9 +105,12 @@ const getHome = async (req, res) => {
         };
 
         categoryTree = attachProductsToCategories(categoryTree);
-        const  newCate = [...categoryTree,...categoryTree,...categoryTree,...categoryTree,...categoryTree,...categoryTree,...categoryTree,...categoryTree,...categoryTree,...categoryTree];
-        const allSubCategories = await Product.find({}).lean(); // Await the product query
-        const result = {category : newCate, subCategory: allSubCategories }
+        const testss = await ProductCategory.find({ parentCategory: null });
+
+        const allSubCategories = await Product.find({}).lean(); 
+        const parentCategoryWithProducts = await getParentCategoriesWithProducts();
+        const productSummaries = await getProductSummary();
+        const result = {category : categoryTree, subCategory: allSubCategories, parentCategoryWithProducts:parentCategoryWithProducts , productSummaries:productSummaries }
         res.status(200).json({ data: result, success: true, message: "Categories fetched successfully" });
     } catch (err) {
         console.error('Error fetching products:', err);

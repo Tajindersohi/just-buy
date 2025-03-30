@@ -9,6 +9,7 @@ import { showLoading } from "../../Assets/Constants/showLoading";
 import ImageSlider from "../../Components/Common/ImageSlider";
 import { addToCart } from "../../store/redux/authSlice";
 import { getMe } from "../../store/redux/thunks";
+import CategoryProduct from "./CategoryProduct";
 
 const Home = () => {
   const productsss = useSelector((state) => state.home);
@@ -103,9 +104,6 @@ const Home = () => {
         </Grid>
       }
       <ImageSlider categories={productsss.categories}/>
-      <Typography variant="h5" gutterBottom mt={4}>
-        <b>Best Selling Products</b>
-      </Typography>
       {progress != 100 && <Grid container spacing={3}>
         {Array.from({ length: 20 }, (_, i) => i).map((product, idx) => (
           <Grid item xs={6} sm={4} md={3} lg={2.4} key={product._id}>
@@ -119,11 +117,12 @@ const Home = () => {
         ))}
         </Grid>
       }
-      <Grid container spacing={3}>
+      <CategoryProduct list={productsss} cart={cart} handleAddItem={handleAddItem} handleSubItem={handleSubItem}/>
+      {/* <Grid container spacing={3}>
         {productsss.products.map((product, idx) => (
           <Product key={idx} product={product} cart={cart} handleAddItem={handleAddItem} handleSubItem={handleSubItem}/>
         ))}
-      </Grid>
+      </Grid> */}
     </Box>
   );
 };

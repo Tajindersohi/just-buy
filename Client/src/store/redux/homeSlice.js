@@ -5,6 +5,7 @@ const homeSlice = createSlice({
   initialState: {
     products: [],
     categories : [],
+    categoryWithProduct:[],
     isLoading: false,
     error: null,
   },
@@ -20,6 +21,7 @@ const homeSlice = createSlice({
       state.isLoading = false;
       state.products = action.payload.subCategory;
       state.categories = action.payload.category;
+      state.categoryWithProduct = action.payload.parentCategoryWithProducts;
     }
   },
 });

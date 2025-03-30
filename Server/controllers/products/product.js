@@ -61,11 +61,6 @@ const getCategoryProducts = async (req, res) => {
 
         const productsList = await Product.find({ category_id: id }).lean();
         const categoryName = await productCategory.findById(id,{name:1, _id:0});
-        
-        if (!productsList.length) {
-            return res.status(404).json({success:true, list: [], message: 'No products found for this category' });
-        }
-
         res.status(200).json({
             message: 'Products fetched successfully',
             list: productsList,
