@@ -31,7 +31,7 @@ axiosInstance.interceptors.response.use(
   (err) => {
     if (err.response && err.response.status === 401) {
       localStorage.clear();
-      window.location.href = "/";
+      // window.location.href = "/";
     }
     showError(err?.response || "Unprocessable")
     return Promise.reject(err);

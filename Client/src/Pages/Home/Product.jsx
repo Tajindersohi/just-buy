@@ -12,7 +12,7 @@ const Product = ({ product, handleAddItem, cart, handleSubItem }) => {
     setProductCount(addedProduct ? addedProduct.count : 0);
   }, [cart, product._id]);
 
-  const getCurrentPrice = (discount, total) => total - (discount * total) / 100;
+  const getCurrentPrice = (discount, total) => (total - (discount * total) / 100).toFixed(2);
 
   return (
     <Grid item xs={6} sm={4} md={3} lg={2} key={product._id}>

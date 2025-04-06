@@ -8,6 +8,7 @@ import categorySlice from './categorySlice';
 import userSlice from './authSlice';
 import productSlice from './productSlice';
 import homeSlice from './homeSlice';
+import cartSlice from './cartslice';
 const persistConfig = {
   key: 'root',
   storage,
@@ -19,7 +20,8 @@ const rootReducer = combineReducers({
   category: categorySlice,
   user: userSlice,
   product: productSlice,
-  home: homeSlice
+  home: homeSlice,
+  cart: cartSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

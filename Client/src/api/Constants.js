@@ -38,6 +38,9 @@ const apiConstants = {
     },
     home:{
         getHome: async () => await axiosInstance.get('/home'),
+    },
+    cart:{
+        getCart: async (data) => await axiosInstance.post('/cart',data)
     }
 };
 

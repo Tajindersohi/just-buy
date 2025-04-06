@@ -24,7 +24,7 @@ const categorySlice = createSlice({
       // state.products.push(action.payload);
     },
     addNewCategory: (state, action) => {
-      state.products.push(action.payload);
+      state.categories.push(action.payload);
     },
   },
 });

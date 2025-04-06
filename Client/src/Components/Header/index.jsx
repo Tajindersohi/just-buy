@@ -14,6 +14,7 @@ import icons from '../../Assets/Icons/Icons';
 import { useTheme, useMediaQuery } from '@mui/material';
 import { logout } from '../../store/redux/thunks';
 import appTheme from '../../Assets/Theme';
+import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import AccountMenu from './AccountMenu';
 import Cart from './Cart';
 
@@ -30,6 +31,8 @@ function Header() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [openCart, setOpenCart] = React.useState(false);
+  
   return (
     <AppBar 
       position="static"
@@ -82,7 +85,21 @@ function Header() {
         {/* Right Section: Buttons */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: appTheme.spacing.md }}>
           {!authState.user && !userState.user && <Login />}
-          {!authState.user && <Cart/>}
+          {!authState.user && 
+            <>
+                <ThemeButton
+                  variant="primary"
+                  icon={<ShoppingCartOutlinedIcon />}
+                  label="My Cart"
+                  onClick={()=> setOpenCart(true)}
+                  style={{
+                    backgroundColor: appTheme.colors.primary,
+                    color: appTheme.colors.textContrast,
+                  }}
+                />
+                {openCart && <Cart open={openCart} setOpen={setOpenCart}/>}
+            </>
+          }
           {(userState.user || authState.user) && (
             <AccountMenu/>
           )}

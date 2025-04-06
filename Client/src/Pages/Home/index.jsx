@@ -15,7 +15,6 @@ const Home = () => {
   const productsss = useSelector((state) => state.home);
   const [cart,setCart] = useState([]);
   const [progress ,setProgress] = useState(0);
-  const userState = useSelector((state) => state.user);
   const errorMsg = useSelector((state) => state.product.error);
   const dispatch = useDispatch();
 
@@ -28,6 +27,7 @@ const Home = () => {
     dispatch(addToCart({ cart })); 
   }, [cart, dispatch]); 
 
+  console.log("productsss",productsss);
   const getList = async () => {
     let interval;
     try {

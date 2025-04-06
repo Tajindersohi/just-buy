@@ -4,23 +4,26 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ThemeButton from "../Common/ThemeButton";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import appTheme from "../../Assets/Theme";
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import {getCartDetails} from '../../store/redux/cartThunk'
 import { IconButton } from "@mui/material";
 
-export default function Cart() {
-  const [state, setState] = React.useState(false);
-  const [cartItems, setCartItems] = React.useState([
-    { id: 1, name: "Product 1", price: "$20" },
-    { id: 2, name: "Product 2", price: "$35" },
-    { id: 3, name: "Product 3", price: "$15" },
-  ]);
+export default function Cart({open, setOpen}) {
+  const user = useSelector((state) => state.user);
+  const cartItems = useSelector((state) => state.cart.list);
+  const dispatch = useDispatch()
 
+  useEffect(()=>{
+    dispatch(getCartDetails(user.cart))
+  },[user.cart])
+  
   const toggleDrawer = (open) => (event) => {
     if (
       event &&
@@ -29,11 +32,11 @@ export default function Cart() {
     ) {
       return;
     }
-    setState(open);
+    setOpen(open);
   };
 
   const removeItem = (id) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
+    // setCartItems(cartItems.filter((item) => item.id !== id));
   };
 
   const cartList = () => (
@@ -106,19 +109,9 @@ export default function Cart() {
 
   return (
     <div>
-      <ThemeButton
-        variant="primary"
-        icon={<ShoppingCartOutlinedIcon />}
-        label="My Cart"
-        onClick={toggleDrawer(true)}
-        style={{
-          backgroundColor: appTheme.colors.primary,
-          color: appTheme.colors.textContrast,
-        }}
-      />
       <SwipeableDrawer
         anchor={"right"}
-        open={state}
+        open={open}
         onClose={toggleDrawer(false)}
         onOpen={toggleDrawer(true)}
       >

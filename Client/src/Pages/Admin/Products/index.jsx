@@ -60,13 +60,13 @@ console.log("allCategories",allCategories);
     }
   };
 
-
     const handleSubmit = async() => {
       try{
         const formData = new FormData();
         formData.append("data", JSON.stringify(newCategory));
         formData.append("media", selectedImage.file);
         dispatch(addCategory(formData))
+        setSelectedImage(null);
       }catch(err){
         showError(err)
       }finally{
@@ -110,32 +110,36 @@ console.log("allCategories",allCategories);
                   <Grid item xs={12}>
                       <TextField sx={{width:"100%"}} onChange={(e)=>handleChange('category', e.target.value,'category')} variant='outlined' label='Enter Category name'/>
                   </Grid>
-                  <Grid item xs={12}>
-                      <FormControlLabel onChange={(e)=>handleChange('isParentCategory', e.target.checked,'category')} control={<Checkbox checked={newCategory.isParentCategory} />} label="Belongs to another category?" />
-                  </Grid>
-                  {newCategory.isParentCategory && 
+                  {allCategories.categories.length > 0 && 
+                  <>
                     <Grid item xs={12}>
-                        <FormControl sx={{width: "100%" }}>
-                            <InputLabel id="demo-multiple-name-label">Select Parent Category</InputLabel>
-                            <Select
-                              labelId="demo-multiple-name-label"
-                              id="demo-multiple-name"
-                              value={newCategory.parentCategory}
-                              onChange={(e)=>handleChange('parentCategory',e.target.value, 'category')}
-                              input={<OutlinedInput label="Select Parent Category" />}
-                              MenuProps={MenuProps}
-                              >
-                            {allCategories.categories.map((category,idx) => (
-                                <MenuItem
-                                key={idx}
-                                value={category.id}
-                                >
-                                {category.name}
-                                </MenuItem>
-                            ))}
-                            </Select>
-                        </FormControl>
+                        <FormControlLabel onChange={(e)=>handleChange('isParentCategory', e.target.checked,'category')} control={<Checkbox checked={newCategory.isParentCategory} />} label="Belongs to another category?" />
                     </Grid>
+                    {newCategory.isParentCategory && 
+                      <Grid item xs={12}>
+                          <FormControl sx={{width: "100%" }}>
+                              <InputLabel id="demo-multiple-name-label">Select Parent Category</InputLabel>
+                              <Select
+                                labelId="demo-multiple-name-label"
+                                id="demo-multiple-name"
+                                value={newCategory.parentCategory}
+                                onChange={(e)=>handleChange('parentCategory',e.target.value, 'category')}
+                                input={<OutlinedInput label="Select Parent Category" />}
+                                MenuProps={MenuProps}
+                                >
+                              {allCategories.categories.map((category,idx) => (
+                                  <MenuItem
+                                  key={idx}
+                                  value={category.id}
+                                  >
+                                  {category.name}
+                                  </MenuItem>
+                              ))}
+                              </Select>
+                          </FormControl>
+                      </Grid>
+                    }
+                  </>
                   }
                   <Grid item xs={12}>
                       <Box display={'flex'} m={0} alignItems={'center'}>
