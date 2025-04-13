@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Chip, Grid, Skeleton, Typography, useMediaQuery } from "@mui/material";
+import { useSelector } from "react-redux";
+import { showError, showInfo, showWarning } from "../../Assets/Constants/showNotifier";
 
-const Product = ({ product, handleAddItem, cart, handleSubItem }) => {
+const Product = ({ product, handleAddItem, handleSubItem }) => {
   const [productCount, setProductCount] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
   const isMobile = useMediaQuery("(max-width:600px)");
   const isTablet = useMediaQuery("(max-width:900px)");
-
+  const cartItems = useSelector((state) => state.cart);
   useEffect(() => {
-    const addedProduct = cart.find((item) => item.id === product._id);
+    const addedProduct = cartItems.items.find((item) => item._id === product._id);
     setProductCount(addedProduct ? addedProduct.count : 0);
-  }, [cart, product._id]);
-
+  }, [cartItems]);
   const getCurrentPrice = (discount, total) => (total - (discount * total) / 100).toFixed(2);
 
+  const handleAdd = (id) => {
+    if(productCount >= product.maxCount){
+      showWarning("Limit Reached", 'center', false);
+      return;
+    }
+    handleAddItem(id)
+  } 
   return (
     <Grid item xs={6} sm={4} md={3} lg={2} key={product._id}>
       <Box
@@ -90,7 +98,7 @@ const Product = ({ product, handleAddItem, cart, handleSubItem }) => {
                       -
                     </Box>
                     {productCount}
-                    <Box onClick={() => handleAddItem(product._id)} sx={{ cursor: "pointer", px: 1 }}>
+                    <Box onClick={() => handleAdd(product._id)} sx={{ cursor: "pointer", px: 1 }}>
                       +
                     </Box>
                   </Box>

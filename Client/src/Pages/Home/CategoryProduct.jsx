@@ -2,7 +2,7 @@ import { Grid, Typography } from '@mui/material';
 import React from 'react'
 import Product from './Product';
 
-const CategoryProduct = ({list,cart, handleAddItem,handleSubItem}) => {
+const CategoryProduct = ({list, handleAddItem,handleSubItem}) => {
   return (
     <div>
         {list.categoryWithProduct.map((item,idx) => {
@@ -14,7 +14,7 @@ const CategoryProduct = ({list,cart, handleAddItem,handleSubItem}) => {
                     </Typography>
                     <Grid container spacing={3}>
                     {item.products.map((product, idx) => (
-                        <Product key={idx} product={product} cart={cart} handleAddItem={handleAddItem} handleSubItem={handleSubItem}/>
+                        <Product key={idx} product={product} handleAddItem={handleAddItem} handleSubItem={handleSubItem}/>
                     ))}
                     </Grid>
                 </>

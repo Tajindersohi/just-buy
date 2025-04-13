@@ -11,10 +11,12 @@ export const NotifierProvider = ({ children }) => {
     message: '',
     type: 'success',
     duration: 2000,
+    dir: 'left',
+    isClosable: true
   });
 
-  const showNotifier = useCallback(({ type = 'success', msg, duration = 2000 }) => {
-    setNotifier({ open: true, message: msg, type, duration });
+  const showNotifier = useCallback(({ type = 'success', msg, dir = 'left' , isClosable = true, duration = 2000 }) => {
+    setNotifier({ open: true, message: msg, type, duration, dir: dir, isClosable: isClosable });
   }, []);
 
   const handleClose = () => {
@@ -25,14 +27,14 @@ export const NotifierProvider = ({ children }) => {
     <NotifierContext.Provider value={{ showNotifier }}>
       {children}
       <Snackbar
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: notifier.dir }}
         open={notifier.open}
         onClose={handleClose}
         TransitionComponent={Fade}
         autoHideDuration={notifier.duration}
       >
         <Alert
-          onClose={handleClose}
+          onClose= { notifier.isClosable ? handleClose : notifier.isClosable}
           severity={notifier.type}
           variant="filled"
           sx={{ width: '100%' }}

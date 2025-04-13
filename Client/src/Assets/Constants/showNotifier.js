@@ -4,18 +4,18 @@ export const setNotifierInstance = (notifier) => {
   showNotifierInstance = notifier;
 };
 
-export const showSuccess = (msg, duration = 2000) => {
-  showNotifierInstance?.({ type: "success", msg, duration });
+export const showSuccess = (msg, dir = 'left', isClosable = true, duration = 2000) => {
+  showNotifierInstance?.({ type: "success", msg, dir, isClosable, duration });
 };
 
-export const showError = (msg, duration = 2000) => {
-  showNotifierInstance?.({ type: "error", msg, duration });
+export const showError = (msg, dir = 'left', isClosable = true, duration = 2000) => {
+  showNotifierInstance?.({ type: "error", msg, dir, isClosable, duration });
 };
 
-export const showInfo = (msg, duration = 2000) => {
-  showNotifierInstance?.({ type: "info", msg, duration });
+export const showInfo = (msg, dir = 'left', isClosable = true, duration = 2000) => {
+  showNotifierInstance?.({ type: "info", msg, dir, isClosable, duration });
 };
 
-export const showWarning = (msg, duration = 2000) => {
-  showNotifierInstance?.({ type: "warning", msg, duration });
+export const showWarning = (msg, dir = 'left', isClosable = true, duration = 2000) => {
+  showNotifierInstance?.({ type: "warning", msg, dir, isClosable, duration });
 };

@@ -1,15 +1,14 @@
 import React, {  useState } from "react";
-import { Box, Button, Grid, Skeleton, Typography } from "@mui/material";
+import { Box, Grid, Skeleton, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import Product from "./Product";
 import { showError } from "../../Assets/Constants/showNotifier";
 import { useEffect } from "react";
 import { getHomeDetails } from "../../store/redux/homeThunk";
 import { showLoading } from "../../Assets/Constants/showLoading";
 import ImageSlider from "../../Components/Common/ImageSlider";
-import { addToCart } from "../../store/redux/authSlice";
 import { getMe } from "../../store/redux/thunks";
 import CategoryProduct from "./CategoryProduct";
+import { addCart, addCartProductItem, removeCartProduct } from "../../store/redux/cartThunk";
 
 const Home = () => {
   const productsss = useSelector((state) => state.home);
@@ -23,11 +22,10 @@ const Home = () => {
     getList();
   }, []);
 
-  useEffect(() => {
-    dispatch(addToCart({ cart })); 
-  }, [cart, dispatch]); 
+  // useEffect(() => {
+  //   dispatch(addCart(cart )); 
+  // }, [cart, dispatch]); 
 
-  console.log("productsss",productsss);
   const getList = async () => {
     let interval;
     try {
@@ -63,26 +61,11 @@ const Home = () => {
   };
 
   const handleAddItem = (id) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === id);
-      if (existingItem) {
-        return prevCart.map((item) =>
-          item.id === id ? { ...item, count: item.count + 1 } : item
-        );
-      } else {
-        return [...prevCart, { id, count: 1 }];
-      }
-    });
+    dispatch(addCartProductItem(id))
   };
   
   const handleSubItem = (id) => {
-    setCart((prevCart) =>
-      prevCart
-        .map((item) =>
-          item.id === id ? { ...item, count: item.count - 1 } : item
-        )
-        .filter((item) => item.count > 0)
-    );
+    dispatch(removeCartProduct(id))
   };
   
   
@@ -117,7 +100,7 @@ const Home = () => {
         ))}
         </Grid>
       }
-      <CategoryProduct list={productsss} cart={cart} handleAddItem={handleAddItem} handleSubItem={handleSubItem}/>
+      <CategoryProduct list={productsss} handleAddItem={handleAddItem} handleSubItem={handleSubItem}/>
       {/* <Grid container spacing={3}>
         {productsss.products.map((product, idx) => (
           <Product key={idx} product={product} cart={cart} handleAddItem={handleAddItem} handleSubItem={handleSubItem}/>

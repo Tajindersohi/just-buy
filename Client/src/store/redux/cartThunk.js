@@ -2,7 +2,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
     gettingCart,
     getCartSuccess,
-    getCartFailed
+    getCartFailed,
+    removeProduct,
+    addProduct
 } from './cartslice';
 import apiConstants from '../../api/Constants';
 
@@ -23,3 +25,22 @@ export const getCartDetails = createAsyncThunk(
   }
 );
 
+export const removeCartProduct = createAsyncThunk(
+  '/cart',
+  (id, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(removeProduct(id)); 
+    } catch (err) {
+    }
+  }
+);
+
+export const addCartProductItem = createAsyncThunk(
+  '/cart',
+  (id, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(addProduct(id)); 
+    } catch (err) {
+    }
+  }
+);
