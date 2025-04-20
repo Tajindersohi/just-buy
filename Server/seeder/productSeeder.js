@@ -8,34 +8,35 @@ import { getImage } from '../utils/unsplash.js';
 
 const MONGO_URI = process.env.CONNECTION_STRING || 'mongodb://localhost:27017';
 
-const categoriesList = [
-  'Fruits', 'Vegetables', 'Dairy', 'Bakery', 'Meat',
-  'Seafood', 'Snacks', 'Beverages', 'Grains', 'Spices'
+const categories = [
+  { name: 'Fruits & Vegetables', query: 'fresh fruits vegetables' },
+  { name: 'Dairy & Bakery', query: 'milk cheese bread' }
 ];
 
-const subCategoryNames = [
-  'Fresh', 'Organic', 'Imported', 'Frozen', 'Local',
-  'Canned', 'Seasonal', 'Gluten-Free', 'Sugar-Free', 'Low-Fat',
-  'Whole', 'Skimmed', 'Artisan', 'Sliced', 'Marinated',
-  'Wild', 'Packaged', 'Bottled', 'Roasted', 'Ground'
-];
-
-const queryMap = {
-  'Fruits': 'fresh fruits',
-  'Dairy': 'milk cheese',
-  'Bakery': 'bread pastry',
-  'Meat': 'raw meat',
-  'Snacks': 'chips cookies',
-  'Vegetables': 'fresh vegetables',
-  'Seafood': 'fish prawns',
-  'Beverages': 'juice drinks',
-  'Spices': 'masala herbs',
-  'Grains': 'rice wheat'
+const subcategories = {
+  'Fruits & Vegetables': [
+    { name: 'Fresh Fruits', query: 'apples bananas' },
+    { name: 'Leafy Greens', query: 'spinach lettuce' },
+    { name: 'Root Vegetables', query: 'carrots potatoes' }
+  ],
+  'Dairy & Bakery': [
+    { name: 'Milk & Yogurt', query: 'milk yogurt' },
+    { name: 'Cheese & Butter', query: 'cheese butter' },
+    { name: 'Breads & Pastries', query: 'bread pastry' }
+  ]
 };
 
+const productsBySubcategory = {
+  'Fresh Fruits': ['Apple', 'Banana', 'Grapes'],
+  'Leafy Greens': ['Spinach', 'Lettuce', 'Kale'],
+  'Root Vegetables': ['Carrot', 'Potato', 'Beetroot'],
+  'Milk & Yogurt': ['Full Cream Milk', 'Greek Yogurt', 'Low Fat Milk'],
+  'Cheese & Butter': ['Cheddar Cheese', 'Butter', 'Cottage Cheese'],
+  'Breads & Pastries': ['Whole Wheat Bread', 'Croissant', 'Bagel']
+};
 
-const getRandomPrice = () => parseFloat((Math.random() * 20 + 5).toFixed(2));
-const getRandomDiscount = () => Math.floor(Math.random() * 30);
+const getRandomPrice = () => parseFloat((Math.random() * 10 + 5).toFixed(2));
+const getRandomDiscount = () => Math.floor(Math.random() * 25);
 
 const seedData = async () => {
   try {
@@ -46,62 +47,48 @@ const seedData = async () => {
     await ProductCategory.deleteMany({});
     console.log('🧹 Old data cleared');
 
-    const categoryDocs = await Promise.all(
-      categoriesList.map(async name => {
-        const query = queryMap[name] || name;
-        const imageUrl = await getImage(query);
-        return ProductCategory.create({
-          name,
-          imageUrl,
-          parentCategory: null
-        });
-      })
-    );
+    const categoryDocs = {};
+    for (const cat of categories) {
+      const imageUrl = await getImage(cat.query);
+      const doc = await ProductCategory.create({
+        name: cat.name,
+        imageUrl,
+        parentCategory: null
+      });
+      categoryDocs[cat.name] = doc;
+    }
+
     console.log('📁 Categories seeded');
 
-    const subCategoryDocs = [];
-    for (let i = 0; i < categoryDocs.length; i++) {
-      const parentCategory = categoryDocs[i];
-
-      const subName1 = subCategoryNames[i * 2] || `SubCat${i * 2 + 1}`;
-      const subName2 = subCategoryNames[i * 2 + 1] || `SubCat${i * 2 + 2}`;
-
-      const imageUrl1 = await getImage(subName1);
-      const imageUrl2 = await getImage(subName2);
-
-      const sub1 = await ProductCategory.create({
-        name: subName1,
-        imageUrl: imageUrl1,
-        parentCategory: parentCategory._id
-      });
-
-      const sub2 = await ProductCategory.create({
-        name: subName2,
-        imageUrl: imageUrl2,
-        parentCategory: parentCategory._id
-      });
-
-      subCategoryDocs.push(sub1, sub2);
+    const subCategoryDocs = {};
+    for (const [parentName, subs] of Object.entries(subcategories)) {
+      for (const sub of subs) {
+        const imageUrl = await getImage(sub.query);
+        const doc = await ProductCategory.create({
+          name: sub.name,
+          imageUrl,
+          parentCategory: categoryDocs[parentName]._id
+        });
+        subCategoryDocs[sub.name] = doc;
+      }
     }
+
     console.log('📁 Subcategories seeded');
 
     const products = [];
-    let productCounter = 1;
 
-    for (const subCat of subCategoryDocs) {
-      for (let j = 0; j < 5; j++) {
-        const productName = `Product ${productCounter}`;
-        const imageUrl = await getImage(productName);
+    for (const [subName, productNames] of Object.entries(productsBySubcategory)) {
+      const subCat = subCategoryDocs[subName];
 
+      for (const prodName of productNames) {
+        const imageUrl = await getImage(prodName);
         products.push({
-          name: productName,
+          name: prodName,
           imageUrl,
           price: getRandomPrice(),
           discount: getRandomDiscount(),
           category_id: subCat._id
         });
-
-        productCounter++;
       }
     }
 
