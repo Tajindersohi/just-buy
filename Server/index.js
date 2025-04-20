@@ -7,7 +7,7 @@ const multer = require("multer");
 const { uploadImage } = require('./controllers/upload/upload');
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: process.env.CONNECTION_STRING,
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
   credentials: true, 
 }));
