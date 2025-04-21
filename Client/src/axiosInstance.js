@@ -2,7 +2,7 @@ import axios from "axios";
 import { showError, showSuccess } from "././Assets/Constants/showNotifier";
 import { Navigate } from "react-router-dom";
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: process.env.APP_URL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
