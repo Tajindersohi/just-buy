@@ -1,4 +1,3 @@
-const { default: _default } = require('concurrently');
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
