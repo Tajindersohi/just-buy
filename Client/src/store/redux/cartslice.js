@@ -47,6 +47,10 @@ const cartSlice = createSlice({
         state.items.push({ _id: action.payload, count: 1 });
       }
     },
+
+    syncCartSlice(state, action) {
+      state.items = action.payload
+    },
   },
 });
 
@@ -56,6 +60,7 @@ export const {
   getCartSuccess,
   removeProduct,
   addProduct,
+  syncCartSlice
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

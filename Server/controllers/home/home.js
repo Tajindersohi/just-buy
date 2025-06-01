@@ -105,8 +105,6 @@ const getHome = async (req, res) => {
         };
 
         categoryTree = attachProductsToCategories(categoryTree);
-        const testss = await ProductCategory.find({ parentCategory: null });
-
         const allSubCategories = await Product.find({}).lean(); 
         const parentCategoryWithProducts = await getParentCategoriesWithProducts();
         const productSummaries = await getProductSummary();

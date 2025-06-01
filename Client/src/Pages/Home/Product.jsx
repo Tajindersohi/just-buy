@@ -48,14 +48,14 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
             justifyContent: "center",
           }}
         >
-          {!imageLoaded && (
+          {/* {!imageLoaded && (
             <Skeleton
               variant="rectangular"
               width="100%"
               height="100%"
               sx={{ borderRadius: "10px" }}
             />
-          )}
+          )} */}
           <img
             src={product.imageUrl}
             alt={product.name}
@@ -81,7 +81,7 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
         </Box>
 
         <Box mx={1} mt={1}>
-          <Box display="flex" justifyContent="left" alignItems="center">
+          <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography fontSize="12px" color="#6f7478" sx={{ textDecoration: "line-through" }}>
             ${product.price}
           </Typography>
@@ -89,10 +89,8 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography fontSize="14px">${getCurrentPrice(product.discount, product.price)}</Typography>
             {productCount > 0 ? (
-              <Chip
-                sx={{ borderRadius: "5px", fontSize: "12px", px: 1 }}
-                color="success"
-                label={
+              <Button size="small" variant="contained" color="success"
+                sx={{ borderRadius: "5px", fontSize: "12px" }}>
                   <Box display="flex" gap={1} alignItems="center">
                     <Box onClick={() => handleSubItem(product._id)} sx={{ cursor: "pointer", px: 1 }}>
                       -
@@ -102,8 +100,7 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
                       +
                     </Box>
                   </Box>
-                }
-              />
+              </Button>
             ) : (
               <Button size="small" variant="outlined" color="success" sx={{ fontSize: "12px" }} onClick={() => handleAddItem(product._id)}>
                 Add

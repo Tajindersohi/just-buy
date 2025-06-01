@@ -34,7 +34,25 @@ app.use("/api/upload-image", upload.single('image'), uploadImage);
 app.use("/api", routes);
 
 // Connect to DB
-connect();
+// connect();
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/build", "index.html"));
+});
+
+const port = process.env.PORT || 6000;
+const start = async () => {
+  try {
+    await connect();
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  } catch (error) {
+    console.log("Error starting server:", error);
+  }
+};
+
+start();
 
 // ❗ Export the app instead of listening
 module.exports = app;

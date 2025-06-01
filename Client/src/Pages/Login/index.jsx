@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Box, Button, FormControl, Grid, InputAdornment, InputLabel, OutlinedInput, TextField, Typography, useMediaQuery } from '@mui/material';
+import { Box, Button, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, Typography, useMediaQuery } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginWithOtp, sendOtp } from '../../store/redux/thunks';
@@ -8,14 +8,14 @@ import CommonModal from '../../Components/Common/CommonModal';
 import ThemeButton from '../../Components/Common/ThemeButton';
 import { useTheme } from '@mui/material';
 import { resetOtpSent } from '../../store/redux/authSlice';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import appTheme from '../../Assets/Theme';
 
-export default function Login() {
+export default function Login({modalType, setModalType}) {
     const dispatch = useDispatch();
     const userState = useSelector((state) => state.user);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-    const [modalType, setModalType] = useState(null);
     const [number, setNumber] = useState("");
     const [otp, setOtp] = useState("");
     const [loading, setLoading] = useState(false);
@@ -67,8 +67,10 @@ export default function Login() {
 
     return (
         <>
-            <ThemeButton label="Login" onClick={handleOpen} variant="primary" icon={<LoginIcon />} />
-            
+            {isMobile ? 
+            <IconButton onClick={handleOpen} ><AccountCircleIcon fontSize='large' sx={{ color: appTheme.colors.primary }}/></IconButton>
+            :<ThemeButton label="Login" onClick={handleOpen} variant="primary" icon={<LoginIcon />} />
+            }
             {/* Phone Number Modal */}
             <CommonModal
                 open={modalType === 'phone'}
@@ -79,7 +81,7 @@ export default function Login() {
                 loginModal={true}
                 loading={loading}
             >
-                <Box width={isMobile ? '100%' : '400px'} p={isMobile ? 2 : 3}>
+                <Box width={isMobile ? 'auto' : '400px'} p={isMobile ? 2 : 3}>
                     <FormControl fullWidth sx={{ my: 1 }}>
                         <InputLabel htmlFor="phone-input">Enter Mobile Number</InputLabel>
                         <OutlinedInput
@@ -103,7 +105,7 @@ export default function Login() {
                 handleSubmit={handleSentOtp}
                 loading={loading}
             >
-                <Box width={isMobile ? '100%' : '400px'} p={isMobile ? 2 : 3}>
+                <Box width={isMobile ? 'auto' : '400px'} p={isMobile ? 2 : 3}>
                     <TextField
                         value={otp}
                         type="number"

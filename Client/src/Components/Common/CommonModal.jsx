@@ -12,7 +12,7 @@ const CommonModal = ({ open, handleClose, children, handleSubmit, header = "", b
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: isMobile ? '90%' : 'auto',
+    width: isMobile ? '80%' : 'auto',
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 3,

@@ -10,6 +10,8 @@ import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
+import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Logout from '@mui/icons-material/Logout';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { logout, logoutUser } from '../../store/redux/thunks';
@@ -17,6 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@mui/material';
 import { logoutAdmin } from '../../store/redux/adminAuthSlice';
 import { Link } from 'react-router-dom';
+import appTheme from '../../Assets/Theme';
 
 export default function AccountMenu() {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -50,7 +53,8 @@ export default function AccountMenu() {
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
             >
-                <Avatar sx={{ width: 32, height: 32 }}></Avatar>
+                
+                <AccountCircleIcon sx={{ color: appTheme.colors.primary }} fontSize='large'/>
             </IconButton>
             </Tooltip>
         </Box>

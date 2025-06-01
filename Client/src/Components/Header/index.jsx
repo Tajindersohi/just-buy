@@ -17,6 +17,7 @@ import appTheme from '../../Assets/Theme';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import AccountMenu from './AccountMenu';
 import Cart from './Cart';
+import StickyCartBar from './StickyCartBar ';
 
 const pages = [
   { link: '/', title: 'Home' },
@@ -24,15 +25,16 @@ const pages = [
   { link: '/contact', title: 'Contact' }
 ];
 
+
 function Header() {
   const userState = useSelector((state) => state.user);
+  const [modalType, setModalType] = useState(null);
   const authState = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openCart, setOpenCart] = React.useState(false);
-  
   return (
     <AppBar 
       position="static"
@@ -52,13 +54,10 @@ function Header() {
               <Link to={'/'}>
                 {icons.justBuy}
               </Link>
-              <Typography fontWeight={700} color={appTheme.colors.textPrimary}>
-                Delivery in 9 minutes
-              </Typography>
             </>
           ) : (
             <IconButton onClick={() => setOpenDrawer(true)}>
-              <MenuIcon sx={{ color: appTheme.colors.primary }} />
+              <MenuIcon sx={{ color: appTheme.colors.primary }} fontSize='large'/>
             </IconButton>
           )}
         </Box>
@@ -84,9 +83,10 @@ function Header() {
 
         {/* Right Section: Buttons */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: appTheme.spacing.md }}>
-          {!authState.user && !userState.user && <Login />}
+          {!authState.user && !userState.user && <Login modalType = {modalType}  setModalType = {setModalType}/>}
           {!authState.user && 
             <>
+            {!isMobile ?  
                 <ThemeButton
                   variant="primary"
                   icon={<ShoppingCartOutlinedIcon />}
@@ -97,9 +97,13 @@ function Header() {
                     color: appTheme.colors.textContrast,
                   }}
                 />
-                {openCart && <Cart open={openCart} setOpen={setOpenCart}/>}
+                :
+                <StickyCartBar onOpenCart={() => setOpenCart(true)} setModalType = {setModalType} open={openCart}/>
+              }
+              {openCart && <Cart open={openCart} setOpen={setOpenCart} modalType={modalType} setModalType = {setModalType}/>}
             </>
           }
+
           {(userState.user || authState.user) && (
             <AccountMenu/>
           )}

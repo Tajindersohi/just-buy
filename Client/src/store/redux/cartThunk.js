@@ -4,7 +4,8 @@ import {
     getCartSuccess,
     getCartFailed,
     removeProduct,
-    addProduct
+    addProduct,
+    syncCartSlice
 } from './cartslice';
 import apiConstants from '../../api/Constants';
 
@@ -40,6 +41,16 @@ export const addCartProductItem = createAsyncThunk(
   (id, { dispatch, rejectWithValue }) => {
     try {
       dispatch(addProduct(id)); 
+    } catch (err) {
+    }
+  }
+);
+
+export const syncCart = createAsyncThunk(
+  '/cart',
+  (data, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(syncCartSlice(data)); 
     } catch (err) {
     }
   }
