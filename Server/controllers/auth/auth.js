@@ -1,25 +1,37 @@
 const productUser = require('../../models/productUser');
 const User = require('../../models/user');
 const jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs"); // If you're using bcrypt
 
-const handleLogin = async (req,res) => {
-    try {
-        const { email, password } = req.body;
-        const user = await User.find({ email, userRole: 'admin' });
-        if(!user){
-            return res.status(401).json({message:'Invalid Credentials'});
-        }
-        const token = jwt.sign(
-          { id: user._id, role: "admin" },
-          process.env.JWT_SECRET,
-          { expiresIn: "1h" }
-        );
+const handleLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-        res.json({token:token, user:user})
-    } catch (error) {
-        res.status(500).json({message:error.message});
+    const user = await User.findOne({ email, userRole: "admin" });
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, role: user.userRole },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    const { password: _, ...userWithoutPassword } = user._doc;
+
+    res.json({ token, user: userWithoutPassword });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
+
 
 const createUser = async (req,res) => {
     const { email, password } = req.body;

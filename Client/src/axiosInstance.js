@@ -33,7 +33,7 @@ axiosInstance.interceptors.response.use(
     if (err.response && err.response.status === 401) {
       logout()
       localStorage.clear();
-      window.location.href = "/admin/login";
+      // window.location.href = "/admin/login";
       showError(err?.response || "Token expired")
     }else{
       showError(err?.response || "Unprocessable")
