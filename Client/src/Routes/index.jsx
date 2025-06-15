@@ -16,13 +16,12 @@ const ProductList = lazy(() => import("../Pages/Admin/Products"));
 
 const AppRoutes = () => {
     const user = useSelector((state) => state.auth.user);
-
     const commonRoutes = () => {
         return (
             <>
                 <Route
                     element={
-                        user ? <Navigate to="/admin/dashboard" /> : <Outlet />
+                        user ? user.userRole == 'admin' ? <Navigate to="/admin/dashboard" /> : <Navigate to="/" /> : <Outlet />
                     }
                 >
                     <Route path="/admin/login" element={<Login />} />

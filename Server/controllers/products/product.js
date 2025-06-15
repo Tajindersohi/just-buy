@@ -109,7 +109,7 @@ const updateProduct = async (req, res) => {
         };
 
         if (req.file) {
-            updateData.imageUrl = `${process.env.APP_URL}/uploads/${req.file.filename}`;
+            updateData.imageUrl = `${'https://just-buy-3071.onrender.com'}/uploads/${req.file.filename}`;
         }
 
         const updatedProduct = await Product.findOneAndUpdate(

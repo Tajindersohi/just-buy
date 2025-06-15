@@ -1,11 +1,11 @@
 const productUser = require('../../models/productUser');
 const User = require('../../models/user');
 const jwt = require('jsonwebtoken');
+
 const handleLogin = async (req,res) => {
     try {
-        console.log("reqreq",req.body);
         const { email, password } = req.body;
-        const user = await User.findOne({email});
+        const user = await User.find({ email, userRole: 'admin' });
         if(!user){
             return res.status(401).json({message:'Invalid Credentials'});
         }
@@ -76,7 +76,7 @@ const sentLoginOtp = async (req, res) => {
     // const lastOtp = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
     const lastOtp = 123456;
     let otpExpiryDate = new Date();
-    const userRole = 'admin';
+    const userRole = 'user';
     let user = await User.findOneAndUpdate(
       { phoneNumber }, 
       { lastOtp, otpExpiryDate, userRole },

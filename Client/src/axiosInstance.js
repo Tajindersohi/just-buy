@@ -1,8 +1,9 @@
 import axios from "axios";
 import { showError, showSuccess } from "././Assets/Constants/showNotifier";
 import { Navigate } from "react-router-dom";
+import { logout } from "./store/redux/thunks";
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_URL,
+  baseURL: process.env.REACT_APP_URL+'/api',
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -30,10 +31,13 @@ axiosInstance.interceptors.response.use(
   },
   (err) => {
     if (err.response && err.response.status === 401) {
+      logout()
       localStorage.clear();
-      // window.location.href = "/";
+      window.location.href = "/admin/login";
+      showError(err?.response || "Token expired")
+    }else{
+      showError(err?.response || "Unprocessable")
     }
-    showError(err?.response || "Unprocessable")
     return Promise.reject(err);
   }
 );

@@ -1,6 +1,6 @@
 const uploadImage = async (req, res) => {
     try {
-        const imageUrl = `/uploads/${req.file.filename}`;
+        const imageUrl = `${process.env.APP_URL}/uploads/${req.file.filename}`;
         console.log("imageUrl",imageUrl);
         res.status(201).json({ message: 'Image uploaded successfully', imageUrl: imageUrl, success:true });
     } catch (error) {
