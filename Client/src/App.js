@@ -4,7 +4,7 @@ import AppRoutes from "./Routes/index";
 import RootProvider from "./rootProvider";
 import NotifierInitializer from "./Assets/Constants/NotifierInitializer";
 import LoadingInitializer from "./Assets/Constants/LoadingInitializer";
-import {CartSync} from './Pages/CartSync';
+import { CartSync } from "./Assets/CartSync";
 
 const App = () => {
   
