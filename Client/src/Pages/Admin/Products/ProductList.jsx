@@ -1,3 +1,4 @@
+// ProductList.js
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
@@ -7,10 +8,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
 import dataGridTheme from '../../../Components/Common/dataGridTheme';
 import appTheme from '../../../Assets/Theme';
-import CommonModal from '../../../Components/Common/CommonModal';
-import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
-import { useState } from 'react';
 import DeleteModal from '../../../Components/Common/DeleteModal';
+import { useState } from 'react';
 
 export default function ProductList({ list }) {
   const isMobile = useMediaQuery('(max-width:600px)');
@@ -23,12 +22,10 @@ export default function ProductList({ list }) {
     setOpenDelete(true);
   };
 
-  const handleClose = (e) => {
-    setOpenDelete(false);
-  };
+  const handleClose = () => setOpenDelete(false);
 
   const deleteCategory = () => {
-
+    // implement product deletion logic
   };
 
   const columns = [
@@ -41,11 +38,11 @@ export default function ProductList({ list }) {
           src={params.row.imageUrl}
           alt="Preview"
           style={{
-            width: '50px',
-            height: '50px',
+            width: 50,
+            height: 50,
             borderRadius: '50%',
             objectFit: 'cover',
-            border: '1px solid #ccc',
+            border: `1px solid ${appTheme.colors.border}`,
           }}
         />
       ),
@@ -57,19 +54,19 @@ export default function ProductList({ list }) {
       field: 'action',
       headerName: 'Action',
       renderCell: (params) => (
-      <>
-        <IconButton component={Link} to={`/products/${params.row.id}`}>
-          <VisibilityIcon  color='primary' fontSize={isMobile ? 'small' : 'medium'} sx={{color:appTheme.colors.primary}}/>
-        </IconButton>
-        <IconButton onClick={() => handleDelete(params.row._id)}> 
-          <DeleteIcon color='error' fontSize={isMobile ? 'small' : 'medium'} />
-        </IconButton>
-      </>
+        <>
+          <IconButton component={Link} to={`/products/${params.row.id}`}>
+            <VisibilityIcon fontSize={isMobile ? 'small' : 'medium'} sx={{ color: appTheme.colors.primary }} />
+          </IconButton>
+          <IconButton onClick={() => handleDelete(params.row._id)}>
+            <DeleteIcon fontSize={isMobile ? 'small' : 'medium'} sx={{ color: appTheme.colors.danger }} />
+          </IconButton>
+        </>
       ),
       flex: 1,
       minWidth: 100,
-    }
-  ].filter(Boolean); 
+    },
+  ].filter(Boolean);
 
   return (
     <Box sx={{ height: isMobile ? 300 : isTablet ? 350 : 400, width: '100%' }}>
@@ -88,10 +85,10 @@ export default function ProductList({ list }) {
           disableRowSelectionOnClick
         />
       </ThemeProvider>
-      <DeleteModal open={openDelete} handleClose={handleClose} handleSubmit={handleDelete}>
-          <Box mt={2} textAlign="center">
-          Are you sure you want to delete this subcategory along with all its associated products
-          </Box>
+      <DeleteModal open={openDelete} handleClose={handleClose} handleSubmit={deleteCategory}>
+        <Box mt={2} textAlign="center">
+          Are you sure you want to delete this subcategory along with all its associated products?
+        </Box>
       </DeleteModal>
     </Box>
   );

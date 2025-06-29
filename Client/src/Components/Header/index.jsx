@@ -1,127 +1,165 @@
 import React, { useState } from 'react';
-import { 
-  AppBar, Box, IconButton, TextField, InputAdornment, Drawer, 
-  List, ListItem, ListItemText, Typography 
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+  InputAdornment,
+  useMediaQuery,
+  useTheme,
+  Badge,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import Login from '../../Pages/Login';
-import ThemeButton from '../Common/ThemeButton';
-import icons from '../../Assets/Icons/Icons';
-import { useTheme, useMediaQuery } from '@mui/material';
-import { logout } from '../../store/redux/thunks';
-import appTheme from '../../Assets/Theme';
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
+import { useSelector, useDispatch } from 'react-redux';
 import AccountMenu from './AccountMenu';
 import Cart from './Cart';
-import StickyCartBar from './StickyCartBar ';
+import StickyCartBar from './StickyCartBar';
+import Login from '../../Pages/Login';
+import icons from '../../Assets/Icons/Icons';
+import ThemeToggleButton from '../Common/ThemeToggleButton';
 
-const pages = [
+const userPages = [
   { link: '/', title: 'Home' },
   { link: '/about', title: 'About Us' },
-  { link: '/contact', title: 'Contact' }
+  { link: '/contact', title: 'Contact' },
 ];
 
+const adminPages = [
+  { link: '/admin/dashboard', title: 'Dashboard' },
+  { link: '/admin/products', title: 'Products' },
+  { link: '/admin/orders', title: 'Orders' },
+  { link: '/admin/users', title: 'Users' },
+];
 
-function Header() {
-  const userState = useSelector((state) => state.user);
-  const [modalType, setModalType] = useState(null);
-  const authState = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
+const Header = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const [openDrawer, setOpenDrawer] = useState(false);
-  const [openCart, setOpenCart] = React.useState(false);
+  const dispatch = useDispatch();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [modalType, setModalType] = useState(null);
+
+  const userState = useSelector((state) => state.user);
+  const authState = useSelector((state) => state.auth);
+  const cartCount = useSelector((state) => state.cart?.items?.length || 0);
+
+  const user = authState.user || userState.user;
+  const isAdmin = user?.userRole === 'admin';
+  const pages = isAdmin ? adminPages : userPages;
+  console.log("useruseruser",user);
   return (
-    <AppBar 
-      position="static"
-      sx={{ 
-        background: 'transparent',
-        boxShadow: 'none',
-        pt: appTheme.spacing.md,
-        top: 0,
-        zIndex: 1100
-      }}
-    >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-        
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: appTheme.spacing.md }}>
-          {!isMobile ? (
-            <>
-              <Link to={'/'}>
+    <>
+      <AppBar
+        position="sticky"
+        elevation={0}
+        sx={{
+          backgroundColor: theme.palette.background.paper,
+          boxShadow: theme.palette.mode === 'light'
+            ? '0 2px 4px rgba(0,0,0,0.05)'
+            : '0 1px 4px rgba(0,0,0,0.6)',
+        }}
+      >
+        <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
+          {/* Logo / Drawer */}
+          <Box display="flex" alignItems="center">
+            {isMobile ? (
+              <IconButton onClick={() => setDrawerOpen(true)} edge="start" color="inherit">
+                <MenuIcon />
+              </IconButton>
+            ) : (
+              <Link to="/" style={{ textDecoration: 'none' }}>
                 {icons.justBuy}
               </Link>
-            </>
-          ) : (
-            <IconButton onClick={() => setOpenDrawer(true)}>
-              <MenuIcon sx={{ color: appTheme.colors.primary }} fontSize='large'/>
-            </IconButton>
-          )}
-        </Box>
-
-        {/* Search Bar - Only Show on Larger Screens */}
-        {!isMobile && (
-          <Box sx={{ flex: 1, maxWidth: '600px', margin: `0 ${appTheme.spacing.md}` }}>
-            <TextField
-              variant="outlined"
-              size="small"
-              fullWidth
-              placeholder="Search..."
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{ color: appTheme.colors.secondary }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
+            )}
           </Box>
-        )}
 
-        {/* Right Section: Buttons */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: appTheme.spacing.md }}>
-          {!authState.user && !userState.user && <Login modalType = {modalType}  setModalType = {setModalType}/>}
-          {!authState.user && 
-            <>
-            {!isMobile ?  
-                <ThemeButton
-                  variant="primary"
-                  icon={<ShoppingCartOutlinedIcon />}
-                  label="My Cart"
-                  onClick={()=> setOpenCart(true)}
-                  style={{
-                    backgroundColor: appTheme.colors.primary,
-                    color: appTheme.colors.textContrast,
-                  }}
-                />
-                :
-                <StickyCartBar onOpenCart={() => setOpenCart(true)} setModalType = {setModalType} open={openCart}/>
-              }
-              {openCart && <Cart open={openCart} setOpen={setOpenCart} modalType={modalType} setModalType = {setModalType}/>}
-            </>
-          }
-
-          {(userState.user || authState.user) && (
-            <AccountMenu/>
+          {/* Search */}
+          {!isAdmin && !isMobile && (
+            <Box flex={1} mx={2} maxWidth="500px">
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Search for products..."
+                variant="outlined"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 10,
+                    backgroundColor: theme.palette.mode === 'light' ? '#f1f5f9' : '#252525',
+                    '& fieldset': { borderColor: '#e2e8f0' },
+                    '&:hover fieldset': { borderColor: '#cbd5e1' },
+                  },
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
           )}
-        </Box>
-      </Box>
 
-      {/* Mobile Drawer Menu */}
-      <Drawer anchor="left" open={openDrawer} onClose={() => setOpenDrawer(false)}>
-        <List sx={{ width: 250, background: appTheme.colors.background, height: '100%' }}>
+          {/* Action Buttons */}
+          <Box display="flex" alignItems="center" gap={1}>
+            {!user && (
+              <Login modalType={modalType} setModalType={setModalType} />
+            )}
+
+            {!isAdmin && (
+              isMobile ? (
+                <StickyCartBar onOpenCart={() => setCartOpen(true)} setModalType={setModalType} open={cartOpen} />
+              ) : (
+                <IconButton onClick={() => setCartOpen(true)}>
+                  <Badge badgeContent={cartCount} color="success">
+                    <ShoppingCartOutlinedIcon color="primary" />
+                  </Badge>
+                </IconButton>
+              )
+            )}
+
+            <ThemeToggleButton />
+            {user && <AccountMenu />}
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      {/* Drawer for Mobile */}
+      <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+        <Box sx={{ width: 250, p: 2 }}>
           {pages.map((page) => (
-            <ListItem button component={Link} to={page.link} onClick={() => setOpenDrawer(false)} key={page.title}>
-              <ListItemText primary={page.title} sx={{ color: appTheme.colors.textPrimary }} />
+            <ListItem
+              button
+              key={page.title}
+              component={Link}
+              to={page.link}
+              onClick={() => setDrawerOpen(false)}
+            >
+              <ListItemText primary={page.title} />
             </ListItem>
           ))}
-        </List>
+        </Box>
       </Drawer>
-    </AppBar>
+
+      {/* Cart Drawer */}
+      {!isAdmin && cartOpen && (
+        <Cart
+          open={cartOpen}
+          setOpen={setCartOpen}
+          modalType={modalType}
+          setModalType={setModalType}
+        />
+      )}
+    </>
   );
-}
+};
 
 export default Header;

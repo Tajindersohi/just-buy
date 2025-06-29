@@ -82,6 +82,7 @@ export const getMe = createAsyncThunk(
     try {
       dispatch(gettingUserInfo());
       const token = localStorage.getItem('token')
+      console.log("tokentoken",token);
       if(token){
         // showLoading(true)
         const response = await apiConstants.user.getMe({token:token});

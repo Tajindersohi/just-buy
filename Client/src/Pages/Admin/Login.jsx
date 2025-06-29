@@ -1,112 +1,121 @@
-import React, {  useEffect, useState } from 'react';
-import { Box, Button, TextField, Typography, Paper } from '@mui/material';
-import { create, login } from '../../store/redux/thunks';
+import React, { useEffect, useState } from 'react';
+import { Box, Typography, Paper, useTheme } from '@mui/material';
+import { login } from '../../store/redux/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { showError, showSuccess } from '../../Assets/Constants/showNotifier';
-// import { useshowNotifier } from '../../Assets/Constants/showNotifier';
-// import { showError, showSuccess } from '../../Assets/Constants/showNotifier';
+import CustomTextField from '../../Components/Common/CustomTextField';
+import ThemeButton from '../../Components/Common/ThemeButton';
 
 export default function AdminLogin() {
-    const user = useSelector((state)=>state.auth.user)
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState('');
-    const [emailError, setEmailError] = useState(false);
-    const [passwordError, setPasswordError] = useState(false);
-    const [type, setType] = useState(true);
-    const navigate = useNavigate()
-    // const { success, error } = useshowNotifier();
+  const theme = useTheme();
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    useEffect(()=>{
-        if(user) navigate('/admin/dashboard') 
-    },[user])
-    const dispatch = useDispatch();
-    
-    // const handleLogin = () => {
-    //     setEmailError(!email.includes('@'));
-    //     setPasswordError(password.length < 6);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
-    //     if (email.includes('@') && password.length >= 6) {
-    //         console.log('Login Successful');
-    //     }
-    // };
+  useEffect(() => {
+    if (user) navigate('/admin/dashboard');
+  }, [user, navigate]);
 
-    const postLogin = async (e) =>{
-        e.preventDefault();
-        const credentials = { email, password };
-    
-        try {
-            if(type){
-                await dispatch(login(credentials)).unwrap();
-                showSuccess("Login Successfull");
-            }else{
-                await dispatch(create(credentials)).unwrap();
-                showSuccess("Register Successfull");
-            }
-        } catch (err) {
-          showError(err);
-          console.error('Login failed:', err);
-        }   
+  const validateForm = () => {
+    let valid = true;
+
+    if (!email.includes('@') || email.trim() === '') {
+      setEmailError('Please enter a valid email');
+      valid = false;
+    } else {
+      setEmailError('');
     }
 
-    
-    return (
-        <Box 
-            sx={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center', 
-                height: '100vh', 
-                backgroundColor: '#f5f5f5' 
-            }}
-        >
-            <Paper 
-                elevation={3} 
-                sx={{ 
-                    padding: '2rem', 
-                    width: '400px', 
-                    textAlign: 'center' 
-                }}
-            >
-                <Typography variant="h5" gutterBottom>
-                    Admin {type ? 'Login' : 'Register'}
-                </Typography>
+    if (password.length < 6) {
+      setPasswordError('Password must be at least 6 characters');
+      valid = false;
+    } else {
+      setPasswordError('');
+    }
 
-                <TextField 
-                    fullWidth 
-                    label="Email" 
-                    placeholder="Enter your email" 
-                    margin="normal"
-                    variant="outlined" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    error={emailError}
-                    helperText={emailError ? "Please enter a valid email address" : ""}
-                />
-                <TextField 
-                    fullWidth 
-                    label="Password" 
-                    type="password" 
-                    placeholder="Enter your password" 
-                    margin="normal"
-                    variant="outlined" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    error={passwordError}
-                    helperText={passwordError ? "Password must be at least 6 characters" : ""}
-                />
-                
-                <Button 
-                    fullWidth 
-                    variant="contained" 
-                    color="primary" 
-                    sx={{ marginTop: '1rem' }}
-                    onClick={postLogin}
-                >
-                    {type ? 'Login' : 'Register'}
-                </Button>
-                <Button onClick={()=> setType(!type)}>{type ? 'Register ?' : 'Login ?'}</Button>
-            </Paper>
-        </Box>
-    );
+    return valid;
+  };
+
+  const postLogin = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    const credentials = { email, password };
+
+    try {
+      await dispatch(login(credentials)).unwrap();
+      showSuccess('Login Successful');
+    } catch (err) {
+      showError(err?.message || 'Login failed');
+      console.error('Login error:', err);
+    }
+  };
+
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: theme.palette.background.default,
+        px: 2,
+      }}
+    >
+      <Paper
+        elevation={4}
+        sx={{
+          padding: '2.5rem 2rem',
+          width: '100%',
+          maxWidth: '420px',
+          textAlign: 'center',
+          borderRadius: 4,
+          backgroundColor: theme.palette.background.paper,
+          boxShadow: theme.shadows[8],
+        }}
+      >
+        <Typography
+          variant="h5"
+          gutterBottom
+          sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+        >
+          Admin Login
+        </Typography>
+
+        <CustomTextField
+          label="Email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={!!emailError}
+          helperText={emailError}
+        />
+
+        <CustomTextField
+          label="Password"
+          placeholder="Enter your password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={!!passwordError}
+          helperText={passwordError}
+        />
+
+        <ThemeButton
+          label="Login"
+          onClick={postLogin}
+          variant="primary"
+          fullWidth
+          sx={{ mt: 2 }}
+        />
+      </Paper>
+    </Box>
+  );
 }

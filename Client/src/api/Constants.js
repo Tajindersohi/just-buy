@@ -4,6 +4,12 @@ const apiConstants = {
     admin:{
         login: async (data) => await axiosInstance.post('/admin/login', data),
         registerUser: async (data) => await axiosInstance.post('/admin/register', data),
+        users:{
+            get: async (data) => await axiosInstance.get('/admin/users', data),
+            delete: async (id) => await axiosInstance.delete(`/admin/users/${id}`),
+            update: async (id, data) => await axiosInstance.put(`/admin/users/${id}`,data),
+            create: async (data) => await axiosInstance.post(`/admin/users`,data),
+        }
     },
     product:{
         categoryList: async () => await axiosInstance.get('/category'),

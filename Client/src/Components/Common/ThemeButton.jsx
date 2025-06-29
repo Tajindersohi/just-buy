@@ -1,42 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, CircularProgress, useTheme } from '@mui/material';
-import appTheme from '../../Assets/Theme';
+import { Button, CircularProgress } from '@mui/material';
 
-const ThemeButton = ({ label, onClick, variant = 'primary', icon, disabled = false, fullWidth = false, loading = false }) => {
-
-  const buttonStyles = {
-    primary: {
-      backgroundColor: appTheme.colors.primary,
-      color: appTheme.colors.background,
-      "&:hover": { backgroundColor: appTheme.colors.dark },
-    },
-    secondary: {
-      backgroundColor: appTheme.colors.secondary,
-      color: appTheme.colors.background,
-      "&:hover": { backgroundColor: appTheme.colors.dark },
-    },
-    danger: {
-      backgroundColor: appTheme.colors.danger,
-      color: appTheme.colors.background,
-      "&:hover": { backgroundColor: appTheme.colors.dark },
-    },
-  };
-
+const ThemeButton = ({
+  label,
+  onClick,
+  variant = 'primary',
+  icon,
+  disabled = false,
+  fullWidth = false,
+  loading = false,
+  type = 'button',
+  size = 'medium',
+  sx = {}
+}) => {
   return (
     <Button
       onClick={onClick}
+      type={type}
       disabled={disabled || loading}
       variant="contained"
-      startIcon={icon}
+      color={variant} // Leverage MUI's theme system
+      startIcon={!loading && icon}
       fullWidth={fullWidth}
+      size={size}
       sx={{
-        ...buttonStyles[variant],
-        borderRadius: appTheme.borderRadius.md,
+        borderRadius: 2,
         textTransform: 'capitalize',
+        minWidth: 100,
+        px: 2,
+        py: 1,
+        ...sx
       }}
     >
-      {loading ? <CircularProgress size={24} color="inherit" /> : label}
+      {loading ? <CircularProgress size={20} color="inherit" /> : label}
     </Button>
   );
 };
@@ -44,10 +41,13 @@ const ThemeButton = ({ label, onClick, variant = 'primary', icon, disabled = fal
 ThemeButton.propTypes = {
   label: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
-  variant: PropTypes.oneOf(['primary', 'secondary', 'danger']),
+  variant: PropTypes.oneOf(['primary', 'secondary', 'error']),
+  icon: PropTypes.element,
   disabled: PropTypes.bool,
   fullWidth: PropTypes.bool,
   loading: PropTypes.bool,
+  type: PropTypes.string,
+  size: PropTypes.oneOf(['small', 'medium', 'large']),
 };
 
 export default ThemeButton;

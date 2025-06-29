@@ -1,65 +1,69 @@
 import React, { Suspense, lazy } from "react";
-import { Routes, Route, Outlet, Navigate } from "react-router-dom";
-import GeneralLayout from "../Layouts/GeneralLayout";
-import LoadingIndicator from "../Components/Common/LoadingIndicator";
-import Login from "../Pages/Admin/Login";
-import PrivateRoute from "./PrivateRoutes";
-import Dashboard from "../Pages/Admin/Dashboard";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
-import Logout from "../Pages/Admin/Logout/Logout";
-import ProductDetails from "../Pages/Admin/Products/ProductDetails";
+import LoadingIndicator from "../Components/Common/LoadingIndicator";
+import PrivateRoute from "./PrivateRoutes";
+import AdminRoute from "./AdminRoutes";
+import GeneralLayout from "../Layouts/GeneralLayout";
+import AdminLayout from "../Pages/Admin/AdminLayout";
+import ProfileView from "../Components/Common/ProfileView";
+
+// Lazy-loaded Pages
 const Home = lazy(() => import("../Pages/Home"));
 const About = lazy(() => import("../Pages/About"));
 const Contact = lazy(() => import("../Pages/Contact"));
 const NotFound = lazy(() => import("../Pages/NotFound"));
-const ProductList = lazy(() => import("../Pages/Admin/Products"));
+const Login = lazy(() => import("../Pages/Admin/Login"));
+const Logout = lazy(() => import("../Pages/Admin/Logout/Logout"));
+const Dashboard = lazy(() => import("../Pages/Admin/Dashboard"));
+const CategoryManager = lazy(() => import("../Pages/Admin/Products"));
+const ProductDetails = lazy(() => import("../Pages/Admin/Products/ProductDetails"));
+const Users = lazy(() => import("../Pages/Admin/Users"));
 
 const AppRoutes = () => {
-    const user = useSelector((state) => state.auth.user);
-    const commonRoutes = () => {
-        return (
-            <>
-                <Route
-                    element={
-                        user ? user.userRole == 'admin' ? <Navigate to="/admin/dashboard" /> : <Navigate to="/" /> : <Outlet />
-                    }
-                >
-                    <Route path="/admin/login" element={<Login />} />
-                </Route>
-                <Route path="/" element={<GeneralLayout><Home /></GeneralLayout>} />
-                <Route path="/about" element={<GeneralLayout><About /></GeneralLayout>} />
-                <Route path="/contact" element={<GeneralLayout><Contact /></GeneralLayout>} />
-                <Route path="*" element={<GeneralLayout><NotFound /></GeneralLayout>} />
-            </>
-        )
-    }
+  const user = useSelector((state) => state.auth.user);
 
-    const adminRoutes = () => {
-        return (
-            <>
-                <Route path="/admin/categories" element={<ProductList />} />
-                <Route path="/products/:id" element={<ProductDetails />} />
-                <Route path="/admin/dashboard" element={<Dashboard />} />
-                <Route path="/admin/logout" element={<Logout />} />
-            </>
-        )
-    }
-   
-    return (
-        <Suspense fallback={<LoadingIndicator />}>
-            <Routes>
-                {/*Admin Routes */}
-                <Route
-                    element={
-                        <PrivateRoute user={user} />
-                    }
-                >
-                    {adminRoutes()}   
-                </Route>
-                {commonRoutes()}
-            </Routes>
-        </Suspense>
-    );
+  return (
+    <Suspense fallback={<LoadingIndicator />}>
+      <Routes>
+
+        <Route element={<GeneralLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+
+        <Route
+          path="/admin/login"
+          element={
+            user
+              ? user.userRole === "admin"
+                ? <Navigate to="/admin/dashboard" />
+                : <Navigate to="/" />
+              : <Login />
+          }
+        />
+
+        <Route element={<PrivateRoute />}>
+          <Route element={<GeneralLayout />}>
+            <Route path="/profile" element={<ProfileView />} />
+          </Route>
+        </Route>
+
+        <Route element={<AdminRoute />}>
+          <Route element={<AdminLayout />}>
+            <Route path="/admin/dashboard" element={<Dashboard />} />
+            <Route path="/admin/logout" element={<Logout />} />
+            <Route path="/admin/categories" element={<CategoryManager />} />
+            <Route path="/products/:id" element={<ProductDetails />} />
+            <Route path="/admin/users" element={<Users />} />
+          </Route>
+        </Route>
+
+      </Routes>
+    </Suspense>
+  );
 };
 
 export default AppRoutes;

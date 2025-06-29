@@ -2,9 +2,6 @@ const usefullinks = [
     "About",
     "Careers",
     "Blog",
-    "Press",
-    "Lead",
-    "Value",
     "Privacy",
     "Terms",
     "FAQs",
@@ -16,7 +13,6 @@ const usefullinks = [
     "Seller",
     "Warehouse",
     "Deliver",
-    "Resources",
 ];
  
 const Constant = [

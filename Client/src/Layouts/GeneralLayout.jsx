@@ -2,8 +2,9 @@ import React from "react";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { Box, Container, Grid, useMediaQuery, useTheme } from "@mui/material";
+import { Outlet } from "react-router-dom"; // ✅ Import this
 
-const GeneralLayout = ({ children }) => {
+const GeneralLayout = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -24,7 +25,7 @@ const GeneralLayout = ({ children }) => {
                 justifyContent="center"
             >
                 <Grid item xs={12}>
-                    {children}
+                    <Outlet />
                 </Grid>
             </Grid>
 

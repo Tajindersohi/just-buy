@@ -1,49 +1,51 @@
 import React from "react";
-import { Grid, Box, Skeleton, useMediaQuery } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { Grid, Skeleton, Card, Box, CardContent } from "@mui/material";
+import { useTheme, useMediaQuery } from "@mui/material";
 
 const ProductSkeleton = ({ count = 6 }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const isMobile = useMediaQuery("(max-width:600px)");
+  const isTablet = useMediaQuery("(max-width:900px)");
+
+  const getImageHeight = () => {
+    if (isMobile) return 100;
+    if (isTablet) return 130;
+    return 150;
+  };
 
   return (
-    <Grid container spacing={1}>
-      {Array.from({ length: count }, (_, idx) => (
-        <Grid
-          item
-          key={idx}
-          xs={6} 
-          sm={6} 
-          md={2}
-        >
-          <Box
-            p={2}
-            border="1px solid #ddd"
-            borderRadius="12px"
-            boxShadow={1}
+    <Grid container spacing={2}>
+      {Array.from({ length: count }).map((_, i) => (
+        <Grid item xs={6} sm={4} md={3} lg={2} key={i}>
+          <Card
+            elevation={2}
+            sx={{
+              borderRadius: 3,
+              backgroundColor: theme.palette.background.paper,
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+            }}
           >
-            <Skeleton
-              variant="rectangular"
-              width="100%"
-              height={100}
-              sx={{ borderRadius: "10px" }}
-            />
-            <Box mt={1}>
-              <Skeleton variant="text" width="60%" height={24} />
-              <Skeleton variant="text" width="40%" height={18} />
-              <Skeleton variant="text" width="30%" height={18} />
-              <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Skeleton variant="text" width="40%" height={22} />
-                <Skeleton
-                  variant="rectangular"
-                  width="60px"
-                  height="32px"
-                  sx={{ borderRadius: "8px", mt: 1 }}
-                />
-              </Box>
+            <Box sx={{ p: 1 }}>
+              <Skeleton
+                variant="rectangular"
+                width="100%"
+                height={getImageHeight()}
+                sx={{ borderRadius: 2 }}
+              />
             </Box>
-          </Box>
+
+            <CardContent sx={{ pt: 1, px: 1.5 }}>
+              <Skeleton variant="text" width="80%" height={20} sx={{ mb: 0.5 }} />
+              <Skeleton variant="text" width="50%" height={15} sx={{ mb: 1 }} />
+              <Skeleton variant="text" width="40%" height={20} />
+            </CardContent>
+
+            <Box px={1.5} pb={2}>
+              <Skeleton variant="rectangular" height={32} width="100%" sx={{ borderRadius: 20 }} />
+            </Box>
+          </Card>
         </Grid>
       ))}
     </Grid>

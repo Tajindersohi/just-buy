@@ -12,36 +12,49 @@ const StickyCartBar = ({ onOpenCart, setModalType, open }) => {
 
   const totalItems = cartItems.items.reduce((sum, item) => sum + item.count, 0);
 
-  if (!isMobile || cartItems.items.length === 0 || open) return null;
+  if (!isMobile || totalItems === 0 || open) return null;
 
   return (
     <Box
       sx={{
         position: "fixed",
-        bottom: "5%",
-        left: "25%",
+        bottom: 16,
+        left: "50%",
+        transform: "translateX(-50%)",
         zIndex: 1300,
-        backgroundColor: "green",
+        backgroundColor: theme.palette.primary.main,
         color: "#fff",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        width: "90%",
+        maxWidth: "400px",
         px: 2,
-        py: 1.5,
-        height:"20px",
-        width:"50%",
-        borderRadius: "10px",
-        boxShadow: "0 -2px 6px rgba(0,0,0,0.2)",
+        py: 1.2,
+        borderRadius: "999px",
+        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
       }}
     >
       <Box display="flex" alignItems="center">
         <ShoppingCartIcon sx={{ mr: 1 }} />
-        <Box>
-          <Typography variant="body2">{totalItems} items</Typography>
-        </Box>
+        <Typography variant="body2" fontWeight={500}>
+          {totalItems} item{totalItems > 1 ? "s" : ""} in cart
+        </Typography>
       </Box>
-      <Button className="button" onClick={onOpenCart} sx={{ color: "#fff" }} endIcon={<>&#8250;</>}>
-        View Cart
+
+      <Button
+        onClick={onOpenCart}
+        size="small"
+        sx={{
+          color: "#fff",
+          fontWeight: 600,
+          textTransform: "none",
+          px: 1.5,
+          fontSize: "13px",
+          minWidth: 0,
+        }}
+      >
+        View
       </Button>
     </Box>
   );

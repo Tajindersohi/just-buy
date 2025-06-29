@@ -8,9 +8,8 @@ const { uploadImage } = require('./controllers/upload/upload');
 
 // middlewares
 app.use(cors({
-  origin: process.env.CONNECTION_STRING,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
-  credentials: true, 
+  origin: 'http://localhost:3000', // or your frontend domain
+  credentials: true
 }));
 
 app.use(express.json());
