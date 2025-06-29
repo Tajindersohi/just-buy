@@ -45,7 +45,6 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
       <Card
         elevation={2}
         sx={{
-          borderRadius: 3,
           backgroundColor: theme.palette.background.paper,
           transition: "transform 0.2s ease, box-shadow 0.3s ease",
           display: "flex",
@@ -65,7 +64,6 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
               alignItems: "center",
               justifyContent: "center",
               position: "relative",
-              borderRadius: 2,
               overflow: "hidden",
               bgcolor: theme.palette.background.default,
             }}
@@ -156,7 +154,7 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
                 backgroundColor: theme.palette.success.main,
                 color: "#fff",
                 "&:hover": {
-                  backgroundColor: theme.palette.success.dark,
+                  backgroundColor: theme.palette.success.main,
                 },
               }}
             >

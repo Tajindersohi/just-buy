@@ -6,7 +6,6 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { IconButton, ThemeProvider, useMediaQuery } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
-import dataGridTheme from '../../../Components/Common/dataGridTheme';
 import appTheme from '../../../Assets/Theme';
 import DeleteModal from '../../../Components/Common/DeleteModal';
 import { useState } from 'react';
@@ -70,7 +69,6 @@ export default function ProductList({ list }) {
 
   return (
     <Box sx={{ height: isMobile ? 300 : isTablet ? 350 : 400, width: '100%' }}>
-      <ThemeProvider theme={dataGridTheme}>
         <DataGrid
           rows={list}
           columns={columns}
@@ -84,7 +82,6 @@ export default function ProductList({ list }) {
           pageSizeOptions={isMobile ? [3, 5] : [5, 10]}
           disableRowSelectionOnClick
         />
-      </ThemeProvider>
       <DeleteModal open={openDelete} handleClose={handleClose} handleSubmit={deleteCategory}>
         <Box mt={2} textAlign="center">
           Are you sure you want to delete this subcategory along with all its associated products?

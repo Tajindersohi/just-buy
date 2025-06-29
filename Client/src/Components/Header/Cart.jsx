@@ -72,7 +72,7 @@ export default function Cart({ open, setOpen, modalType, setModalType }) {
         <IconButton onClick={toggleDrawer(false)}>
           <CancelRoundedIcon />
         </IconButton>
-      </Box>
+      </Box>  
 
       {cartItems.items.length > 0 ? (
         <>
@@ -102,7 +102,7 @@ export default function Cart({ open, setOpen, modalType, setModalType }) {
                     />
                   </Box>
                   <Box ml={2} flexGrow={1}>
-                    <Typography fontWeight={500}>{cartItem.name}</Typography>
+                    <Typography fontWeight={500}>{item.name}</Typography>
                     <Typography variant="body2" color="text.secondary">
                       {item.weight}
                     </Typography>

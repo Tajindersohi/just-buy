@@ -7,7 +7,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CommonModal from '../../../Components/Common/CommonModal';
 import { useState } from 'react';
 import appTheme from '../../../Assets/Theme';
-import dataGridTheme from '../../../Components/Common/dataGridTheme';
 import EditIcon from '@mui/icons-material/Edit';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteProduct,updateSingleProduct } from '../../../store/redux/productThunk';
@@ -132,7 +131,6 @@ export default function ProductsGrid({ list = [] }) {
 
   return (
     <Box sx={{ height: isMobile ? 300 : isTablet ? 350 : 400, width: '100%' }}>
-      <ThemeProvider theme={dataGridTheme}>
         <DataGrid
           rows={rows}
           columns={columns}
@@ -183,7 +181,6 @@ export default function ProductsGrid({ list = [] }) {
               </Grid>
           </Grid>
       </CommonModal>
-      </ThemeProvider>
       <DeleteModal open={openDelete} handleClose={handleClose} handleSubmit={handleDelete} isLoading={isLoading}>
           <Box mt={2} textAlign="center">
                 Do you really want to delete this product?

@@ -8,6 +8,7 @@ import {
   IconButton,
   Tooltip,
   Button,
+  useTheme,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -17,7 +18,6 @@ import {
   createUser,
 } from '../../../store/redux/adminUsersThunk';
 import { DataGrid } from '@mui/x-data-grid';
-import dataGridTheme from '../../../Components/Common/dataGridTheme';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -29,7 +29,7 @@ const Users = () => {
   const dispatch = useDispatch();
   const users = useSelector((state) => state.adminUsers.list || []);
   const loading = useSelector((state) => state.adminUsers.loading);
-
+  const theme = useTheme();
   const [selectedUser, setSelectedUser] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
@@ -209,7 +209,6 @@ const Users = () => {
         </Box>
       ) : (
         <Box mt={2} height={500}>
-          <ThemeProvider theme={dataGridTheme}>
             <DataGrid
               rows={users}
               getRowId={(row) => row?._id}
@@ -224,7 +223,6 @@ const Users = () => {
               pageSizeOptions={[5]}
               disableRowSelectionOnClick
             />
-          </ThemeProvider>
         </Box>
       )}
 
