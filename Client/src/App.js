@@ -12,7 +12,9 @@ import { ThemeProvider, CssBaseline } from "@mui/material";
 export const ColorModeContext = createContext();
 const App = () => {
   const [mode, setMode] = useState(() => {
-    return localStorage.getItem("theme") || "light";
+  const storedTheme = localStorage.getItem("theme");
+  const defaultTheme = ['dark', 'light'].includes(storedTheme) ? storedTheme : 'light';
+  return defaultTheme;
   });
 
   const toggleColorMode = () => {

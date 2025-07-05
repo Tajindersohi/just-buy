@@ -31,12 +31,14 @@ export default function Login({ modalType, setModalType }) {
   const [number, setNumber] = useState('');
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isOtpSent, setIsOtpSent] = useState(false);
 
   const handleOpen = useCallback(() => setModalType('phone'), []);
   const handleClose = useCallback(() => {
     setModalType(null);
     setNumber('');
     setOtp('');
+    setIsOtpSent(false);
   }, []);
 
   const handleChange = (key, val) => {
@@ -52,9 +54,17 @@ export default function Login({ modalType, setModalType }) {
           showError('Enter a valid phone number');
           return;
         }
-        dispatch(sendOtp({ phoneNumber: number }));
+
+        const res = await dispatch(sendOtp({ phoneNumber: number }));
+        if (res.meta.requestStatus === 'fulfilled') {
+          setModalType('otp');
+          setIsOtpSent(true);
+        }
       } else {
-        await dispatch(loginWithOtp({ phoneNumber: number, otp }));
+        const res = await dispatch(loginWithOtp({ phoneNumber: number, otp }));
+        if (res.meta.requestStatus === 'fulfilled') {
+          handleClose();
+        }
       }
     } catch (err) {
       console.error(err);
@@ -64,12 +74,14 @@ export default function Login({ modalType, setModalType }) {
   };
 
   useEffect(() => {
-    if (userState.sent) setModalType('otp');
-    if (userState.isAuthenticated && userState.user) handleClose();
-  }, [userState.sent, userState.isAuthenticated]);
+    if (userState.isAuthenticated && userState.user) {
+      handleClose();
+    }
+  }, [userState.isAuthenticated]);
 
   const handleChangeNumber = () => {
-    dispatch(resetOtpSent());
+    dispatch(resetOtpSent()); // Optional if not used in slice
+    setIsOtpSent(false);
     setModalType('phone');
   };
 
@@ -94,23 +106,23 @@ export default function Login({ modalType, setModalType }) {
         loading={loading}
       >
         <Box width={isMobile ? '100%' : '400px'} px={2} py={1}>
-            <FormControl fullWidth variant="outlined">
+          <FormControl fullWidth variant="outlined">
             <InputLabel htmlFor="phone-input">Enter Mobile Number</InputLabel>
             <OutlinedInput
-                id="phone-input"
-                value={number}
-                onChange={(e) => handleChange('number', e.target.value)}
-                startAdornment={<InputAdornment position="start">+91</InputAdornment>}
-                label="Enter Mobile Number"
-                type="tel"
-                sx={{
+              id="phone-input"
+              value={number}
+              onChange={(e) => handleChange('number', e.target.value)}
+              startAdornment={<InputAdornment position="start">+91</InputAdornment>}
+              label="Enter Mobile Number"
+              type="tel"
+              sx={{
                 borderRadius: 2,
                 '& .MuiOutlinedInput-notchedOutline': {
-                    borderRadius: 2,
+                  borderRadius: 2,
                 },
-                }}
+              }}
             />
-            </FormControl>
+          </FormControl>
         </Box>
       </CommonModal>
 
@@ -133,9 +145,9 @@ export default function Login({ modalType, setModalType }) {
             onChange={(e) => handleChange('otp', e.target.value)}
             sx={{ borderRadius: 3 }}
           />
-          {userState.message && (
+          {isOtpSent && (
             <Typography variant="body2" mt={1} textAlign="center">
-              {userState.message} sent to <strong>+{number}</strong>
+              OTP sent to <strong>+91 {number}</strong>
             </Typography>
           )}
           <Box display="flex" justifyContent="center" mt={2}>

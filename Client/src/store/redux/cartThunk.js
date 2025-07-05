@@ -1,57 +1,64 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
-    gettingCart,
-    getCartSuccess,
-    getCartFailed,
-    removeProduct,
-    addProduct,
-    syncCartSlice
+  gettingCart,
+  getCartSuccess,
+  getCartFailed,
+  removeProduct,
+  addProduct,
+  syncCartSlice,
 } from './cartslice';
 import apiConstants from '../../api/Constants';
 
 export const getCartDetails = createAsyncThunk(
-  '/cart',
+  'cart/getCartDetails',
   async (data, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(gettingCart()); 
+      dispatch(gettingCart());
       const response = await apiConstants.cart.getCart(data);
       const list = response.data.data;
-      if(response.data.success){
-        dispatch(getCartSuccess(list)); 
+
+      if (response.data.success) {
+        dispatch(getCartSuccess(list));
       }
-      return { list };
+
+      return list;
     } catch (err) {
-      dispatch(getCartFailed(err.response?.data?.message || 'Get Products failed')); // Dispatch error
+      const errorMsg = err.response?.data?.message || 'Get Products failed';
+      dispatch(getCartFailed(errorMsg));
+      return rejectWithValue(errorMsg);
     }
   }
 );
 
 export const removeCartProduct = createAsyncThunk(
-  '/cart',
-  (id, { dispatch, rejectWithValue }) => {
+  'cart/removeProduct',
+  (id, { dispatch }) => {
     try {
-      dispatch(removeProduct(id)); 
+      dispatch(removeProduct(id));
     } catch (err) {
+      console.error("Remove Cart Product failed", err);
     }
   }
 );
 
 export const addCartProductItem = createAsyncThunk(
-  '/cart',
-  (id, { dispatch, rejectWithValue }) => {
+  'cart/addProduct',
+  (id, { dispatch }) => {
     try {
-      dispatch(addProduct(id)); 
+      dispatch(addProduct(id));
     } catch (err) {
+      console.error("Add Cart Product failed", err);
     }
   }
 );
 
 export const syncCart = createAsyncThunk(
-  '/cart',
-  (data, { dispatch, rejectWithValue }) => {
+  'cart/syncCart',
+  (data, { dispatch }) => {
     try {
-      dispatch(syncCartSlice(data)); 
+      dispatch(syncCartSlice(data));
     } catch (err) {
+      console.error("Sync Cart failed", err);
     }
   }
 );

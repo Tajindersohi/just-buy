@@ -26,20 +26,28 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    // showSuccess(response?.data?.message || "Success")
     return response;
   },
-  (err) => {
-    if (err.response && err.response.status === 401) {
-      logout()
-      localStorage.clear();
-      // window.location.href = "/admin/login";
-      showError(err?.response || "Token expired")
-    }else{
-      showError(err?.response || "Unprocessable")
+  (error) => {
+    let errorMsg = "Something went wrong.";
+    if (error?.response?.data?.message) {
+      errorMsg = error.response.data.message;
+    } else if (error?.message) {
+      errorMsg = error.message;
     }
-    return Promise.reject(err);
+
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userRole");
+      // showError(errorMsg || "Token expired");
+    } else {
+      showError(errorMsg || "Unprocessable");
+    }
+
+    return Promise.reject(error);
   }
 );
+
 
 export default axiosInstance;

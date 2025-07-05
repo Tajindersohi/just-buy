@@ -78,25 +78,30 @@ export const logoutUser = createAsyncThunk('/logout', async (_, { dispatch }) =>
 
 export const getMe = createAsyncThunk(
   '/getMe',
-  async (credentials, { dispatch, rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
       dispatch(gettingUserInfo());
-      const token = localStorage.getItem('token')
-      console.log("tokentoken",token);
-      if(token){
-        // showLoading(true)
-        const response = await apiConstants.user.getMe({token:token});
-        if(response.status == 200){
-          const {user} = response.data;
-          localStorage.setItem('token', token);
-          dispatch(loginOrSignup(user)); 
-        }else{
-          dispatch(gettingUserInfoFailed());
-        }
-        return response.data
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        dispatch(gettingUserInfoFailed());
+        return rejectWithValue('Token missing');
       }
-    }catch(error){
-      return rejectWithValue(error.response?.data?.message || 'failed');
+
+      const response = await apiConstants.user.getMe({ token });
+
+      if (response.status === 200) {
+        const { user } = response.data;
+        dispatch(loginOrSignup(user));
+        return user;
+      } else {
+        dispatch(gettingUserInfoFailed());
+        return rejectWithValue(response.data?.message || 'Unauthorized');
+      }
+    } catch (error) {
+      dispatch(gettingUserInfoFailed());
+      return rejectWithValue(error?.response?.data?.message || 'Failed to fetch user info');
     }
   }
 );
+

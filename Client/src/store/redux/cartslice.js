@@ -1,13 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { getCartDetails } from './cartThunk';
 
 const initialState = {
-  list: [],
   items: [],
   isLoading: false,
-  error: null,
-  total_cost : 0,
+  total_cost: 0,
   delivery_charges: 0,
   handeling_charges: 0,
+  detailsFetched: false,
+  error: null,
 };
 
 const cartSlice = createSlice({
@@ -18,12 +19,10 @@ const cartSlice = createSlice({
       state.isLoading = true;
       state.error = null;
     },
-
     getCartFailed(state, action) {
       state.isLoading = false;
       state.error = action.payload;
     },
-
     getCartSuccess(state, action) {
       state.isLoading = false;
       state.items = action.payload.items;
@@ -38,7 +37,6 @@ const cartSlice = createSlice({
         )
         .filter(item => item.count > 0);
     },
-
     addProduct(state, action) {
       const existingItem = state.items.find(item => item._id === action.payload);
       if (existingItem) {
@@ -47,10 +45,17 @@ const cartSlice = createSlice({
         state.items.push({ _id: action.payload, count: 1 });
       }
     },
-
     syncCartSlice(state, action) {
-      state.items = action.payload
+      state.items = action.payload;
     },
+    resetCartState(state) {
+      return initialState;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(getCartDetails.fulfilled, (state) => {
+      state.detailsFetched = true;
+    });
   },
 });
 
@@ -60,7 +65,8 @@ export const {
   getCartSuccess,
   removeProduct,
   addProduct,
-  syncCartSlice
+  syncCartSlice,
+  resetCartState,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;
