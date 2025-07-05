@@ -24,7 +24,7 @@ const GeneralLayout = () => {
                 mt={isMobile ? 1 : 2} 
                 justifyContent="center"
             >
-                <Grid item xs={12}>
+                <Grid item xs={12} minHeight={'60vh'}>
                     <Outlet />
                 </Grid>
             </Grid>

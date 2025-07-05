@@ -7,6 +7,8 @@ import AdminRoute from "./AdminRoutes";
 import GeneralLayout from "../Layouts/GeneralLayout";
 import AdminLayout from "../Pages/Admin/AdminLayout";
 import ProfileView from "../Components/Common/ProfileView";
+import CategoryProductsPage from "../Pages/Home/CategoryProductsPage";
+import CategoriesPage from "../Pages/Home/CategoriesPage";
 
 // Lazy-loaded Pages
 const Home = lazy(() => import("../Pages/Home"));
@@ -29,6 +31,8 @@ const AppRoutes = () => {
 
         <Route element={<GeneralLayout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/category/:categoryId" element={<CategoryProductsPage />} />
+          <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />

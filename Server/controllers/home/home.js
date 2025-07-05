@@ -2,119 +2,196 @@ const ProductCategory = require('../../models/productCategory');
 const Product = require('../../models/product');
 
 const getNestedCategories = (categories, parentId = null) => {
-    return categories
-    .filter(category => String(category.parentCategory?._id || '') === String(parentId || ''))
-    .map(category => ({
-            id: category._id,
-            name: category.name,
-            imageUrl: category.imageUrl,
-            subcategories: getNestedCategories(categories, category._id),
-            products: [], 
-        }));
+  return categories
+    .filter(cat => String(cat.parentCategory?._id || '') === String(parentId || ''))
+    .map(cat => ({
+      id: cat._id,
+      name: cat.name,
+      imageUrl: cat.imageUrl,
+      subcategories: getNestedCategories(categories, cat._id),
+      products: [],
+    }));
 };
 
-
 const getParentCategoriesWithProducts = async () => {
-    try {
-        const categoriesWithProducts = await ProductCategory.aggregate([
-            {
-                $match: { parentCategory: null }
-            },
-            {
-                $lookup: {
-                    from: 'productcategories', // Ensure correct collection name
-                    localField: '_id',
-                    foreignField: 'parentCategory',
-                    as: 'subcategories'
-                }
-            },
-            {
-                $addFields: {
-                    subcategoryIds: {
-                        $map: { input: "$subcategories", as: "sub", in: "$$sub._id" }
-                    }
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'subcategoryIds',
-                    foreignField: 'category_id', // Products are linked to subcategories
-                    as: 'products'
-                }
-            },
-            {
-                $project: {
-                    subcategoryIds: 0 
-                }
-            }
-        ]);
-
-        return categoriesWithProducts;
-    } catch (error) {
-        console.error("Error fetching categories with products:", error);
-        throw error;
+  return ProductCategory.aggregate([
+    { $match: { parentCategory: null } },
+    {
+      $lookup: {
+        from: 'productcategories',
+        localField: '_id',
+        foreignField: 'parentCategory',
+        as: 'subcategories'
+      }
+    },
+    {
+      $addFields: {
+        subcategoryIds: { $map: { input: "$subcategories", as: "sub", in: "$$sub._id" } }
+      }
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'subcategoryIds',
+        foreignField: 'category_id',
+        as: 'products'
+      }
+    },
+    {
+      $project: {
+        subcategoryIds: 0
+      }
     }
+  ]);
 };
 
 const getProductSummary = async () => {
-    try {
-        const result = await Product.aggregate([
-            {
-                $group: {
-                    _id: "$category_id",
-                    totalProducts: { $sum: 1 },
-                    avgPrice: { $avg: "$price" }
-                }
-            }
-        ]);
-        return result;
-    } catch (error) {
-        console.error(error);
+  return Product.aggregate([
+    {
+      $group: {
+        _id: "$category_id",
+        totalProducts: { $sum: 1 },
+        avgPrice: { $avg: "$price" }
+      }
     }
+  ]);
 };
-
 
 const getHome = async (req, res) => {
-    try {
-        const categoriesWithProducts = await ProductCategory.find().populate('parentCategory').lean();
+  try {
+    const allCategories = await ProductCategory.find().populate('parentCategory').lean();
+    const categoryIds = allCategories.map(cat => cat._id);
+    const allProducts = await Product.find({ category_id: { $in: categoryIds } }).lean();
 
-        const categoryIds = categoriesWithProducts.map(category => category._id);
+    const productMap = allProducts.reduce((acc, prod) => {
+      const catId = prod.category_id.toString();
+      if (!acc[catId]) acc[catId] = [];
+      acc[catId].push({
+        id: prod._id,
+        name: prod.name,
+        imageUrl: prod.imageUrl,
+        price: prod.price,
+        discount: prod.discount,
+      });
+      return acc;
+    }, {});
 
-        const products = await Product.find({ category_id: { $in: categoryIds } }).lean();
-        const productMap = products.reduce((acc, product) => {
-            const catId = product.category_id.toString();
-            if (!acc[catId]) acc[catId] = [];
-            acc[catId].push({
-                id: product._id,
-                name: product.name,
-                imageUrl: product.imageUrl,
-                price: product.price,
-                discount: product.discount,
-            });
-            return acc;
-        }, {});
+    let categoryTree = getNestedCategories(allCategories);
 
-        let categoryTree = getNestedCategories(categoriesWithProducts);
-        const attachProductsToCategories = (categories) => {
-            return categories.map(category => ({
-                ...category,
-                products: productMap[category.id] || [],
-                subcategories: attachProductsToCategories(category.subcategories),
-            }));
-        };
+    const attachProducts = (categories) => {
+      return categories.map(cat => ({
+        ...cat,
+        products: productMap[cat.id] || [],
+        subcategories: attachProducts(cat.subcategories),
+      }));
+    };
 
-        categoryTree = attachProductsToCategories(categoryTree);
-        const allSubCategories = await Product.find({}).lean(); 
-        const parentCategoryWithProducts = await getParentCategoriesWithProducts();
-        const productSummaries = await getProductSummary();
-        const result = {category : categoryTree, subCategory: allSubCategories, parentCategoryWithProducts:parentCategoryWithProducts , productSummaries:productSummaries }
-        res.status(200).json({ data: result, success: true, message: "Categories fetched successfully" });
-    } catch (err) {
-        console.error('Error fetching products:', err);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
+    categoryTree = attachProducts(categoryTree);
+
+    const productSummaries = await getProductSummary();
+    const parentCategoryWithProducts = await getParentCategoriesWithProducts();
+
+    res.status(200).json({
+      success: true,
+      message: "Home data fetched successfully",
+      data: {
+        category: categoryTree,
+        subCategory: allProducts,
+        parentCategoryWithProducts,
+        productSummaries
+      }
+    });
+  } catch (err) {
+    console.error("Error in getHome:", err);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
 };
 
+const getCategoryProducts = async (req, res) => {
+  try {
+    const categoryId = req.params.id;
+    const category = await ProductCategory.findById(categoryId);
 
-module.exports = { getHome };
+    if (!category) {
+      return res.status(404).json({ success: false, message: "Category not found" });
+    }
+
+    let products = [];
+    let subcategories = [];
+
+    if (!category.parentCategory) {
+      subcategories = await ProductCategory.find({ parentCategory: categoryId }).lean();
+
+      const subCatIds = subcategories.map((sc) => sc._id);
+      products = await Product.find({ category_id: { $in: subCatIds } }).lean();
+    } else {
+      products = await Product.find({ category_id: categoryId }).lean();
+    }
+
+    const formattedProducts = products.map((prod) => ({
+      _id: prod._id,
+      name: prod.name,
+      price: prod.price,
+      imageUrl: prod.imageUrl,
+      discount: prod.discount,
+    }));
+
+    res.status(200).json({
+      success: true,
+      message: "Category details fetched",
+      data: {
+        categoryName: category.name,
+        subcategories,
+        products: formattedProducts,
+      },
+    });
+  } catch (err) {
+    console.error("Error in getCategoryProducts:", err);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+const buildCategoryTree = (categories, parentId = null) => {
+  return categories
+    .filter(cat => String(cat.parentCategory?._id || '') === String(parentId || ''))
+    .map(cat => ({
+      id: cat._id,
+      name: cat.name,
+      imageUrl: cat.imageUrl,
+      subcategories: buildCategoryTree(categories, cat._id),
+    }));
+};
+
+const getCategories = async (req, res) => {
+  try {
+    const categories = await ProductCategory.find().populate("parentCategory").lean();
+
+    const nestedCategories = buildCategoryTree(categories);
+
+    res.status(200).json({
+      success: true,
+      message: "Categories fetched successfully",
+      data: {
+        flat: categories.map(cat => ({
+          _id: cat._id,
+          name: cat.name,
+          imageUrl: cat.imageUrl,
+          parentCategory: cat.parentCategory ? cat.parentCategory._id : null
+        })),
+        nested: nestedCategories
+      }
+    });
+  } catch (err) {
+    console.error("Error fetching categories:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch categories",
+    });
+  }
+};
+
+module.exports = {
+  getHome,
+  getCategoryProducts,
+  getCategories
+};
