@@ -32,12 +32,13 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
   const getCurrentPrice = (discount, total) =>
     (total - (discount * total) / 100).toFixed(2);
 
-  const handleAdd = (id) => {
+  const handleAdd = (product) => {
     if (productCount >= product.maxCount) {
       showWarning("Limit Reached", "center", false);
       return;
     }
-    handleAddItem(id);
+    console.log("productproductproduct",product);
+    handleAddItem(product);
   };
 
   return (
@@ -167,7 +168,7 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
                 </Box>
                 {productCount}
                 <Box
-                  onClick={() => handleAdd(product._id)}
+                  onClick={() => handleAdd(product)}
                   sx={{ px: 1.5, cursor: "pointer", fontWeight: 600 }}
                 >
                   +
@@ -180,7 +181,7 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
               size="small"
               variant="outlined"
               color="success"
-              onClick={() => handleAddItem(product._id)}
+              onClick={() => handleAdd(product)}
               sx={{
                 fontSize: "13px",
                 borderRadius: "20px",

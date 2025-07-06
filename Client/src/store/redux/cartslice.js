@@ -15,20 +15,14 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    gettingCart(state) {
-      state.isLoading = true;
-      state.error = null;
-    },
-    getCartFailed(state, action) {
-      state.isLoading = false;
-      state.error = action.payload;
-    },
-    getCartSuccess(state, action) {
-      state.isLoading = false;
-      state.items = action.payload.items;
-      state.total_cost = action.payload.total_cost;
-      state.delivery_charges = action.payload.delivery_charges;
-      state.handeling_charges = action.payload.handeling_charges;
+    addProduct(state, action) {
+      console.log("actionaction",action);
+      const existingItem = state.items.find(item => item._id === action.payload._id);
+      if (existingItem) {
+        existingItem.count += 1;
+      } else {
+        state.items.push({...action.payload, count:1});
+      }
     },
     removeProduct(state, action) {
       state.items = state.items
@@ -37,19 +31,26 @@ const cartSlice = createSlice({
         )
         .filter(item => item.count > 0);
     },
-    addProduct(state, action) {
-      const existingItem = state.items.find(item => item._id === action.payload);
-      if (existingItem) {
-        existingItem.count += 1;
-      } else {
-        state.items.push({ _id: action.payload, count: 1 });
-      }
-    },
     syncCartSlice(state, action) {
       state.items = action.payload;
     },
-    resetCartState(state) {
+    resetCartState() {
       return initialState;
+    },
+    gettingCart(state) {
+      state.isLoading = true;
+      state.error = null;
+    },
+    getCartSuccess(state, action) {
+      state.isLoading = false;
+      state.items = action.payload.items;
+      state.total_cost = action.payload.total_cost;
+      state.delivery_charges = action.payload.delivery_charges;
+      state.handeling_charges = action.payload.handeling_charges;
+    },
+    getCartFailed(state, action) {
+      state.isLoading = false;
+      state.error = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -60,13 +61,13 @@ const cartSlice = createSlice({
 });
 
 export const {
-  gettingCart,
-  getCartFailed,
-  getCartSuccess,
-  removeProduct,
   addProduct,
+  removeProduct,
   syncCartSlice,
   resetCartState,
+  gettingCart,
+  getCartSuccess,
+  getCartFailed,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

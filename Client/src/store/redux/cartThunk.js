@@ -11,10 +11,11 @@ import apiConstants from '../../api/Constants';
 
 export const getCartDetails = createAsyncThunk(
   'cart/getCartDetails',
-  async (data, { dispatch, rejectWithValue }) => {
+  async (data,{ dispatch, rejectWithValue, getState }) => {
     try {
+      const { cart } = getState(); 
       dispatch(gettingCart());
-      const response = await apiConstants.cart.getCart(data);
+      const response = await apiConstants.cart.getCart(cart.items);
       const list = response.data.data;
 
       if (response.data.success) {
@@ -43,14 +44,16 @@ export const removeCartProduct = createAsyncThunk(
 
 export const addCartProductItem = createAsyncThunk(
   'cart/addProduct',
-  (id, { dispatch }) => {
+  (data, { dispatch }) => {
     try {
-      dispatch(addProduct(id));
+      console.log("datadata",data);
+      dispatch(addProduct(data));
     } catch (err) {
       console.error("Add Cart Product failed", err);
     }
   }
 );
+
 
 export const syncCart = createAsyncThunk(
   'cart/syncCart',

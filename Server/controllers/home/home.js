@@ -164,22 +164,23 @@ const buildCategoryTree = (categories, parentId = null) => {
 
 const getCategories = async (req, res) => {
   try {
+    // Fetch all categories with parent info
     const categories = await ProductCategory.find().populate("parentCategory").lean();
 
-    const nestedCategories = buildCategoryTree(categories);
+    // Send only flat categories (no nested subcategories)
+    const flatCategories = categories.map(cat => ({
+      _id: cat._id,
+      name: cat.name,
+      imageUrl: cat.imageUrl,
+      parentCategory: cat.parentCategory ? cat.parentCategory._id : null,
+    }));
 
     res.status(200).json({
       success: true,
       message: "Categories fetched successfully",
       data: {
-        flat: categories.map(cat => ({
-          _id: cat._id,
-          name: cat.name,
-          imageUrl: cat.imageUrl,
-          parentCategory: cat.parentCategory ? cat.parentCategory._id : null
-        })),
-        nested: nestedCategories
-      }
+        flat: flatCategories,
+      },
     });
   } catch (err) {
     console.error("Error fetching categories:", err);
@@ -190,8 +191,86 @@ const getCategories = async (req, res) => {
   }
 };
 
+const searchProducts = async (req, res) => {
+  try {
+    const query = req.query.q?.trim();
+
+    if (!query) {
+      return res.status(400).json({ success: false, message: "Search query is required" });
+    }
+
+    const regex = new RegExp(query, 'i');
+
+    // Find matching categories and subcategories
+    const matchedCategories = await ProductCategory.find({ name: regex }).select('_id');
+    const categoryIds = matchedCategories.map(cat => cat._id);
+
+    // Find products by name or matching category/subcategory
+    const products = await Product.find({
+      $or: [
+        { name: regex },
+        { category_id: { $in: categoryIds } },
+      ],
+    })
+    .select('_id name imageUrl price discount category_id')
+    .populate({
+      path: 'category_id',
+      select: 'name parentCategory',
+      populate: {
+        path: 'parentCategory',
+        select: 'name'
+      }
+    })
+    .limit(30);
+
+    res.status(200).json({
+      success: true,
+      message: "Search results fetched",
+      products,
+    });
+  } catch (error) {
+    console.error("Error in searchProducts:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+const getSearchSuggestions = async (req, res) => {
+  try {
+    const query = req.query.q?.trim();
+
+    if (!query) {
+      return res.status(400).json({ success: false, message: "Query is required" });
+    }
+
+    const regex = new RegExp(query, 'i');
+
+    // Get product name matches
+    const productMatches = await Product.find({ name: regex })
+      .limit(5)
+      .select("name imageUrl");
+
+    // Get category or subcategory name matches
+    const categoryMatches = await ProductCategory.find({ name: regex })
+      .limit(5)
+      .select("name imageUrl");
+
+    res.status(200).json({
+      success: true,
+      suggestions: [
+        ...productMatches.map(p => ({ type: 'product', ...p._doc })),
+        ...categoryMatches.map(c => ({ type: 'category', ...c._doc })),
+      ],
+    });
+  } catch (err) {
+    console.error("Suggestion error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 module.exports = {
   getHome,
   getCategoryProducts,
-  getCategories
+  getCategories,
+  searchProducts,
+  getSearchSuggestions
 };

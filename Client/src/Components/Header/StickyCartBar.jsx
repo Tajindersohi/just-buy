@@ -6,11 +6,14 @@ import { useMediaQuery } from "@mui/material";
 import { useSelector } from "react-redux";
 
 const StickyCartBar = ({ onOpenCart, setModalType, open }) => {
-  const cartItems = useSelector((state) => state.cart);
+  const cart = useSelector((state) => state.cart);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const totalItems = cartItems.items.reduce((sum, item) => sum + item.count, 0);
+  const totalItems = cart.items.reduce((sum, item) => sum + item.count, 0);
+  const totalAmount = cart.items.reduce((total, item) => {
+    const discountedPrice = item.price - (item.discount * item.price) / 100;
+    return total + discountedPrice * item.count;
+  }, 0).toFixed(2);
 
   if (!isMobile || totalItems === 0 || open) return null;
 
@@ -35,11 +38,13 @@ const StickyCartBar = ({ onOpenCart, setModalType, open }) => {
         boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
       }}
     >
-      <Box display="flex" alignItems="center">
-        <ShoppingCartIcon sx={{ mr: 1 }} />
-        <Typography variant="body2" fontWeight={500}>
-          {totalItems} item{totalItems > 1 ? "s" : ""} in cart
-        </Typography>
+      <Box display="flex" alignItems="center" gap={1}>
+        <ShoppingCartIcon />
+        <Box>
+          <Typography variant="body2" fontWeight={500}>
+            {totalItems} item{totalItems > 1 ? "s" : ""} • ₹{totalAmount}
+          </Typography>
+        </Box>
       </Box>
 
       <Button

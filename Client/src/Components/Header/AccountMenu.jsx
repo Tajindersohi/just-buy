@@ -20,6 +20,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout, logoutUser } from '../../store/redux/thunks';
+import HomeIcon from '@mui/icons-material/Home';
 
 const AccountMenu = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -88,20 +89,29 @@ const AccountMenu = () => {
           },
         }}
       >
+        {isAdmin && 
         <MenuItem component={Link} to="/profile">
           <ListItemIcon>
             <ProfileIcon fontSize="small" />
           </ListItemIcon>
           Profile
         </MenuItem>
-
+        }
         {!isAdmin && (
+          <>
           <MenuItem component={Link} to="/orders">
             <ListItemIcon>
               <OrdersIcon fontSize="small" />
             </ListItemIcon>
             My Orders
           </MenuItem>
+          <MenuItem component={Link} to="/addresses">
+            <ListItemIcon>
+              <HomeIcon fontSize="small" />
+            </ListItemIcon>
+            Addresses
+          </MenuItem>
+          </>
         )}
 
         {isAdmin && (
@@ -118,18 +128,15 @@ const AccountMenu = () => {
               </ListItemIcon>
               Categories
             </MenuItem>
+            <MenuItem component={Link} to="/settings">
+              <ListItemIcon>
+                <Settings fontSize="small" />
+              </ListItemIcon>
+              Settings
+            </MenuItem>
           </>
         )}
-
         <Divider />
-
-        <MenuItem component={Link} to="/settings">
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
-
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />

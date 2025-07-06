@@ -71,42 +71,13 @@ const Header = () => {
           {/* Logo / Drawer */}
           <Box display="flex" alignItems="center">
             {isMobile ? (
-              <IconButton onClick={() => setDrawerOpen(true)} edge="start" color="inherit">
-                <MenuIcon />
-              </IconButton>
+              ""
             ) : (
               <Link to="/" style={{ textDecoration: 'none' }}>
                 {icons.justBuy}
               </Link>
             )}
           </Box>
-
-          {/* Search */}
-          {!isAdmin && !isMobile && (
-            <Box flex={1} mx={2} maxWidth="500px">
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="Search for products..."
-                variant="outlined"
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 10,
-                    backgroundColor: theme.palette.mode === 'light' ? '#f1f5f9' : '#252525',
-                    '& fieldset': { borderColor: '#e2e8f0' },
-                    '&:hover fieldset': { borderColor: '#cbd5e1' },
-                  },
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Box>
-          )}
 
           {/* Action Buttons */}
           <Box display="flex" alignItems="center" gap={1}>

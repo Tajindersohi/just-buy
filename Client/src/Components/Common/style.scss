@@ -38,3 +38,8 @@
     background-color: lighten(rgb(209, 53, 53), 10%) !important;
     color: white;
   }
+
+  .search-bar .MuiFormControl-root {
+    border-radius: 999px;
+    background-color: #f8fafc; /* optional */
+  }

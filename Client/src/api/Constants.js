@@ -44,6 +44,8 @@ const apiConstants = {
     },
     home:{
         getHome: async () => await axiosInstance.get('/home'),
+        searchHome: async (query) => await axiosInstance.get(`/home/search?q=${query}`),
+        searchSuggestion: async (query) => await axiosInstance.get(`/home/search/suggestions?q=${query}`),
         getCategoryProducts: async (id) => await axiosInstance.get(`/home/category/${id}`),
         getAllCategories: async () => await axiosInstance.get(`/home/categories`),
     },
