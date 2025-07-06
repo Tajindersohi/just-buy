@@ -49,6 +49,13 @@ const apiConstants = {
         getCategoryProducts: async (id) => await axiosInstance.get(`/home/category/${id}`),
         getAllCategories: async () => await axiosInstance.get(`/home/categories`),
     },
+    address: {
+    create: async (data) => await axiosInstance.post(`/address`, data),
+    getAll: async () => await axiosInstance.get(`/address`),
+    update: async (id, data) => await axiosInstance.put(`/address/${id}`, data),
+    delete: async (id) => await axiosInstance.delete(`/address/${id}`),
+    },
+
     cart:{
         getCart: async (data) => await axiosInstance.post('/cart',data)
     }

@@ -105,12 +105,6 @@ const AccountMenu = () => {
             </ListItemIcon>
             My Orders
           </MenuItem>
-          <MenuItem component={Link} to="/addresses">
-            <ListItemIcon>
-              <HomeIcon fontSize="small" />
-            </ListItemIcon>
-            Addresses
-          </MenuItem>
           </>
         )}
 

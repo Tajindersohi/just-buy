@@ -25,11 +25,11 @@ import StickyCartBar from './StickyCartBar';
 import Login from '../../Pages/Login';
 import icons from '../../Assets/Icons/Icons';
 import ThemeToggleButton from '../Common/ThemeToggleButton';
+import SearchBar from '../Common/SearchBar';
+import AddressModal from '../../Pages/Address';
 
 const userPages = [
   { link: '/', title: 'Home' },
-  { link: '/about', title: 'About Us' },
-  { link: '/contact', title: 'Contact' },
 ];
 
 const adminPages = [
@@ -73,12 +73,27 @@ const Header = () => {
             {isMobile ? (
               ""
             ) : (
-              <Link to="/" style={{ textDecoration: 'none' }}>
-                {icons.justBuy}
-              </Link>
+              <>
+                <Link to="/" style={{ textDecoration: 'none' }}>
+                  {icons.justBuy}
+                </Link>
+              </>
             )}
           </Box>
-
+          {isMobile && user &&
+          <Box display={'flex'} justifyContent={'center'} width={"100%"} gap={2}>
+            <AddressModal/>
+          </Box>
+          }
+          {!isMobile && 
+          <Box display={'flex'} justifyContent={'center'} width={"100%"} gap={2}>
+            {user &&
+            <AddressModal/>}
+            <Box width={'60%'}>
+              <SearchBar/>
+            </Box>
+          </Box>
+          }
           {/* Action Buttons */}
           <Box display="flex" alignItems="center" gap={1}>
             {!user && (

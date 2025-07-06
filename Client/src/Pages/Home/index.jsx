@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -19,20 +19,22 @@ import { addCartProductItem, removeCartProduct } from "../../store/redux/cartThu
 import ProductSkeleton from "../../Components/Common/ProductSkeleton";
 import CategorySkeleton from "../../Components/Common/CategorySkeleton";
 import CategoryProduct from "./CategoryProduct";
-import apiConstants from "../../api/Constants";
 import Product from "./Product";
+import { useSearch } from "../../context/SearchContext";
 
 const Home = () => {
   const dispatch = useDispatch();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showSearchResult, setShowSearchResult] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
-  const [searchLoading, setSearchLoading] = useState(false);
   const productsss = useSelector((state) => state.home);
   const errorMsg = useSelector((state) => state.product.error);
+
+  const {
+    searchQuery,
+    showSearchResult,
+    searchResults,
+    searchLoading,
+  } = useSearch();
+
   const [progress, setProgress] = useState(0);
-  const [suggestions, setSuggestions] = useState([]);
-  const skipSuggestionRef = useRef(false);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -71,82 +73,13 @@ const Home = () => {
   const handleAddItem = (product) => dispatch(addCartProductItem(product));
   const handleSubItem = (id) => dispatch(removeCartProduct(id));
 
-  const handleSearch = (e) => {
-    const val = e.target.value;
-    setSearchQuery(val);
-    if (val.trim()) {
-      setShowSearchResult(true);
-    } else {
-      setShowSearchResult(false);
-    }
-  };
-
-  useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      if (searchQuery.trim()) {
-        fetchSearchResults();
-
-        // Only fetch suggestions if not triggered by click
-        if (!skipSuggestionRef.current) {
-          fetchSuggestions(searchQuery);
-        }
-
-        // Reset the flag after execution
-        skipSuggestionRef.current = false;
-      } else {
-        setSearchResults([]);
-        setSuggestions([]);
-      }
-    }, 300);
-
-    return () => clearTimeout(delayDebounce);
-  }, [searchQuery]);
-
-
-  const fetchSearchResults = async () => {
-    try {
-      setSearchLoading(true);
-      const res = await apiConstants.home.searchHome(encodeURIComponent(searchQuery));
-      setSearchResults(res.data?.products || []);
-    } catch (error) {
-      console.error("Search API failed", error);
-    } finally {
-      setSearchLoading(false);
-    }
-  };
-
-  const handleSuggestionClick = (item) => {
-    skipSuggestionRef.current = true;  // prevent suggestion fetch
-    setSearchQuery(item.name);
-    setSearchResults([item]);
-    setSuggestions([]);
-    setShowSearchResult(true);
-  };
-
-  const fetchSuggestions = async (input) => {
-    try {
-      const res = await apiConstants.home.searchSuggestion(input);
-      if (res.data.success) {
-        setSuggestions(res.data.suggestions);
-      }
-    } catch (err) {
-      console.error("Error fetching suggestions", err);
-    }
-  };
-
   return (
     <Box py={2} position="relative">
+      {isMobile && 
       <Box maxWidth="600px" mx="auto" px={2} mb={4} mt={1}>
-        <SearchBar
-          value={searchQuery}
-          onChange={handleSearch}
-          onFocus={() => setShowSearchResult(true)}
-          // onFocusRemove={() => setShowSearchResult(false)}
-          suggestions={suggestions}
-          showSuggestions={searchQuery.trim().length > 0 && !searchLoading}
-          onSuggestionClick={handleSuggestionClick}
-        />  
+        <SearchBar />
       </Box>
+      }
 
       {!showSearchResult && (
         <>
@@ -193,7 +126,12 @@ const Home = () => {
           ) : searchResults.length > 0 ? (
             <Grid container spacing={2}>
               {searchResults.map((product) => (
-                  <Product handleAddItem={handleAddItem} handleSubItem={handleSubItem} product={product}/>
+                <Product
+                  key={product._id}
+                  handleAddItem={handleAddItem}
+                  handleSubItem={handleSubItem}
+                  product={product}
+                />
               ))}
             </Grid>
           ) : (

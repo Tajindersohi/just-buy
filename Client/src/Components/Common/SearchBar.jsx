@@ -5,33 +5,48 @@ import {
   InputAdornment,
   List,
   ListItem,
-  ListItemText,
   Paper,
   Typography,
   Divider,
   Avatar,
+  IconButton,
   useTheme,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close"; // 👈 Import clear icon
 import './style.scss';
-const SearchBar = ({
-  value,
-  onChange,
-  onFocus,
-  onFocusRemove,
-  suggestions = [],
-  onSuggestionClick,
-  showSuggestions = false,
-  placeholder = "Search for products or categories...",
-}) => {
+import { useSearch } from "../../context/SearchContext";
+
+const SearchBar = ({ onFocusRemove, placeholder = "Search for products or categories..." }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const wrapperRef = useRef(null);
 
+  const {
+    searchQuery,
+    setSearchQuery,
+    suggestions,
+    handleSuggestionClick,
+    setShowSearchResult,
+    searchLoading,
+  } = useSearch();
+
+  const showSuggestions = searchQuery.trim().length > 0 && !searchLoading;
+
+  const handleChange = (e) => {
+    setSearchQuery(e.target.value);
+    setShowSearchResult(!!e.target.value.trim());
+  };
+
+  const handleClear = () => {
+    setSearchQuery("");
+    setShowSearchResult(false);
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-        onFocusRemove?.(); // only if provided
+        onFocusRemove?.();
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -39,15 +54,15 @@ const SearchBar = ({
   }, [onFocusRemove]);
 
   return (
-    <Box position="relative" className="search-bar" ref={wrapperRef}>
+    <Box position="relative" className="search-bar" ref={wrapperRef} width={'100%'}>
       <TextField
         fullWidth
         size="small"
         placeholder={placeholder}
         variant="outlined"
-        value={value}
-        onChange={onChange}
-        onFocus={onFocus}
+        value={searchQuery}
+        onChange={handleChange}
+        onFocus={() => setShowSearchResult(true)}
         sx={{
           '& .MuiOutlinedInput-root': {
             borderRadius: "999px",
@@ -67,10 +82,16 @@ const SearchBar = ({
               <SearchIcon sx={{ color: isDark ? "#cbd5e1" : "#64748b" }} />
             </InputAdornment>
           ),
+          endAdornment: searchQuery && (
+            <InputAdornment position="end">
+              <IconButton onClick={handleClear} edge="end" size="small">
+                <CloseIcon sx={{ color: isDark ? "#cbd5e1" : "#64748b", fontSize: 20 }} />
+              </IconButton>
+            </InputAdornment>
+          )
         }}
       />
 
-      {/* Suggestion Dropdown */}
       {showSuggestions && suggestions.length > 0 && (
         <Paper
           elevation={3}
@@ -92,7 +113,7 @@ const SearchBar = ({
               <React.Fragment key={item._id}>
                 <ListItem
                   button
-                  onClick={() => onSuggestionClick(item)}
+                  onClick={() => handleSuggestionClick(item)}
                   sx={{
                     display: "flex",
                     alignItems: "center",

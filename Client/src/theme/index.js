@@ -11,6 +11,10 @@ export const getTheme = (mode = 'light') =>
               main: '#00b14f',
               contrastText: '#ffffff',
             },
+            error: {
+              main: '#dc2626',
+              contrastText: '#fff',
+            },
             secondary: {
               main: '#e5e7eb',
             },
@@ -38,6 +42,10 @@ export const getTheme = (mode = 'light') =>
             },
             secondary: {
               main: '#1f2937',
+            },
+            error: {
+              main: '#f87171',
+              contrastText: '#fff',
             },
             background: {
               default: '#121212',
@@ -84,6 +92,18 @@ export const getTheme = (mode = 'light') =>
             },
             '&:active': {
               boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.08)',
+            },
+          },
+        },
+      },
+        MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            '&.Mui-error .MuiOutlinedInput-notchedOutline': {
+              borderColor: mode === 'light' ? '#dc2626' : '#f87171',
+            },
+            '&.Mui-focused.Mui-error .MuiOutlinedInput-notchedOutline': {
+              borderColor: mode === 'light' ? '#dc2626' : '#f87171',
             },
           },
         },
