@@ -15,15 +15,19 @@ import {
 } from "@mui/material";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import { useDispatch, useSelector } from "react-redux";
-import { getCartDetails } from "../../store/redux/cartThunk";
+import { clearCart, getCartDetails } from "../../store/redux/cartThunk";
 import { showWarning } from "../../Assets/Constants/showNotifier";
 import { addProduct, removeProduct } from "../../store/redux/cartslice";
+import apiConstants from "../../api/Constants";
+import { useNavigate } from "react-router-dom";
 
 export default function Cart({ open, setOpen, setModalType }) {
   const theme = useTheme();
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
+  const user = useSelector((state) => state.user);
   const isAuthenticated = useSelector((state) => state.auth.user || state.user.user);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (open) {
@@ -120,6 +124,76 @@ export default function Cart({ open, setOpen, setModalType }) {
     </List>
   );
 
+  const handlePayment = async () => {
+    const res = await loadRazorpay("https://checkout.razorpay.com/v1/checkout.js");
+    if (!res) return alert("Razorpay SDK failed to load. Please try again.");
+
+    try {
+      const { data: order } = await apiConstants.user.payment.createOrder({
+        amount: cart.total_cost
+      });
+
+      const options = {
+        key: "rzp_test_spOg1mtGRCSHCE", // Replace with real Razorpay Key ID
+        amount: order.amount,
+        currency: "INR",
+        name: "Just Buy",
+        description: "Order Payment",
+        order_id: order.id,
+        handler: async function (response) {
+          const res =   await apiConstants.user.payment.verifyPayment({
+            ...response,
+            userId: user._id,
+            products: cart.items.map(item => ({
+              productId: item._id,
+              quantity: item.count
+            })),
+            amount: cart.total_cost
+          });
+                
+          if (res.data.success) {
+            localStorage.removeItem("cart");
+            dispatch(clearCart());
+
+            // dispatch(clearCart()); // Replace with your cart clearing logic
+
+            // alert("Payment Successful! Your order has been placed.");
+            navigate("/thank-you"); // Optional
+          }
+        },
+        prefill: {
+          contact: user?.phoneNumber || "9999999999",
+        },
+        theme: {
+          color: "#308d46",
+        },
+          method: {
+          upi: true, // ✅ explicitly allow UPI
+          card: true,
+          netbanking: true,
+          wallet: true,
+          paylater: true,
+        }
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Try again.");
+    }
+  };
+
+  const loadRazorpay = (src) => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   const renderBillDetails = () => (
     <Paper elevation={1} sx={{ mt: 2, p: 1.5, borderRadius: 2 }}>
       <Typography variant="subtitle2" fontWeight={700} gutterBottom>
@@ -154,13 +228,14 @@ export default function Cart({ open, setOpen, setModalType }) {
         variant="contained"
         color="success"
         fullWidth
-        onClick={!isAuthenticated ? handleLogin : undefined}
+        onClick={!isAuthenticated ? handleLogin : handlePayment}
         sx={{ fontSize: { xs: 14, sm: 16 }, borderRadius: 3, py: 1.5, boxShadow: 2 }}
       >
         {!isAuthenticated ? `Login to Proceed ₹${cart.total_cost}` : "Proceed to Payment"}
       </Button>
     </Box>
   );
+
 
   const renderEmpty = () => (
     <Box display="flex" justifyContent="center" alignItems="center" flexGrow={1} textAlign="center" mt={5}>

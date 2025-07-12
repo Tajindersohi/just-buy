@@ -38,6 +38,11 @@ const apiConstants = {
         sentOtp: async (data) => await axiosInstance.post('/sent-otp',data),
         login: async (data) => await axiosInstance.post('/login',data),
         getMe: async () => await axiosInstance.post('/me'),
+        orders: async () => await axiosInstance.get(`/orders`),
+        payment:{
+            createOrder: async (data) => await axiosInstance.post('/payment/create-order',data),
+            verifyPayment: async (data) => await axiosInstance.post('/payment/verify',data),
+        },
     },
     upload:{
         image: async (data) => await axiosInstance.post('/upload-image',data),

@@ -6,6 +6,7 @@ import {
   removeProduct,
   addProduct,
   syncCartSlice,
+  clearCartSlice,
 } from './cartslice';
 import apiConstants from '../../api/Constants';
 
@@ -62,6 +63,25 @@ export const syncCart = createAsyncThunk(
       dispatch(syncCartSlice(data));
     } catch (err) {
       console.error("Sync Cart failed", err);
+    }
+  }
+);
+
+
+export const clearCart = createAsyncThunk(
+  'cart/clearCart',
+  async (_, { dispatch }) => {
+    try {
+      // ✅ Clear Redux cart
+      dispatch(clearCartSlice());
+
+      // ✅ Clear LocalStorage cart
+      localStorage.removeItem("cart");
+
+      // Optionally: also call backend to clear user cart in DB if needed
+      // await apiConstants.cart.clearCartForUser(userId);
+    } catch (err) {
+      console.error("Clear Cart failed", err);
     }
   }
 );
