@@ -12,9 +12,6 @@ const GeneralLayout = () => {
         <Container 
             maxWidth="xl"  
             disableGutters 
-            sx={{
-                px: isMobile ? 2 : 4, 
-            }}
         >
             <Header />
 
@@ -25,7 +22,9 @@ const GeneralLayout = () => {
                 justifyContent="center"
             >
                 <Grid item xs={12} minHeight={'60vh'}>
-                    <Outlet />
+                    <Box px={4}>
+                        <Outlet />
+                    </Box>
                 </Grid>
             </Grid>
 

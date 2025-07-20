@@ -37,7 +37,6 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
       showWarning("Limit Reached", "center", false);
       return;
     }
-    console.log("productproductproduct",product);
     handleAddItem(product);
   };
 

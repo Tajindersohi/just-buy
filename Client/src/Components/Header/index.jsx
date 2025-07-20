@@ -59,9 +59,12 @@ const Header = () => {
     <>
       <AppBar
         position="sticky"
-        elevation={0}
+        elevation={4}
         sx={{
           backgroundColor: theme.palette.background.paper,
+          borderRadius:0,
+          p:1,
+          m:0,
           boxShadow: theme.palette.mode === 'light'
             ? '0 2px 4px rgba(0,0,0,0.05)'
             : '0 1px 4px rgba(0,0,0,0.6)',

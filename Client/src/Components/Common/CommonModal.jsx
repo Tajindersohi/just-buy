@@ -36,7 +36,7 @@ const CommonModal = ({
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 3,
-    borderRadius: 3,
+    borderRadius: 1,
     outline: 'none',
   };
 

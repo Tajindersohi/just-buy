@@ -31,7 +31,7 @@ const CategorySlider = ({ categories }) => {
   }, []);
 
   return (
-    <Box position="relative" sx={{ px: 2, py: 1 }}>
+    <Box position="relative" sx={{py: 1 }}>
       {/* Scroll Buttons */}
       {!isScrolledLeft && (
         <IconButton
@@ -75,23 +75,20 @@ const CategorySlider = ({ categories }) => {
         sx={{
           scrollBehavior: "smooth",
           "&::-webkit-scrollbar": { display: "none" },
-          px: isMobile ? 1 : 4,
         }}
       >
         {categories.map((category, i) => (
-          <Box key={i} textAlign="center" minWidth={90}>
+          <Box key={i} textAlign="center" minWidth={140} sx={{borderRadius:1, p:2, bgcolor:'#00b1500a', cursor:'pointer'}}  onClick={() => navigate(`/category/${category.id}`)}>
             <Box
               component="img"
-              onClick={() => navigate(`/category/${category.id}`)} // ⬅️ Navigate on click
               src={category.imageUrl}
               onError={(e) => (e.target.src = placeholder)}
               alt={category.name}
               sx={{
                 width: 70,
                 height: 70,
-                borderRadius: "50%",
+                borderRadius: "10%",
                 objectFit: "cover",
-                border: `2px solid ${theme.palette.primary.main}`,
                 mb: 1,
                 boxShadow: 1,
                 cursor: "pointer",
@@ -99,9 +96,11 @@ const CategorySlider = ({ categories }) => {
                 "&:hover": { transform: "scale(1.05)" },
               }}
             />
-            <Typography fontSize="12px" noWrap color="text.primary">
-              {category.name}
-            </Typography>
+            <Box sx={{ maxWidth: 100, wordWrap: 'break-word', whiteSpace: 'normal' }}>
+              <Typography fontSize="14px" color="text.primary" fontWeight={700}>
+                {category.name}
+              </Typography>
+            </Box>
           </Box>
         ))}
       </Box>
