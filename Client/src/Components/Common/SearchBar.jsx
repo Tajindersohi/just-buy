@@ -21,6 +21,32 @@ const SearchBar = ({ onFocusRemove, placeholder = "Search for products or catego
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const wrapperRef = useRef(null);
+  const placeholderList = [
+    "Search for 'Chocolates'",
+    "Search for 'Breads'",
+    "Search for 'Chips'",
+    "Search for 'Dryer'",
+    "Search for 'Vegetables'",
+    "Search for 'Wireless Headphones'",
+    "Search in 'Home Appliances'",
+    "Search in 'Sports Equipment'",
+  ];
+
+  const [currentPlaceholderIndex, setCurrentPlaceholderIndex] = React.useState(0);
+  const [fade, setFade] = React.useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFade(false); // Start fade out
+
+      setTimeout(() => {
+        setCurrentPlaceholderIndex((prev) => (prev + 1) % placeholderList.length);
+        setFade(true); // Fade in new text
+      }, 250); // Wait before updating placeholder
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const {
     searchQuery,
@@ -54,28 +80,14 @@ const SearchBar = ({ onFocusRemove, placeholder = "Search for products or catego
   }, [onFocusRemove]);
 
   return (
-    <Box position="relative" className="search-bar" ref={wrapperRef} width={'100%'}>
+    <Box position="relative">
       <TextField
         fullWidth
         size="small"
-        placeholder={placeholder}
-        variant="outlined"
         value={searchQuery}
         onChange={handleChange}
         onFocus={() => setShowSearchResult(true)}
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            borderRadius: "999px",
-            backgroundColor: isDark ? "#1e293b" : "#f8fafc",
-            px: 1.5,
-            '& fieldset': {
-              borderColor: isDark ? "#334155" : "#d1d5db",
-            },
-            '&:hover fieldset': {
-              borderColor: isDark ? "#475569" : "#9ca3af",
-            },
-          },
-        }}
+        variant="outlined"
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -90,62 +102,39 @@ const SearchBar = ({ onFocusRemove, placeholder = "Search for products or catego
             </InputAdornment>
           )
         }}
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            borderRadius: "999px",
+            backgroundColor: isDark ? "#1e293b" : "#f8fafc",
+            px: 1.5,
+            '& fieldset': {
+              borderColor: isDark ? "#334155" : "#d1d5db",
+            },
+            '&:hover fieldset': {
+              borderColor: isDark ? "#475569" : "#9ca3af",
+            },
+          },
+        }}
       />
-
-      {showSuggestions && suggestions.length > 0 && (
-        <Paper
-          elevation={3}
+      {searchQuery === "" && (
+        <Typography
+          variant="body2"
           sx={{
             position: "absolute",
-            top: "100%",
-            left: 0,
-            right: 0,
-            zIndex: 1000,
-            mt: 1,
-            borderRadius: 2,
-            overflow: "hidden",
-            bgcolor: theme.palette.background.paper,
-            boxShadow: theme.shadows[3],
+            top: "50%",
+            left: 48,
+            transform: "translateY(-50%)",
+            pointerEvents: "none",
+            color: isDark ? "#94a3b8" : "#94a3b8",
+            transition: "opacity 0.3s",
+            opacity: fade ? 1 : 0,
           }}
         >
-          <List dense>
-            {suggestions.slice(0, 5).map((item, index) => (
-              <React.Fragment key={item._id}>
-                <ListItem
-                  button
-                  onClick={() => handleSuggestionClick(item)}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    px: 2,
-                    py: 1.5,
-                    "&:hover": {
-                      backgroundColor: isDark ? "#334155" : "#f1f5f9",
-                    },
-                  }}
-                >
-                  <Avatar
-                    src={item.imageUrl}
-                    alt={item.name}
-                    variant="rounded"
-                    sx={{ width: 44, height: 44, mr: 2 }}
-                  />
-                  <Box>
-                    <Typography fontWeight={600} fontSize={14}>
-                      {item.name}
-                    </Typography>
-                    <Typography fontSize={12} color="text.secondary">
-                      {item.type === 'category' ? 'Category' : 'Product'}
-                    </Typography>
-                  </Box>
-                </ListItem>
-                {index < suggestions.length - 1 && <Divider component="li" />}
-              </React.Fragment>
-            ))}
-          </List>
-        </Paper>
+          {placeholderList[currentPlaceholderIndex]}
+        </Typography>
       )}
     </Box>
+
   );
 };
 

@@ -98,11 +98,8 @@ const Header = () => {
           </Box>
           }
           {/* Action Buttons */}
-          <Box display="flex" alignItems="center" gap={1}>
-            {!user && (
-              <Login modalType={modalType} setModalType={setModalType} />
-            )}
-
+          <Box display="flex" alignItems="center" gap={'4px'}>
+            
             {!isAdmin && (
               isMobile ? (
                 <StickyCartBar onOpenCart={() => setCartOpen(true)} setModalType={setModalType} open={cartOpen} />
@@ -114,7 +111,9 @@ const Header = () => {
                 </IconButton>
               )
             )}
-
+            {!user && (
+              <Login modalType={modalType} setModalType={setModalType} />
+            )}
             <ThemeToggleButton />
             {user && <AccountMenu />}
           </Box>

@@ -15,12 +15,38 @@ import { showLoading } from "../../Assets/Constants/showLoading";
 import ImageSlider from "../../Components/Common/ImageSlider";
 import SearchBar from "../../Components/Common/SearchBar";
 import { getMe } from "../../store/redux/thunks";
-import { addCartProductItem, removeCartProduct } from "../../store/redux/cartThunk";
+import {
+  addCartProductItem,
+  removeCartProduct,
+} from "../../store/redux/cartThunk";
 import ProductSkeleton from "../../Components/Common/ProductSkeleton";
 import CategorySkeleton from "../../Components/Common/CategorySkeleton";
 import CategoryProduct from "./CategoryProduct";
 import Product from "./Product";
 import { useSearch } from "../../context/SearchContext";
+import TrendingSections from "./TrendingSections";
+const trendingData = [
+  {
+    title: "Trending Now",
+    items: [
+      {
+        name: "Fresh Watermelon",
+        desc: "Summer Special",
+        image: "https://images.unsplash.com/photo-1537640538966-79f369143f8f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MzM0ODN8MHwxfHNlYXJjaHwxfHxHcmFwZXN8ZW58MHwwfHx8MTc0NjI4OTY3NHww&ixlib=rb-4.0.3&q=80&w=400",
+      },
+    ],
+  },
+  // {
+  //   title: "Most Ordered",
+  //   items: [
+  //     {
+  //       name: "Amul Butter",
+  //       desc: "500g Pack",
+  //       image: "https://images.unsplash.com/photo-1537640538966-79f369143f8f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MzM0ODN8MHwxfHNlYXJjaHwxfHxHcmFwZXN8ZW58MHwwfHx8MTc0NjI4OTY3NHww&ixlib=rb-4.0.3&q=80&w=400",
+  //     },
+  //   ],
+  // },
+];
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -74,23 +100,23 @@ const Home = () => {
   const handleSubItem = (id) => dispatch(removeCartProduct(id));
 
   return (
-    <Box py={2} position="relative">
-      {isMobile && 
-      <Box maxWidth="600px" mx="auto" px={2} mb={4} mt={1}>
-        <SearchBar />
-      </Box>
-      }
+    <Box position="relative">
+      {isMobile && (
+        <Box maxWidth="600px" mx="auto" px={2} mb={4}>
+          <SearchBar />
+        </Box>
+      )}
 
       {!showSearchResult && (
         <>
           <Typography
             variant="h4"
             fontWeight="bold"
-            mb={3}
+            my={2}
             color="primary"
             sx={{ letterSpacing: 0.5 }}
           >
-            Just Buy – Get It Now!
+            Just Buy – Shop Smarter, Not Slower
           </Typography>
           {progress !== 100 ? (
             <>
@@ -104,6 +130,47 @@ const Home = () => {
             <>
               <ImageSlider categories={productsss.categories} />
               <Divider sx={{ my: 4 }} />
+
+              {/* <Box
+                px={2}
+                py={2}
+                display="flex"
+                gap={2}
+                overflow="auto"
+                sx={{
+                  scrollbarWidth: "none",
+                  "&::-webkit-scrollbar": { display: "none" },
+                }}
+              >
+                {["Instant Delivery", "Best Offers", "New Arrivals", "Top Rated", "Seasonal Picks"].map(
+                  (label, i) => (
+                    <Box
+                      key={i}
+                      sx={{
+                        px: 2,
+                        py: 1,
+                        bgcolor: theme.palette.grey[100],
+                        border: "1px solid",
+                        borderColor: "divider",
+                        borderRadius: "999px",
+                        whiteSpace: "nowrap",
+                        fontWeight: 500,
+                        fontSize: "14px",
+                        cursor: "pointer",
+                        color: theme.palette.text.primary,
+                        transition: "all 0.2s ease",
+                        ":hover": {
+                          bgcolor: "primary.light",
+                          color: "primary.main",
+                        },
+                      }}
+                    >
+                      {label}
+                    </Box>
+                  )
+                )}
+              </Box> */}
+              <TrendingSections data={trendingData} />
               <CategoryProduct
                 list={productsss}
                 handleAddItem={handleAddItem}

@@ -18,7 +18,7 @@ const GeneralLayout = () => {
             <Grid 
                 container 
                 spacing={isMobile ? 1 : 2} 
-                mt={isMobile ? 1 : 2} 
+                mt={1} 
                 justifyContent="center"
             >
                 <Grid item xs={12} minHeight={'60vh'}>

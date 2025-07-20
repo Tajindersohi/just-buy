@@ -70,6 +70,11 @@ export const getTheme = (mode = 'light') =>
         fontWeight: 600,
         textTransform: 'none',
       },
+      text: {
+        primary: '#333333',
+        secondary: '#555555',
+      },
+
     },
 
     shape: {

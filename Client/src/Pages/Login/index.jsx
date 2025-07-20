@@ -87,15 +87,9 @@ export default function Login({ modalType, setModalType }) {
 
   return (
     <>
-      {isMobile ? (
-        <IconButton onClick={handleOpen}>
-          <AccountCircleIcon fontSize="large" sx={{ color: appTheme.colors.primary }} />
-        </IconButton>
-      ) : (
-        <ThemeButton label="Login" onClick={handleOpen} variant="primary" icon={<LoginIcon />} />
-      )}
-
-      {/* 📱 Phone Number Modal */}
+      <IconButton onClick={handleOpen} size='small'>
+        <AccountCircleIcon fontSize='large' sx={{ color: appTheme.colors.primary }} />
+      </IconButton>
       <CommonModal
         open={modalType === 'phone'}
         handleClose={handleClose}

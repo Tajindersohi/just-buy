@@ -8,7 +8,7 @@ const CategoryProduct = ({ list, handleAddItem, handleSubItem }) => {
       {list.categoryWithProduct?.map((item, idx) =>
         item.products?.length > 0 ? (
           <Box key={idx} my={4}>
-            <Typography variant="h6" fontWeight="bold" mb={2} color="primary">
+            <Typography variant="h4" sx={{fontWeight:700}}  mb={2} color="default">
               {item.name}
             </Typography>
             <Grid container spacing={2} rowGap={3}>

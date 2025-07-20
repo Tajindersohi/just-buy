@@ -20,7 +20,7 @@ const ProductSkeleton = ({ count = 6 }) => {
           <Card
             elevation={2}
             sx={{
-              borderRadius: 3,
+              borderRadius: 1,
               backgroundColor: theme.palette.background.paper,
               height: "100%",
               display: "flex",
@@ -43,7 +43,7 @@ const ProductSkeleton = ({ count = 6 }) => {
             </CardContent>
 
             <Box px={1.5} pb={2}>
-              <Skeleton variant="rectangular" height={32} width="100%" sx={{ borderRadius: 20 }} />
+              <Skeleton variant="rectangular" height={32} width="100%" sx={{ borderRadius: 1 }} />
             </Box>
           </Card>
         </Grid>

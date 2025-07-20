@@ -78,25 +78,39 @@ const CategorySlider = ({ categories }) => {
         }}
       >
         {categories.map((category, i) => (
-          <Box key={i} textAlign="center" minWidth={140} sx={{borderRadius:1, p:2, bgcolor:'#00b1500a', cursor:'pointer'}}  onClick={() => navigate(`/category/${category.id}`)}>
-            <Box
-              component="img"
-              src={category.imageUrl}
-              onError={(e) => (e.target.src = placeholder)}
-              alt={category.name}
-              sx={{
-                width: 70,
-                height: 70,
-                borderRadius: "10%",
-                objectFit: "cover",
-                mb: 1,
-                boxShadow: 1,
-                cursor: "pointer",
-                transition: "transform 0.2s",
-                "&:hover": { transform: "scale(1.05)" },
+          <Box display={'flex'} flexDirection={'column'}>
+            <Box key={i} 
+              textAlign="center"
+              minWidth={120} 
+              sx={{borderRadius:1,
+              my:1,
+              "&:hover": {
+                boxShadow: theme.shadows[1],
+              },
+              bgcolor:'#00b15018',
+              cursor:'pointer',
               }}
-            />
-            <Box sx={{ maxWidth: 100, wordWrap: 'break-word', whiteSpace: 'normal' }}>
+              onClick={() => navigate(`/category/${category.id}`)}
+            >
+              <Box
+                component="img"
+                src={category.imageUrl}
+                onError={(e) => (e.target.src = placeholder)}
+                alt={category.name}
+                sx={{
+                  width: 90,
+                  height: 90,
+                  borderRadius: "10%",
+                  objectFit: "cover",
+                  my: 1,
+                  boxShadow: 1,
+                  cursor: "pointer",
+                  transition: "transform 0.2s",
+                  "&:hover": { transform: "scale(1.05)" },
+                }}
+              />
+            </Box>
+            <Box sx={{ maxWidth: 100, textAlign:'center', wordWrap: 'break-word', whiteSpace: 'normal' }}>
               <Typography fontSize="14px" color="text.primary" fontWeight={700}>
                 {category.name}
               </Typography>

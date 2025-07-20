@@ -45,18 +45,19 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
       <Card
         elevation={2}
         sx={{
-          backgroundColor: theme.palette.background.paper,
+          bgcolor: "#00b1500a",
           transition: "transform 0.2s ease, box-shadow 0.3s ease",
           display: "flex",
           flexDirection: "column",
+          boxShadow: theme.shadows[1],
           height: "100%",
           "&:hover": {
-            transform: "translateY(-4px)",
+            // transform: "translateY(-4px)",
             boxShadow: theme.shadows[4],
           },
         }}
       >
-        <CardActionArea disableRipple sx={{ p: 1, pb: 0 }}>
+        <CardActionArea disableRipple sx={{ p: 0, pb: 0 }}>
           <Box
             sx={{
               height: isMobile ? 100 : isTablet ? 130 : 150,
@@ -65,7 +66,6 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
               justifyContent: "center",
               position: "relative",
               overflow: "hidden",
-              bgcolor: theme.palette.background.default,
             }}
           >
             {!imageLoaded && <Skeleton variant="rectangular" width="100%" height="100%" />}
