@@ -59,7 +59,7 @@ export const getTheme = (mode = 'light') =>
     },
 
     typography: {
-      fontFamily: `"Inter", "Poppins", "Roboto", "Arial", sans-serif`,
+      fontFamily: `"Poppins", "Inter", "Roboto", "Arial", sans-serif`,
       h1: { fontSize: '2.2rem', fontWeight: 700 },
       h2: { fontSize: '1.75rem', fontWeight: 700 },
       h3: { fontSize: '1.5rem', fontWeight: 600 },

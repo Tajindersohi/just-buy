@@ -99,99 +99,101 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
                   top: 8,
                   left: 8,
                   fontSize: "10px",
-                  fontWeight: 600,
                 }}
               />
             )}
           </Box>
 
-          <CardContent sx={{ px: 1, pt: 1.5, pb: 1 }}>
-            <Typography
-              variant="subtitle2"
-              fontWeight={600}
-              noWrap
-              color="text.primary"
-            >
-              {product.name}
-            </Typography>
-
-            <Typography variant="caption" color="text.secondary">
-              {product.quantity || "100g"}
-            </Typography>
-
-            <Box mt={0.5}>
-              {product.discount > 0 && (
+          <CardContent sx={{ px: 1, pt: 1, pb: 1 }}>
+            <Box display={{xs:'flex',md:'block'}} alignItems={'center'} gap={1} justifyContent={'start'}>
                 <Typography
-                  variant="caption"
-                  sx={{ textDecoration: "line-through", color: theme.palette.text.secondary }}
+                  variant="subtitle2"
+                  noWrap
+                  color="text.primary"
                 >
-                  ₹{product.price}
+                  {product.name}
                 </Typography>
-              )}
-              <Typography
-                variant="body2"
-                fontWeight="bold"
-                color="success.main"
-              >
-                ₹{getCurrentPrice(product.discount, product.price)}
-              </Typography>
+
+                <Typography variant="caption" color="text.secondary">
+                  {product.quantity || "100g"}
+                </Typography>
+            </Box>
+
+            <Box mt={0.5} display={'flex'} gap={2} justifyContent={'space-between'} alignItems={'center'}>
+              <Box display={{xs:'block',sm:'flex'}} justifyContent={'start'} gap={1}>
+                  {product.discount > 0 && (
+                    <Typography
+                      variant="caption"
+                      sx={{ textDecoration: "line-through", color: theme.palette.text.secondary }}
+                    >
+                      ₹{product.price}
+                    </Typography>
+                  )}
+                  <Typography
+                    variant="body2"
+                    fontWeight="bold"
+                    color="success.main"
+                  >
+                    ₹{getCurrentPrice(product.discount, product.price)}
+                  </Typography>
+              </Box>
+              <Box>
+                {productCount > 0 ? (
+                  <Button
+                    fullWidth
+                    size="small"
+                    variant="contained"
+                    color="success"
+                    sx={{
+                      fontSize: "13px",
+                      borderRadius: "20px",
+                      textTransform: "none",
+                      py: 0.6,
+                      backgroundColor: theme.palette.success.main,
+                      color: "#fff",
+                      "&:hover": {
+                        backgroundColor: theme.palette.success.main,
+                      },
+                    }}
+                  >
+                    <Box display="flex" alignItems="center" justifyContent="center" width="100%">
+                      <Box
+                        onClick={() => handleSubItem(product._id)}
+                        sx={{ px: 1.5, cursor: "pointer" }}
+                      >
+                        −
+                      </Box>
+                      {productCount}
+                      <Box
+                        onClick={() => handleAdd(product)}
+                        sx={{ px: 1.5, cursor: "pointer" }}
+                      >
+                        +
+                      </Box>
+                    </Box>
+                  </Button>
+                ) : (
+                  <Button
+                    fullWidth
+                    size="small"
+                    variant="outlined"
+                    color="success"
+                    onClick={() => handleAdd(product)}
+                    sx={{
+                      fontSize: "13px",
+                      borderRadius: "20px",
+                      textTransform: "none",
+                      py: 0.6,
+                    }}
+                  >
+                    Add
+                  </Button>
+                )}
+              </Box>
             </Box>
           </CardContent>
         </CardActionArea>
 
-        <Box px={1.5} pb={1.5}>
-          {productCount > 0 ? (
-            <Button
-              fullWidth
-              size="small"
-              variant="contained"
-              color="success"
-              sx={{
-                fontSize: "13px",
-                borderRadius: "20px",
-                textTransform: "none",
-                py: 0.6,
-                backgroundColor: theme.palette.success.main,
-                color: "#fff",
-                "&:hover": {
-                  backgroundColor: theme.palette.success.main,
-                },
-              }}
-            >
-              <Box display="flex" alignItems="center" justifyContent="center" width="100%">
-                <Box
-                  onClick={() => handleSubItem(product._id)}
-                  sx={{ px: 1.5, cursor: "pointer", fontWeight: 600 }}
-                >
-                  −
-                </Box>
-                {productCount}
-                <Box
-                  onClick={() => handleAdd(product)}
-                  sx={{ px: 1.5, cursor: "pointer", fontWeight: 600 }}
-                >
-                  +
-                </Box>
-              </Box>
-            </Button>
-          ) : (
-            <Button
-              fullWidth
-              size="small"
-              variant="outlined"
-              color="success"
-              onClick={() => handleAdd(product)}
-              sx={{
-                fontSize: "13px",
-                borderRadius: "20px",
-                textTransform: "none",
-                py: 0.6,
-              }}
-            >
-              Add
-            </Button>
-          )}
-        </Box>
       </Card>
     </Grid>
   );

@@ -8,9 +8,32 @@ const CategoryProduct = ({ list, handleAddItem, handleSubItem }) => {
       {list.categoryWithProduct?.map((item, idx) =>
         item.products?.length > 0 ? (
           <Box key={idx} my={4}>
-            <Typography variant="h4" sx={{fontWeight:700}}  mb={2} color="default">
-              {item.name}
-            </Typography>
+            <Box>
+              <Typography
+                variant="h4"
+                sx={{
+                  mb: 3,
+                  color: "primary.main",
+                  textTransform: "capitalize",
+                  letterSpacing: "0.5px",
+                  position: "relative",
+                  display: "inline-block",
+                  fontSize: { xs: "1rem", sm: "1.5rem", md: "2rem" },
+                  '&::after': {
+                    content: '""',
+                    position: "absolute",
+                    left: 0,
+                    bottom: -6,
+                    width: "50%",
+                    height: "4px",
+                    backgroundColor: "primary.main",
+                    borderRadius: 2,
+                  },
+                }}
+              >
+                {item.name}
+              </Typography>
+            </Box>
             <Grid container spacing={2} rowGap={3}>
               {item.products.map((product) => (
                 <Product

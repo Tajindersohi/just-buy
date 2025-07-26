@@ -87,7 +87,7 @@ const CategorySlider = ({ categories }) => {
               "&:hover": {
                 boxShadow: theme.shadows[1],
               },
-              bgcolor:'#00b15018',
+              bgcolor:'#00b1500e',
               cursor:'pointer',
               }}
               onClick={() => navigate(`/category/${category.id}`)}
@@ -111,7 +111,7 @@ const CategorySlider = ({ categories }) => {
               />
             </Box>
             <Box sx={{ maxWidth: 100, textAlign:'center', wordWrap: 'break-word', whiteSpace: 'normal' }}>
-              <Typography fontSize="14px" color="text.primary" fontWeight={700}>
+              <Typography fontSize="14px" color="text.primary">
                 {category.name}
               </Typography>
             </Box>

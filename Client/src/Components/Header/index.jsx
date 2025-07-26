@@ -63,25 +63,19 @@ const Header = () => {
         sx={{
           backgroundColor: theme.palette.background.paper,
           borderRadius:0,
-          p:1,
-          m:0,
           boxShadow: theme.palette.mode === 'light'
             ? '0 2px 4px rgba(0,0,0,0.05)'
             : '0 1px 4px rgba(0,0,0,0.6)',
         }}
       >
-        <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
+        <Toolbar sx={{ justifyContent: 'space-between', py: 1 }} px={{xs:2, md:4}}>
           {/* Logo / Drawer */}
           <Box display="flex" alignItems="center">
-            {isMobile ? (
-              ""
-            ) : (
               <>
                 <Link to="/" style={{ textDecoration: 'none' }}>
                   {icons.justBuy}
                 </Link>
               </>
-            )}
           </Box>
           {isMobile && user &&
           <Box display={'flex'} justifyContent={'center'} width={"100%"} gap={2}>

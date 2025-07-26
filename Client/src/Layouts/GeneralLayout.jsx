@@ -13,6 +13,7 @@ const GeneralLayout = () => {
             maxWidth="xl"  
             disableGutters 
         >
+
             <Header />
 
             <Grid 
@@ -22,7 +23,7 @@ const GeneralLayout = () => {
                 justifyContent="center"
             >
                 <Grid item xs={12} minHeight={'60vh'}>
-                    <Box px={4}>
+                    <Box px={{xs:2, md:4}}>
                         <Outlet />
                     </Box>
                 </Grid>
