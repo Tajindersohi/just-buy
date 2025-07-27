@@ -246,8 +246,8 @@ const AddressesPage = () => {
                   >
                     {addr._id === currentAddressId ? "Current" : "Use this"}
                   </Button>
-                  <IconButton onClick={() => handleEdit(addr)}><EditIcon /></IconButton>
-                  <IconButton color="error" onClick={() => setConfirmDeleteId(addr._id)}><DeleteIcon /></IconButton>
+                  <IconButton size='small' onClick={() => handleEdit(addr)}><EditIcon /></IconButton>
+                  <IconButton size='small' sx={{ml:'0px !important'}} color="error" onClick={() => setConfirmDeleteId(addr._id)}><DeleteIcon /></IconButton>
                 </CardActions>
               </Card>
             </Grid>

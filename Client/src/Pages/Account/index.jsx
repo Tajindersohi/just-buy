@@ -12,6 +12,7 @@ import {
   Skeleton,
   useTheme,
   Button,
+  useMediaQuery,
 } from "@mui/material";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import apiConstants from "../../api/Constants";
@@ -25,6 +26,7 @@ const MyAccount = () => {
   const [activeTab, setActiveTab] = useState("account");
   const user = useSelector((state) => state.user);
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const renderAccountDetails = () => {
     return (
       <Card>
@@ -62,6 +64,7 @@ const MyAccount = () => {
       <Stack direction="row" spacing={2} mt={3} mb={4}>
         {["account", "orders", "addresses"].map((tab) => (
           <Button
+            size={isMobile ? 'small' : 'medium'}
             startIcon={tab === "orders" ? <ShoppingBagIcon/> : tab === "account" ? <AccountCircleIcon/>  : <HomeIcon/> }
             key={tab}
             variant={activeTab === tab ? "contained" : "outlined"}

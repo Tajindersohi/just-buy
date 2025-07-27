@@ -70,13 +70,14 @@ const Header = () => {
       >
         <Toolbar sx={{ justifyContent: 'space-between', py: 1 }} px={{xs:2, md:4}}>
           {/* Logo / Drawer */}
+          {!isMobile && 
           <Box display="flex" alignItems="center">
               <>
                 <Link to="/" style={{ textDecoration: 'none' }}>
                   {icons.justBuy}
                 </Link>
               </>
-          </Box>
+          </Box>}
           {isMobile && user && user.userRole != 'admin' &&
           <Box display={'flex'} justifyContent={'center'} width={"100%"} gap={2}>
             <AddressModal/>
