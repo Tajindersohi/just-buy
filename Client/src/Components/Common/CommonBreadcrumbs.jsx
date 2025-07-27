@@ -17,7 +17,7 @@ const CommonBreadcrumbs = ({ items }) => {
             {item.label}
           </MuiLink>
         ) : (
-          <Typography key={index} color="text.primary">
+          <Typography textTransform={'capitalize'} key={index} color="text.primary" >
             {item.label}
           </Typography>
         )

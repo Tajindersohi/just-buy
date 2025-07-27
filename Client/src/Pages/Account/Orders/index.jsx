@@ -13,40 +13,32 @@ import {
   useTheme
 } from "@mui/material";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
-import apiConstants from "../../api/Constants";
-import CommonBreadcrumbs from "../../Components/Common/CommonBreadcrumbs";
-
+import apiConstants from "../../../api/Constants";
+import CommonBreadcrumbs from "../../../Components/Common/CommonBreadcrumbs";
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
   const userId = localStorage.getItem("user_id");
-
+  const fetchOrders = async () => {
+    try {
+      const res = await apiConstants.user.orders(`/orders/${userId}`);
+      setOrders(res.data.orders || []);
+    } catch (err) {
+      console.error("Failed to fetch orders:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await apiConstants.user.orders(`/orders/${userId}`);
-        setOrders(res.data.orders || []);
-      } catch (err) {
-        console.error("Failed to fetch orders:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
 
     fetchOrders();
   }, [userId]);
 
   return (
-    <Box p={{ xs: 2, sm: 3, md: 4 }} maxWidth="md" mx="auto">
-      <CommonBreadcrumbs
-        items={[
-          { label: "Home", to: "/" },
-          { label: "Orders"},
-        ]}
-      />
+    <Box  maxWidth="md" mx="auto">
       {loading ? (
-        <Skeleton variant="rectangular" height={140} sx={{ borderRadius: 2 }} />
+        <Skeleton variant="rectangular" height={140} sx={{ borderRadius: 1 }} />
       ) : orders.length === 0 ? (
         <Typography variant="body1" mt={2}>
           You haven’t placed any orders yet.
@@ -56,8 +48,8 @@ const Orders = () => {
           <Card
             key={index}
             sx={{
-              mb: 3,
-              borderRadius: 2,
+              mb: 1,
+              borderRadius: 1,
               boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
               overflow: "hidden",
               transition: "0.3s ease",
@@ -72,7 +64,7 @@ const Orders = () => {
               sx={{
                 background: `linear-gradient(135deg, ${theme.palette.success.main} 0%, ${theme.palette.success.dark} 100%)`,
                 color: "#fff",
-                p: 2,
+                p: 1,
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center"
@@ -109,19 +101,12 @@ const Orders = () => {
                         display="flex"
                         justifyContent="space-between"
                         alignItems="center"
-                        sx={{
-                          borderRadius: 2,
-                          border: "1px solid",
-                          borderColor: theme.palette.divider,
-                          p: 1.5,
-                          bgcolor: theme.palette.background.default
-                        }}
                       >
-                        <Stack direction="row" spacing={2} alignItems="center">
+                        <Stack direction="row" spacing={1} alignItems="center">
                           <Avatar
                             variant="rounded"
                             src={product.imageUrl || product.thumbnail || ""}
-                            sx={{ width: 56, height: 56, bgcolor: "grey.200" }}
+                            sx={{ width: 30, height: 30, bgcolor: "grey.200" }}
                           />
                           <Box>
                             <Typography fontSize={14} fontWeight={600}>

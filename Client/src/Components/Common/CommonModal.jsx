@@ -21,6 +21,7 @@ const CommonModal = ({
   loading = false,
   isDeleteModel = false,
   startIcon = null,
+  minWidth = '300px'
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -32,6 +33,7 @@ const CommonModal = ({
     width: '90%',
     maxWidth: '430px',
     transform: 'translate(-50%, -50%)',
+    minWidth:minWidth,
     // width: isMobile ? '90%' : 400,
     bgcolor: 'background.paper',
     boxShadow: 24,

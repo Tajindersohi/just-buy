@@ -16,12 +16,13 @@ import {
   Category as CategoryIcon,
   ShoppingBag as OrdersIcon,
   AccountCircle as ProfileIcon,
+  AccountCircle,
 } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout, logoutUser } from '../../store/redux/thunks';
 import HomeIcon from '@mui/icons-material/Home';
-
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 const AccountMenu = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -99,11 +100,11 @@ const AccountMenu = () => {
         }
         {!isAdmin && (
           <>
-          <MenuItem component={Link} to="/orders">
+          <MenuItem component={Link} to="/account">
             <ListItemIcon>
-              <OrdersIcon fontSize="small" />
+              <AccountCircle />
             </ListItemIcon>
-            My Orders
+            My Account
           </MenuItem>
           </>
         )}

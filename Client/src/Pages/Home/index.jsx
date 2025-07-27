@@ -32,7 +32,12 @@ const trendingData = [
       {
         name: "Fresh Watermelon",
         desc: "Summer Special",
-        image: "https://images.unsplash.com/photo-1537640538966-79f369143f8f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MzM0ODN8MHwxfHNlYXJjaHwxfHxHcmFwZXN8ZW58MHwwfHx8MTc0NjI4OTY3NHww&ixlib=rb-4.0.3&q=80&w=400",
+        image: "/images/home-just-buy.jpg",
+      },
+      {
+        name: "Fresh Watermelon",
+        desc: "Summer Special",
+        image: "/images/home-just-buy-2.png",
       },
     ],
   },
@@ -170,7 +175,9 @@ const Home = () => {
                   )
                 )}
               </Box> */}
-              <TrendingSections data={trendingData} />
+              {!isMobile && 
+                <TrendingSections data={trendingData} />
+              }
               <CategoryProduct
                 list={productsss}
                 handleAddItem={handleAddItem}

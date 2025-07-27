@@ -9,9 +9,9 @@ import AdminLayout from "../Pages/Admin/AdminLayout";
 import ProfileView from "../Components/Common/ProfileView";
 import CategoryProductsPage from "../Pages/Home/CategoryProductsPage";
 import CategoriesPage from "../Pages/Home/CategoriesPage";
-import Orders from "../Pages/Orders";
 import AddressModal from "../Pages/Address";
 import ThankYouPage from "../Pages/ThankYouPage";
+import MyAccount from "../Pages/Account";
 
 // Lazy-loaded Pages
 const Home = lazy(() => import("../Pages/Home"));
@@ -56,7 +56,8 @@ const AppRoutes = () => {
           <Route element={<GeneralLayout />}>
             <Route path="/profile" element={<ProfileView />} />
             <Route path="/addresses" element={<AddressModal />} />
-            <Route path="/orders" element={<Orders />} />
+            {/* <Route path="/orders" element={<Orders />} /> */}
+            <Route path="/account" element={<MyAccount />} />
             <Route path="/thank-you" element={<ThankYouPage />} />
           </Route>
         </Route>

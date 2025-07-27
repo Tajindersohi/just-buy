@@ -10,6 +10,7 @@ import ThemeButton from '../../Components/Common/ThemeButton';
 export default function AdminLogin() {
   const theme = useTheme();
   const user = useSelector((state) => state.auth.user);
+  const loading = useSelector((state) => state.auth.loading);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -76,7 +77,7 @@ export default function AdminLogin() {
           width: '100%',
           maxWidth: '420px',
           textAlign: 'center',
-          borderRadius: 4,
+          borderRadius: 1,
           backgroundColor: theme.palette.background.paper,
           boxShadow: theme.shadows[8],
         }}
@@ -111,6 +112,7 @@ export default function AdminLogin() {
         <ThemeButton
           label="Login"
           onClick={postLogin}
+          loading={loading}
           variant="primary"
           fullWidth
           sx={{ mt: 2 }}

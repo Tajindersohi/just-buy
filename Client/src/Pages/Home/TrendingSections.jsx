@@ -22,9 +22,9 @@ const TrendingSections = ({ data }) => {
                     sx={{
                       height: { xs: 140, sm: 180, md: 250 },
                       width: "100%",
-                      objectFit: "fill",
+                      objectFit:'fill'
                     }}
-                    image={"/images/home-just-buy.jpg"}
+                    image={item.image}
                     alt={item.name}
                   />
                 </Card>

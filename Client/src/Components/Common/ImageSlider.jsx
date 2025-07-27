@@ -87,7 +87,7 @@ const CategorySlider = ({ categories }) => {
               "&:hover": {
                 boxShadow: theme.shadows[1],
               },
-              bgcolor:'#00b1500e',
+              bgcolor:'#68766e0f',
               cursor:'pointer',
               }}
               onClick={() => navigate(`/category/${category.id}`)}

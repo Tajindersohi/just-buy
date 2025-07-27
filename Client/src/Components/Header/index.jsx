@@ -77,14 +77,14 @@ const Header = () => {
                 </Link>
               </>
           </Box>
-          {isMobile && user &&
+          {isMobile && user && user.userRole != 'admin' &&
           <Box display={'flex'} justifyContent={'center'} width={"100%"} gap={2}>
             <AddressModal/>
           </Box>
           }
-          {!isMobile && 
+          {!isMobile  && 
           <Box display={'flex'} justifyContent={'center'} width={"100%"} gap={2}>
-            {user &&
+            {user && user.userRole != 'admin' &&
             <AddressModal/>}
             <Box width={'60%'}>
               <SearchBar/>

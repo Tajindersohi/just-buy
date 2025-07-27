@@ -1,5 +1,5 @@
 import {createAsyncThunk } from '@reduxjs/toolkit';
-import { loginUser, logoutAdmin } from './adminAuthSlice';
+import { logging, loginUser, logoutAdmin } from './adminAuthSlice';
 import apiConstants from '../../api/Constants';
 import { gettingUserInfo, gettingUserInfoFailed, loginOrSignup, sentLoginOtp, logoutClient } from './authSlice';
 
@@ -7,6 +7,7 @@ export const login = createAsyncThunk(
   'auth/login',
   async (credentials, { dispatch, rejectWithValue }) => {
     try {
+      dispatch(logging())
       const response = await apiConstants.admin.login(credentials);
       const { token, user } = response.data;
       localStorage.setItem('token', token);

@@ -70,7 +70,7 @@ const AddressModal = () => {
 
       if (data?.display_name) {
         setQuery(data.display_name);
-        setShowForm(true); // ✅ Show form after location detection
+        setShowForm(true); 
         setIsEditing(false);
         setEditingId(null);
         setEditData({ house: '', phone: '', landmark: '' });
@@ -152,7 +152,7 @@ const AddressModal = () => {
   };
 
   useEffect(() => {
-    if (open) fetchAddresses();
+    fetchAddresses();
   }, [open]);
 
   return (

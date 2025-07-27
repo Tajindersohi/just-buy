@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -28,7 +28,7 @@ export default function Cart({ open, setOpen, setModalType }) {
   const user = useSelector((state) => state.user);
   const isAuthenticated = useSelector((state) => state.auth.user || state.user.user);
   const navigate = useNavigate();
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     if (open) {
       dispatch(getCartDetails());
@@ -125,9 +125,10 @@ export default function Cart({ open, setOpen, setModalType }) {
   );
 
   const handlePayment = async () => {
+    setIsLoading(true);
     const res = await loadRazorpay("https://checkout.razorpay.com/v1/checkout.js");
     if (!res) return alert("Razorpay SDK failed to load. Please try again.");
-
+    setIsLoading(false);
     try {
       const { data: order } = await apiConstants.user.payment.createOrder({
         amount: cart.total_cost
@@ -228,6 +229,7 @@ export default function Cart({ open, setOpen, setModalType }) {
         variant="contained"
         color="success"
         fullWidth
+        loading={isLoading}
         onClick={!isAuthenticated ? handleLogin : handlePayment}
         sx={{ fontSize: { xs: 14, sm: 16 }, borderRadius: 3, py: 1.5, boxShadow: 2 }}
       >
