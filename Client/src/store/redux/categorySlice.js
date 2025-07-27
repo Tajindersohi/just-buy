@@ -21,7 +21,7 @@ const categorySlice = createSlice({
       state.categories = action.payload;
     },
     addNewProduct: (state, action) => {
-      // state.products.push(action.payload);
+      state.isLoading = false
     },
     addNewCategory: (state, action) => {
       state.categories.push(action.payload);

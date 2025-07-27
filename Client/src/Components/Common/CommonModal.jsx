@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import ThemeButton from './ThemeButton';
+import appTheme from '../../Assets/Theme';
 
 const CommonModal = ({
   open,
@@ -43,14 +44,21 @@ const CommonModal = ({
   };
 
   return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal 
+      onClose={(event, reason) => {
+        if (reason !== 'backdropClick') {
+          handleClose();
+        }
+      }}
+      open={open}
+      >
       <Box sx={modalStyle}>
         {/* Header */}
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography variant="h6" fontWeight={600}>
             {header}
           </Typography>
-          <IconButton onClick={handleClose}>
+          <IconButton onClick={handleClose} disabled={loading}>
             <CancelRoundedIcon sx={{ fontSize: 26, color: theme.palette.text.secondary }} />
           </IconButton>
         </Box>
@@ -64,16 +72,22 @@ const CommonModal = ({
             <ThemeButton
               label="Close"
               onClick={handleClose}
+              disabled={loading}
               variant="secondary"
-              color="error"
+              sx={{'&:hover':{
+                backgroundColor: '#264653',
+              }}}
             />
             <ThemeButton
               label={buttonTitle}
               onClick={handleSubmit}
-              variant={isDeleteModel ? 'danger' : 'primary'}
               disabled={loading}
               loading={loading}
               icon={startIcon}
+              variant={isDeleteModel ? 'error' : 'primary'}
+              sx={{'&:hover':{
+                backgroundColor: isDeleteModel ? appTheme.colors.danger : 'none',
+              }}}
             />
           </Box>
         )}

@@ -7,7 +7,7 @@ import LoadingInitializer from "./Assets/Constants/LoadingInitializer";
 import { CartSync } from "./Assets/CartSync";
 import { getTheme } from "./theme";
 import { ThemeProvider, CssBaseline } from "@mui/material";
-
+import ScrollToTop from "./ScrollToTop"; // 👈 import it
 // Create Context
 export const ColorModeContext = createContext();
 const App = () => {
@@ -32,6 +32,7 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Router>
+          <ScrollToTop />
           <RootProvider>
             <NotifierInitializer />
             <LoadingInitializer />

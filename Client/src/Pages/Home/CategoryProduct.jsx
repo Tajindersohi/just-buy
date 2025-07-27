@@ -1,6 +1,7 @@
 import { Grid, Typography, Box } from '@mui/material';
 import React from 'react';
 import Product from './Product';
+import { Link } from 'react-router-dom';
 
 const CategoryProduct = ({ list, handleAddItem, handleSubItem }) => {
   return (
@@ -8,7 +9,7 @@ const CategoryProduct = ({ list, handleAddItem, handleSubItem }) => {
       {list.categoryWithProduct?.map((item, idx) =>
         item.products?.length > 0 ? (
           <Box key={idx} my={4}>
-            <Box>
+            <Box display={'flex'} justifyContent={'space-between'} alignItems="center">
               <Typography
                 variant="h4"
                 sx={{
@@ -33,6 +34,26 @@ const CategoryProduct = ({ list, handleAddItem, handleSubItem }) => {
               >
                 {item.name}
               </Typography>
+
+              <Link to={`/category/${item._id}`} style={{ textDecoration: 'none' }}>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: 'text.secondary',
+                    fontWeight: 500,
+                    borderBottom: '2px solid transparent',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer',
+                    '&:hover': {
+                      color: 'primary.main',
+                      borderBottom: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  }}
+                >
+                  See all
+                </Typography>
+              </Link>
             </Box>
             <Grid container spacing={2} rowGap={3}>
               {item.products.map((product) => (

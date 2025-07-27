@@ -54,9 +54,7 @@ const AppRoutes = () => {
 
         <Route element={<PrivateRoute />}>
           <Route element={<GeneralLayout />}>
-            <Route path="/profile" element={<ProfileView />} />
             <Route path="/addresses" element={<AddressModal />} />
-            {/* <Route path="/orders" element={<Orders />} /> */}
             <Route path="/account" element={<MyAccount />} />
             <Route path="/thank-you" element={<ThankYouPage />} />
           </Route>
@@ -65,6 +63,7 @@ const AppRoutes = () => {
         <Route element={<AdminRoute />}>
           <Route element={<AdminLayout />}>
             <Route path="/admin/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<ProfileView />} />
             <Route path="/admin/logout" element={<Logout />} />
             <Route path="/admin/categories" element={<CategoryManager />} />
             <Route path="/products/:id" element={<ProductDetails />} />

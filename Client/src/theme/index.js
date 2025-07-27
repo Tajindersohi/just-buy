@@ -16,7 +16,7 @@ export const getTheme = (mode = 'light') =>
               contrastText: '#fff',
             },
             secondary: {
-              main: '#e5e7eb',
+              main: '#264653',
             },
             background: {
               default: '#f4f6f8',

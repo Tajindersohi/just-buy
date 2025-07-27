@@ -31,8 +31,15 @@ const apiConstants = {
                     "Content-Type": "multipart/form-data",
                 },
             }),
+        updateCategory: async (id,data) => 
+            await axiosInstance.put(`/category/${id}`, data, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }),
         getCategoryProducts: async (data) => await axiosInstance.post('/category/products',data),
         deleteProduct: async (id) => await axiosInstance.delete(`/category/products/${id}`),
+        deleteCategory: async (id) => await axiosInstance.delete(`/category/${id}`),
     },
     user:{
         sentOtp: async (data) => await axiosInstance.post('/sent-otp',data),

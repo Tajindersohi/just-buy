@@ -40,9 +40,11 @@ const MenuProps = {
 export default function CategoryManager() {
   const dispatch = useDispatch();
   const allCategories = useSelector((state) => state.category);
+
   const [loading, setLoading] = useState(false);
   const [openAddCategory, setOpenAddCategory] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
   const [newCategory, setNewCategory] = useState({
     category: '',
     isParentCategory: false,
@@ -62,21 +64,53 @@ export default function CategoryManager() {
     })();
   }, [dispatch]);
 
+  const getCategories = async () => {
+    await dispatch(getCategoryList());
+  };
+
   const handleChange = (key, value) => {
     setNewCategory((prev) => ({ ...prev, [key]: value }));
+    setFormErrors((prev) => ({ ...prev, [key]: '' })); // Clear error on change
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!newCategory.category.trim()) {
+      errors.category = 'Category name is required';
+    }
+    if (newCategory.isParentCategory && !newCategory.parentCategory) {
+      errors.parentCategory = 'Please select a parent category';
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async () => {
+    if (!validateForm()) return;
+    if(!selectedImage){
+      showError('Please upload category image');
+      return;
+    }
     try {
       const formData = new FormData();
       formData.append('data', JSON.stringify(newCategory));
-      formData.append('media', selectedImage?.file);
+      if (selectedImage?.file) {
+        formData.append('media', selectedImage.file);
+      }
       await dispatch(addCategory(formData));
+
+      // Reset form
+      setNewCategory({
+        category: '',
+        isParentCategory: false,
+        parentCategory: null,
+      });
       setSelectedImage(null);
+      setFormErrors({});
+      setOpenAddCategory(false);
+      getCategories();
     } catch (err) {
       showError(err);
-    } finally {
-      setOpenAddCategory(false);
     }
   };
 
@@ -89,7 +123,8 @@ export default function CategoryManager() {
           </Typography>
         </Breadcrumbs>
         <ThemeButton
-          label="Add Category"
+          label="Create"
+          size='small'
           onClick={() => setOpenAddCategory(true)}
           variant="primary"
           icon={<AddIcon />}
@@ -99,15 +134,19 @@ export default function CategoryManager() {
       {loading ? (
         Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} height={40} sx={{ my: 1 }} />)
       ) : (
-        <CategoriesAccordions />
+        <CategoriesAccordions getCategories={getCategories} />
       )}
 
       <CommonModal
         open={openAddCategory}
-        handleClose={() => setOpenAddCategory(false)}
+        handleClose={() => {
+          setOpenAddCategory(false);
+          setFormErrors({});
+        }}
         handleSubmit={handleSubmit}
         header="Add Category"
         buttonTitle="Submit"
+        loading={allCategories.isLoading}
         startIcon={<AddIcon />}
       >
         <Grid container spacing={2}>
@@ -116,7 +155,10 @@ export default function CategoryManager() {
               fullWidth
               variant="outlined"
               label="Enter Category Name"
+              value={newCategory.category}
               onChange={(e) => handleChange('category', e.target.value)}
+              error={!!formErrors.category}
+              helperText={formErrors.category}
             />
           </Grid>
 
@@ -133,12 +175,13 @@ export default function CategoryManager() {
                   label="Belongs to another category?"
                 />
               </Grid>
+
               {newCategory.isParentCategory && (
                 <Grid item xs={12}>
-                  <FormControl fullWidth>
+                  <FormControl fullWidth error={!!formErrors.parentCategory}>
                     <InputLabel>Select Parent Category</InputLabel>
                     <Select
-                      value={newCategory.parentCategory}
+                      value={newCategory.parentCategory || ''}
                       onChange={(e) => handleChange('parentCategory', e.target.value)}
                       input={<OutlinedInput label="Select Parent Category" />}
                       MenuProps={MenuProps}
@@ -149,6 +192,11 @@ export default function CategoryManager() {
                         </MenuItem>
                       ))}
                     </Select>
+                    {formErrors.parentCategory && (
+                      <Typography variant="caption" color="error" mt={0.5}>
+                        {formErrors.parentCategory}
+                      </Typography>
+                    )}
                   </FormControl>
                 </Grid>
               )}

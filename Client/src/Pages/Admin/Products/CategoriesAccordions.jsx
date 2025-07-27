@@ -13,13 +13,65 @@ import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ProductList from './ProductList';
 import DeleteModal from '../../../Components/Common/DeleteModal';
+import EditIcon from '@mui/icons-material/Edit';
+import EditCategoryModal from './EditCategoryModal';
+import apiConstants from '../../../api/Constants';
 
-export default function CategoriesAccordions() {
+export default function CategoriesAccordions({getCategories}) {
   const [expanded, setExpanded] = useState('panel0');
   const [openDelete, setOpenDelete] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const theme = useTheme();
   const allCategories = useSelector((state) => state.category);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [editData, setEditData] = useState(null);
+  const [editLoading, setEditLoading] = useState(false);
+
+  const handleEditClick = (e, categoryId) => {
+    e.stopPropagation();
+    const category = allCategories.categories.find(cat => cat.id === categoryId);
+    setEditData({ id: categoryId, name: category.name, imageUrl: category.imageUrl });
+    setOpenEdit(true);
+  };
+
+  const handleEditSubmit = async (data) => {
+    setEditLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("data", JSON.stringify({ name: data.name }));
+      if (data.file) formData.append("media", data.file);
+
+      const result = await apiConstants.product.updateCategory(data.id, formData);
+
+      if (result.data.success) {
+        console.log("Category updated successfully");
+        getCategories()
+      }
+    } catch (error) {
+      console.error("Error updating category:", error);
+    } finally {
+      setEditLoading(false);
+      setOpenEdit(false);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      setEditLoading(true)
+      const result = await apiConstants.product.deleteCategory(deleteId);
+      if (result.data.success) {
+        console.log("Category deleted successfully");
+        getCategories()
+      }
+    } catch (error) {
+      console.error("Error deleting category:", error);
+    } finally {
+      setEditLoading(false);
+      setOpenDelete(false);
+    }
+  };
+
+
 
   const handleChange = (panel) => (_, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
@@ -29,12 +81,6 @@ export default function CategoriesAccordions() {
     e.stopPropagation();
     setDeleteId(categoryId);
     setOpenDelete(true);
-  };
-
-  const handleDeleteConfirm = () => {
-    // You can dispatch deleteCategory(deleteId) here
-    console.log('Deleting category:', deleteId);
-    setOpenDelete(false);
   };
 
   return (
@@ -55,7 +101,7 @@ export default function CategoriesAccordions() {
               id={`panel${idx}d-header`}
             >
               <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
-                <Box display="flex" alignItems="center" gap={2}>
+                <Box display="flex" alignItems="center" gap={1}>
                   <img
                     src={category.imageUrl}
                     alt={category.name}
@@ -75,14 +121,19 @@ export default function CategoriesAccordions() {
                     {category.name}
                   </Typography>
                 </Box>
-                <IconButton onClick={(e) => handleDeleteClick(e, category._id)}>
-                  <DeleteIcon sx={{ color: theme.palette.error.main }} />
-                </IconButton>
+                <Box>
+                  <IconButton onClick={(e) => handleEditClick(e, category.id)} size='small'>
+                    <EditIcon sx={{ color: theme.palette.primary }} />
+                  </IconButton>
+                  <IconButton onClick={(e) => handleDeleteClick(e, category.id)} size='small'>
+                    <DeleteIcon sx={{ color: theme.palette.error.main }} />
+                  </IconButton>
+                </Box>
               </Box>
             </MuiAccordionSummary>
 
             <MuiAccordionDetails>
-              <ProductList list={category.subcategories} />
+              <ProductList list={category.subcategories} fetchProducts={getCategories}/>
             </MuiAccordionDetails>
           </MuiAccordion>
         );
@@ -91,12 +142,20 @@ export default function CategoriesAccordions() {
       <DeleteModal
         open={openDelete}
         handleClose={() => setOpenDelete(false)}
-        handleSubmit={handleDeleteConfirm}
+        handleDelete={handleDeleteConfirm}
+        isLoading={editLoading}
       >
         <Box mt={2} textAlign="center">
           Are you sure you want to delete this category along with all its subcategories and associated products?
         </Box>
       </DeleteModal>
+      <EditCategoryModal
+        open={openEdit}
+        handleClose={() => setOpenEdit(false)}
+        handleSubmit={handleEditSubmit}
+        initialData={editData}
+        loading={editLoading}
+      />
     </Box>
   );
 }

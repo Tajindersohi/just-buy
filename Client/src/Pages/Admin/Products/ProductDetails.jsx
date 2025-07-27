@@ -88,7 +88,7 @@ const getProducts = async () => {
         <Link to="/admin/categories" style={{ textDecoration: 'none', color: '#0c8342', fontWeight: 'bold' }}>
           Categories
         </Link>
-        <Typography color="textPrimary" sx={{ fontWeight: 'bold' }}>Products</Typography>
+        <Typography color="textPrimary" sx={{ fontWeight: 'bold' }}>{productList?.categoryName?.name || 'Products'}</Typography>
       </Breadcrumbs>
 
         <Box display={'flex'} gap={2}>

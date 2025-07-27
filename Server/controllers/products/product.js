@@ -162,4 +162,49 @@ const deleteProduct = async (req, res) => {
     }
 };
 
-module.exports = { getCategoryList, addNewProduct, addNewCategory, getCategoryProducts, deleteProduct, updateProduct };
+const deleteCategory = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const allCategories = await ProductCategory.find().lean();
+    const getAllNestedIds = (parentId) => {
+      const children = allCategories.filter(cat => String(cat.parentCategory?._id) === String(parentId));
+      return children.reduce((acc, curr) => {
+        return acc.concat(curr._id, getAllNestedIds(curr._id));
+      }, []);
+    };
+
+    const nestedIds = getAllNestedIds(id);
+    const allIdsToDelete = [id, ...nestedIds];
+
+    await Product.deleteMany({ category_id: { $in: allIdsToDelete } });
+    await ProductCategory.deleteMany({ _id: { $in: allIdsToDelete } });
+
+    res.status(200).json({ success: true, message: 'Category and all nested items deleted' });
+  } catch (err) {
+    console.error('Error deleting category:', err);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};
+
+const updateCategory = async (req, res) => {
+  try {
+    const { name } = JSON.parse(req.body.data);
+    const { id } = req.params;
+
+    const updateData = { name };
+    if (req.file) {
+      updateData.imageUrl = `${process.env.APP_URL}/uploads/${req.file.filename}`;
+    }
+
+    const updated = await ProductCategory.findByIdAndUpdate(id, updateData, { new: true });
+    res.status(200).json({ success: true, message: "Category updated", category: updated });
+  } catch (err) {
+    console.error("Error updating category:", err);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+
+
+module.exports = { getCategoryList, addNewProduct, addNewCategory, getCategoryProducts, deleteProduct, updateProduct, deleteCategory, updateCategory };

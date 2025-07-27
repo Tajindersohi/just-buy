@@ -6,7 +6,9 @@ const {
     addNewCategory,
     getCategoryProducts,
     deleteProduct,
-    updateProduct
+    updateProduct,
+    deleteCategory,
+    updateCategory
 } = require('../controllers/products/product');
 const upload = require('../middlewares/uploadMiddleware');
 
@@ -16,5 +18,8 @@ router.post("/update-product", upload.single("media"), updateProduct);
 router.post("/create-category", upload.single("media"),addNewCategory);
 router.post("/products", getCategoryProducts);
 router.delete("/products/:id", deleteProduct);
+router.delete("/:id", deleteCategory);
+router.put("/:id", upload.single("media"), updateCategory);
+
 
 module.exports = router;
