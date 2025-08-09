@@ -10,16 +10,16 @@ const {
     deleteCategory,
     updateCategory
 } = require('../controllers/products/product');
-const upload = require('../middlewares/uploadMiddleware');
+const {upload,saveFileToGitHub} = require('../middlewares/uploadMiddleware');
 
 router.get("/", getCategoryList);
-router.post("/create-product", upload.single("media"), addNewProduct);
-router.post("/update-product", upload.single("media"), updateProduct);
-router.post("/create-category", upload.single("media"),addNewCategory);
+router.post("/create-product", upload.single("media"),saveFileToGitHub, addNewProduct);
+router.post("/update-product", upload.single("media"), saveFileToGitHub, updateProduct);
+router.post("/create-category", upload.single("media"), saveFileToGitHub,addNewCategory);
 router.post("/products", getCategoryProducts);
 router.delete("/products/:id", deleteProduct);
 router.delete("/:id", deleteCategory);
-router.put("/:id", upload.single("media"), updateCategory);
+router.put("/:id", upload.single("media"), saveFileToGitHub, updateCategory);
 
 
 module.exports = router;

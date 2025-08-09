@@ -76,7 +76,7 @@ const getCategoryProducts = async (req, res) => {
 const addNewProduct = async (req, res) => {
     try {
         const { categoryId, price, productName, discount } = JSON.parse(req.body.data);
-        const imageUrl = req.file ? `${process.env.APP_URL}/uploads/${req.file.filename}` : null;
+        const imageUrl = req.fileUrl; // already a full public URL
         const newProduct = await Product.create({
             category_id:categoryId ,
             name: productName,
@@ -108,8 +108,8 @@ const updateProduct = async (req, res) => {
             discount,
         };
 
-        if (req.file) {
-            updateData.imageUrl = `${process.env.APP_URL}/uploads/${req.file.filename}`;
+        if (req.fileUrl) {
+            updateData.imageUrl = req.fileUrl; 
         }
 
         const updatedProduct = await Product.findOneAndUpdate(
@@ -136,7 +136,8 @@ const updateProduct = async (req, res) => {
 const addNewCategory = async (req, res) => {
     try {
         const { category, parentCategory } = JSON.parse(req.body.data);
-        const imageUrl = req.file ? `${process.env.APP_URL}/uploads/${req.file.filename}` : null;
+        
+        const imageUrl = req.fileUrl;
         let categoryRecord = await ProductCategory.create({ name: category, imageUrl: imageUrl, parentCategory: parentCategory});
         res.status(201).json({
             message: 'Category created successfully',
@@ -193,8 +194,9 @@ const updateCategory = async (req, res) => {
     const { id } = req.params;
 
     const updateData = { name };
-    if (req.file) {
-      updateData.imageUrl = `${process.env.APP_URL}/uploads/${req.file.filename}`;
+    
+    if (req.fileUrl) {
+        updateData.imageUrl = req.fileUrl; // already a full public URL
     }
 
     const updated = await ProductCategory.findByIdAndUpdate(id, updateData, { new: true });

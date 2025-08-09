@@ -1,22 +1,17 @@
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 
-const uploadDir = path.join(__dirname, "../uploads");
-
-// Ensure uploads directory exists
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+// Lazy-load Octokit so we can use it in CommonJS
+let Octokit;
+async function getOctokit() {
+    if (!Octokit) {
+        const module = await import("@octokit/rest");
+        Octokit = module.Octokit;
+    }
+    return Octokit;
 }
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    },
-});
+// Store file in memory instead of disk
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
     if (file.mimetype.startsWith("image/")) {
@@ -28,4 +23,36 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ storage, fileFilter });
 
-module.exports = upload;
+// Middleware to upload directly to GitHub
+const saveFileToGitHub = async (req, res, next) => {
+    if (!req.file) return next();
+
+    const OctokitClass = await getOctokit();
+    const octokit = new OctokitClass({
+        auth: process.env.GITHUB_TOKEN,
+    });
+
+    const [owner, repo] = process.env.GITHUB_REPO.split("/");
+    const branch = process.env.GITHUB_BRANCH || "main";
+
+    const filePath = `uploads/${Date.now()}-${req.file.originalname}`;
+    const content = req.file.buffer.toString("base64");
+
+    try {
+        await octokit.repos.createOrUpdateFileContents({
+            owner,
+            repo,
+            path: filePath,
+            message: `Upload ${req.file.originalname}`,
+            content,
+            branch,
+        });
+
+        req.fileUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}`;
+        next();
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports = { upload, saveFileToGitHub };
