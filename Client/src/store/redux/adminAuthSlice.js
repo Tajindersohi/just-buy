@@ -23,8 +23,13 @@ const adminAuthSlice = createSlice({
       state.user = null;
       state.loading = false;
     },
+    loginUserFailed(state) {
+      state.isAuthenticated = false;
+      state.user = null;
+      state.loading = false;
+    },
   },
 });
 
-export const { loginUser, logoutAdmin, logging } = adminAuthSlice.actions;
+export const { loginUser, logoutAdmin, logging, loginUserFailed } = adminAuthSlice.actions;
 export default adminAuthSlice.reducer;

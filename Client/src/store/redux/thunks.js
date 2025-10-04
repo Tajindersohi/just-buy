@@ -1,5 +1,5 @@
 import {createAsyncThunk } from '@reduxjs/toolkit';
-import { logging, loginUser, logoutAdmin } from './adminAuthSlice';
+import { logging, loginUser, logoutAdmin, loginUserFailed } from './adminAuthSlice';
 import apiConstants from '../../api/Constants';
 import { gettingUserInfo, gettingUserInfoFailed, loginOrSignup, sentLoginOtp, logoutClient } from './authSlice';
 
@@ -14,6 +14,7 @@ export const login = createAsyncThunk(
       dispatch(loginUser(user)); 
       return { token };
     } catch (error) {
+      dispatch(loginUserFailed()); 
       return rejectWithValue(error.response?.data?.message || 'Login failed');
     }
   }
