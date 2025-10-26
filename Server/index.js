@@ -32,6 +32,9 @@ const upload = multer({ storage });
 
 app.use("/api/upload-image", upload.single('image'), uploadImage);
 app.use("/api", routes);
+app.get('/ping', (req, res) => {
+  res.status(200).send('OK');
+});
 
 // Connect to DB
 // connect();
