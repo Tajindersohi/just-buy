@@ -3,13 +3,12 @@ import {
   Box,
   Button,
   Card,
-  CardActionArea,
   CardContent,
   CardMedia,
   Chip,
   Grid,
-  Skeleton,
   Typography,
+  Skeleton,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -20,9 +19,9 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
   const [productCount, setProductCount] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
   const cartItems = useSelector((state) => state.cart);
-  const isMobile = useMediaQuery("(max-width:600px)");
-  const isTablet = useMediaQuery("(max-width:900px)");
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
   useEffect(() => {
     const added = cartItems.items.find((item) => item._id === product._id);
@@ -43,157 +42,201 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
   return (
     <Grid item xs={6} sm={4} md={3} lg={2}>
       <Card
-        elevation={2}
+        variant="outlined"
         sx={{
-          bgcolor: "#00b1500a",
-          transition: "transform 0.2s ease, box-shadow 0.3s ease",
+          height: "100%",
           display: "flex",
           flexDirection: "column",
-          boxShadow: theme.shadows[1],
-          height: "100%",
+          justifyContent: "space-between",
+          borderColor: "#e0e0e0",
+          transition: "box-shadow 0.2s ease-in-out, transform 0.15s",
           "&:hover": {
-            // transform: "translateY(-4px)",
-            boxShadow: theme.shadows[4],
+            // boxShadow: theme.shadows[2],
+            // transform: "translateY(-2px)",
           },
         }}
       >
-        <CardActionArea disableRipple sx={{ p: 0, pb: 0 }}>
-          <Box
+        {/* ---------- Product Image ---------- */}
+        <Box
+          sx={{
+            height: isMobile ? 100 : isTablet ? 100 : 100,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+            bgcolor: "#f9f9f9",
+            overflow: "hidden",
+          }}
+        >
+          {!imageLoaded && <Skeleton variant="rectangular" width="100%" height="100%" />}
+          <CardMedia
+            component="img"
+            image={product.imageUrl}
+            alt={product.name}
+            onLoad={() => setImageLoaded(true)}
+            onError={(e) => {
+              e.target.src = "https://via.placeholder.com/200x200.png?text=No+Image";
+              setImageLoaded(true);
+            }}
             sx={{
-              height: isMobile ? 100 : isTablet ? 130 : 150,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
-              overflow: "hidden",
+              display: imageLoaded ? "block" : "none",
+              objectFit: "contain",
+              maxHeight: "100%",
+              transition: "transform 0.25s ease",
+              "&:hover": { transform: "scale(1.05)" },
+            }}
+          />
+
+          {product.discount >= 10 && (
+            <Chip
+              label={`${product.discount}% OFF`}
+              color="error"
+              size="small"
+              sx={{
+                position: "absolute",
+                top: 6,
+                left: 6,
+                fontSize: "10px",
+                height: 20,
+              }}
+            />
+          )}
+        </Box>
+
+        {/* ---------- Product Info ---------- */}
+        <CardContent
+          sx={{
+            p: isMobile ? 1 : 1,
+            flexGrow: 1,
+          }}
+        >
+          <Typography
+            variant="body2"
+            noWrap
+            sx={{
+              fontWeight: 600,
+              lineHeight: 1.2,
+              fontSize: isMobile ? "13px" : "13px",
+              color: "text.primary",
             }}
           >
-            {!imageLoaded && <Skeleton variant="rectangular" width="100%" height="100%" />}
-              <CardMedia
-                component="img"
-                image={product.imageUrl}
-                alt={product.name}
-                onLoad={() => setImageLoaded(true)}
-                onError={(e) => {
-                  e.target.src = 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MzM0ODN8MHwxfHNlYXJjaHwxfHxHcmFwZXN8ZW58MHwwfHx8MTc0NjI4OTY3NHww&ixlib=rb-4.0.3&q=80&w=400';
-                  setImageLoaded(true);
-                }}
-                sx={{
-                  display: imageLoaded ? "block" : "none",
-                  objectFit: "contain",
-                  maxHeight: "100%",
-                  transition: "transform 0.3s ease",
-                  "&:hover": {
-                    transform: "scale(1.05)",
-                  },
-                }}
-              />
+            {product.name}
+          </Typography>
 
-            {product.discount >= 10 && (
-              <Chip
-                label={`${product.discount}% OFF`}
-                color="error"
-                size="small"
+          <Typography
+            variant="caption"
+            sx={{
+              color: "text.secondary",
+              display: "block",
+              mt: 0.3,
+              fontSize: "11px",
+            }}
+          >
+            {product.quantity || "100g"}
+          </Typography>
+
+          {/* ---------- Price & Add Button ---------- */}
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            mt={0.7}
+          >
+            <Box>
+              {product.discount > 0 && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    textDecoration: "line-through",
+                    color: "text.disabled",
+                    mr: 0.5,
+                    fontSize: "11px",
+                  }}
+                >
+                  ₹{product.price}
+                </Typography>
+              )}
+              <Typography
+                variant="body2"
+                fontWeight={600}
+                color="success.main"
+                component="span"
+              >
+                ₹{getCurrentPrice(product.discount, product.price)}
+              </Typography>
+            </Box>
+
+            {productCount > 0 ? (
+              <Box
                 sx={{
-                  position: "absolute",
-                  top: 8,
-                  left: 8,
-                  fontSize: "10px",
+                  display: "flex",
+                  alignItems: "center",
+                  border: "1px solid",
+                  borderColor: theme.palette.success.main,
+                  borderRadius: "14px",
+                  overflow: "hidden",
+                  height: 26,
                 }}
-              />
+              >
+                <Button
+                  onClick={() => handleSubItem(product._id)}
+                  sx={{
+                    minWidth: 24,
+                    color: "success.main",
+                    fontSize: "13px",
+                    fontWeight: "bold",
+                    px: 0,
+                    lineHeight: 1,
+                  }}
+                >
+                  −
+                </Button>
+                <Typography
+                  sx={{
+                    px: 1,
+                    fontSize: "12px",
+                    fontWeight: 500,
+                    minWidth: 18,
+                    textAlign: "center",
+                  }}
+                >
+                  {productCount}
+                </Typography>
+                <Button
+                  onClick={() => handleAdd(product)}
+                  sx={{
+                    minWidth: 24,
+                    color: "success.main",
+                    fontSize: "13px",
+                    fontWeight: "bold",
+                    px: 0,
+                    lineHeight: 1,
+                  }}
+                >
+                  +
+                </Button>
+              </Box>
+            ) : (
+              <Button
+                variant="outlined"
+                color="success"
+                onClick={() => handleAdd(product)}
+                sx={{
+                  borderRadius: "14px",
+                  textTransform: "none",
+                  fontSize: "12px",
+                  px: 1.5,
+                  py: 0.2,
+                  height: 26,
+                  minWidth: 70,
+                  lineHeight: 1.2,
+                }}
+              >
+                Add
+              </Button>
             )}
           </Box>
-
-          <CardContent sx={{ px: 1, pt: 1, pb: 1 }}>
-            <Box display={{xs:'flex',md:'block'}} alignItems={'center'} gap={1} justifyContent={'start'}>
-                <Typography
-                  variant="subtitle2"
-                  noWrap
-                  color="text.primary"
-                >
-                  {product.name}
-                </Typography>
-
-                <Typography variant="caption" color="text.secondary">
-                  {product.quantity || "100g"}
-                </Typography>
-            </Box>
-
-            <Box mt={0.5} display={'flex'} gap={2} justifyContent={'space-between'} alignItems={'center'}>
-              <Box display={{xs:'block',sm:'flex'}} justifyContent={'start'} gap={1}>
-                  {product.discount > 0 && (
-                    <Typography
-                      variant="caption"
-                      sx={{ textDecoration: "line-through", color: theme.palette.text.secondary }}
-                    >
-                      ₹{product.price}
-                    </Typography>
-                  )}
-                  <Typography
-                    variant="body2"
-                    fontWeight="bold"
-                    color="success.main"
-                  >
-                    ₹{getCurrentPrice(product.discount, product.price)}
-                  </Typography>
-              </Box>
-              <Box>
-                {productCount > 0 ? (
-                  <Button
-                    fullWidth
-                    size="small"
-                    variant="contained"
-                    color="success"
-                    sx={{
-                      fontSize: "13px",
-                      borderRadius: "20px",
-                      textTransform: "none",
-                      py: 0.6,
-                      backgroundColor: theme.palette.success.main,
-                      color: "#fff",
-                      "&:hover": {
-                        backgroundColor: theme.palette.success.main,
-                      },
-                    }}
-                  >
-                    <Box display="flex" alignItems="center" justifyContent="center" width="100%">
-                      <Box
-                        onClick={() => handleSubItem(product._id)}
-                        sx={{ px: 1.5, cursor: "pointer" }}
-                      >
-                        −
-                      </Box>
-                      {productCount}
-                      <Box
-                        onClick={() => handleAdd(product)}
-                        sx={{ px: 1.5, cursor: "pointer" }}
-                      >
-                        +
-                      </Box>
-                    </Box>
-                  </Button>
-                ) : (
-                  <Button
-                    fullWidth
-                    size="small"
-                    variant="outlined"
-                    color="success"
-                    onClick={() => handleAdd(product)}
-                    sx={{
-                      fontSize: "13px",
-                      borderRadius: "20px",
-                      textTransform: "none",
-                      py: 0.6,
-                    }}
-                  >
-                    Add
-                  </Button>
-                )}
-              </Box>
-            </Box>
-          </CardContent>
-        </CardActionArea>
-
+        </CardContent>
       </Card>
     </Grid>
   );
