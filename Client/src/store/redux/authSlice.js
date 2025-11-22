@@ -3,11 +3,13 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   isAuthenticated: false,
   user: null,
-  sent:false,
-  isFetching:false,
-  message:"",
-  cart:[],
+  sent: false,
+  isFetching: false,
+  userLoaded: false,  
+  message: "",
+  cart: [],
 };
+
 
 const userSlice = createSlice({
   name: 'user',
@@ -16,6 +18,8 @@ const userSlice = createSlice({
     loginOrSignup(state, action) {
       state.isAuthenticated = true;
       state.user = action.payload;
+      state.isFetching = false;
+      state.userLoaded = true;   
     },
     sentLoginOtp(state, action) {
       state.sent = action.payload.sent;
@@ -36,6 +40,7 @@ const userSlice = createSlice({
     gettingUserInfoFailed(state){
       state.isAuthenticated = false;
       state.user = null;
+      state.userLoaded = true;   
       state.isFetching = false;
     },
     logoutClient(state) {

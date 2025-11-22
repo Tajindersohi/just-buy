@@ -71,7 +71,6 @@ const Home = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   useEffect(() => {
-    dispatch(getMe());
     fetchHomeData();
   }, []);
 

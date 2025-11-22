@@ -106,7 +106,7 @@ const sentLoginOtp = async (req, res) => {
 
 const handleGetMe = async (req, res) => {
   try {
-     const user = await User.findById(req.user.id).select('-password'); 
+     const user = await User.findById(req.user.id).select('-password,-lastOtp'); 
      if (!user) {
          return res.status(404).json({ message: 'User not found' });
      }

@@ -19,7 +19,7 @@ export default function LoadingIndicatorProvider({ children }) {
   return (
     <LoadingContext.Provider value={{ showLoading }}>
       {children}
-      {loadingState.isLoading && (
+      {loadingState.isLoading === true && (
         <Box
           height="100vh"
           width="100%"

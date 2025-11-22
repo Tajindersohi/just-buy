@@ -58,6 +58,7 @@ export const loginWithOtp = createAsyncThunk(
         const { token, user} = response.data;
         localStorage.setItem('token', token);
         dispatch(loginOrSignup(user)); 
+        window.location.href = "/"; 
       }else{
       }
       return response.data
@@ -83,7 +84,6 @@ export const getMe = createAsyncThunk(
   async (_, { dispatch, rejectWithValue }) => {
     try {
       dispatch(gettingUserInfo());
-
       const token = localStorage.getItem('token');
       if (!token) {
         dispatch(gettingUserInfoFailed());
@@ -102,6 +102,8 @@ export const getMe = createAsyncThunk(
       }
     } catch (error) {
       dispatch(gettingUserInfoFailed());
+      console.log("egregegeg");
+      
       return rejectWithValue(error?.response?.data?.message || 'Failed to fetch user info');
     }
   }

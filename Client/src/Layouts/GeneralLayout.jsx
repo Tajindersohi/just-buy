@@ -3,27 +3,25 @@ import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { Box, Container, Grid, useMediaQuery, useTheme } from "@mui/material";
 import { Outlet } from "react-router-dom"; // ✅ Import this
+import PageLoader from "../Components/Common/PageLoader";
+import { useSelector } from "react-redux";
 
 const GeneralLayout = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const { userLoaded,isFetching } = useSelector((state) => state.user);
+    console.log("userLoadeduserLoaded",userLoaded);
+    if (!userLoaded) {
+        return <PageLoader type="circular" />;
+    }
 
     return (
-        <Container 
-            maxWidth="xl"  
-            disableGutters 
-        >
-
+        <Container maxWidth="xl" disableGutters>
             <Header />
 
-            <Grid 
-                container 
-                spacing={isMobile ? 1 : 2} 
-                mt={1} 
-                justifyContent="center"
-            >
-                <Grid item xs={12} minHeight={'60vh'}>
-                    <Box px={{xs:2, md:4}}>
+            <Grid container spacing={isMobile ? 1 : 2} mt={1} justifyContent="center">
+                <Grid item xs={12} minHeight="60vh">
+                    <Box px={{ xs: 2, md: 4 }}>
                         <Outlet />
                     </Box>
                 </Grid>
@@ -35,5 +33,7 @@ const GeneralLayout = () => {
         </Container>
     );
 };
+
+
 
 export default GeneralLayout;

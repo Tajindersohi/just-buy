@@ -1,13 +1,36 @@
 import React from "react";
-import { Box, Grid, Typography, Link, useTheme } from "@mui/material";
+import { Box, Grid, Typography, useTheme } from "@mui/material";
 import Constant from "./Constant";
 import { useSelector } from "react-redux";
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const theme = useTheme();
   const [usefulLinks] = Constant;
   const categories = useSelector((state) => state.home.categories);
-
+  const renderLink = (link, name, fontWeight) => {
+    return(
+      <Link to={link} style={{ textDecoration: 'none' }}>
+        <Typography
+          variant="body1"
+          sx={{
+            color: 'text.secondary',
+            fontWeight: fontWeight,
+            borderBottom: '2px solid transparent',
+            transition: 'all 0.3s ease',
+            cursor: 'pointer',
+            '&:hover': {
+              color: 'primary.main',
+              borderBottom: '2px solid',
+              borderColor: 'primary.main',
+            },
+          }}
+        >
+          {name}
+        </Typography>
+      </Link>
+    )
+  }
   return (
     <Box
       sx={{
@@ -30,14 +53,7 @@ const Footer = () => {
           </Typography>
           <Box display="flex" flexDirection="column" gap={1}>
             {usefulLinks.map((link, idx) => (
-              <Link
-                key={idx}
-                href="#"
-                underline="hover"
-                sx={{ fontSize: "14px", color: theme.palette.text.secondary }}
-              >
-                {link}
-              </Link>
+              renderLink("/", link, 300)
             ))}
           </Box>
         </Grid>
@@ -48,20 +64,12 @@ const Footer = () => {
             <Typography variant="h6" fontWeight={700}>
               Categories
             </Typography>
-            <Link href="#" underline="none" color="success.main" fontSize={14}>
-              See all
-            </Link>
+            {renderLink("/categories", "See all", 500)}
           </Box>
           <Grid container spacing={1}>
             {categories?.slice(0, 12).map((item, idx) => (
               <Grid item xs={6} sm={4} md={3} key={idx}>
-                <Link
-                  href="#"
-                  underline="hover"
-                  sx={{ fontSize: "14px", color: theme.palette.text.secondary }}
-                >
-                  {item.name}
-                </Link>
+                {renderLink(`category/${item.id}`, item.name, 300)}
               </Grid>
             ))}
           </Grid>

@@ -1,7 +1,7 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
-import { useSelector } from "react-redux";
-import LoadingIndicator from "../Components/Common/LoadingIndicator";
+import { useDispatch, useSelector } from "react-redux";
+import LoadingIndicator, { useLoading } from "../Components/Common/LoadingIndicator";
 import PrivateRoute from "./PrivateRoutes";
 import AdminRoute from "./AdminRoutes";
 import GeneralLayout from "../Layouts/GeneralLayout";
@@ -12,6 +12,8 @@ import CategoriesPage from "../Pages/Home/CategoriesPage";
 import AddressModal from "../Pages/Address";
 import ThankYouPage from "../Pages/ThankYouPage";
 import MyAccount from "../Pages/Account";
+import PageLoader from "../Components/Common/PageLoader";
+import { getMe } from "../store/redux/thunks";
 
 // Lazy-loaded Pages
 const Home = lazy(() => import("../Pages/Home"));
@@ -27,9 +29,24 @@ const Users = lazy(() => import("../Pages/Admin/Users"));
 
 const AppRoutes = () => {
   const user = useSelector((state) => state.auth.user);
+  const userState = useSelector((state) => state.user);
+  const { showLoading } = useLoading();
+  const dispatch = useDispatch();
+
+  if (userState.isFetching) {
+  // return (
+  //   <div style={{ padding: 30 }}>
+  //     <LoadingIndicator />
+  //   </div>
+  // );
+  }
+
+  useEffect(() => {
+    dispatch(getMe());
+  }, []);
 
   return (
-    <Suspense fallback={<LoadingIndicator />}>
+    <Suspense fallback={<PageLoader/>}>
       <Routes>
 
         <Route element={<GeneralLayout />}>

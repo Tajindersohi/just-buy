@@ -42,8 +42,9 @@ const AccountMenu = () => {
     } else {
       await dispatch(logoutUser());
     }
-    navigate('/');
+    window.location.href = "/"; 
   };
+
 
   const isAdmin = user?.userRole === 'admin';
 

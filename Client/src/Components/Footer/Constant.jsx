@@ -1,18 +1,18 @@
 const usefullinks = [
     "About",
-    "Careers",
+    // "Careers",
     "Blog",
     "Privacy",
     "Terms",
     "FAQs",
-    "Security",
-    "Mobile",
-    "Contact",
-    "Partner",
-    "Franchise",
-    "Seller",
-    "Warehouse",
-    "Deliver",
+    // "Security",
+    // "Mobile",
+    // "Contact",
+    // "Partner",
+    // "Franchise",
+    // "Seller",
+    // "Warehouse",
+    // "Deliver",
 ];
  
 const Constant = [

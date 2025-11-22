@@ -54,7 +54,6 @@ const Header = () => {
   const user = authState.user || userState.user;
   const isAdmin = user?.userRole === 'admin';
   const pages = isAdmin ? adminPages : userPages;
-  console.log("useruseruser",user);
   return (
     <>
       <AppBar
@@ -79,13 +78,14 @@ const Header = () => {
           </Box>
           {isMobile && user && user.userRole != 'admin' &&
           <Box display={'flex'} justifyContent={'center'} width={"100%"} gap={2}>
-            <AddressModal/>
+            <AddressModal user={user}/>
           </Box>
           }
           {!isMobile  && 
           <Box display={'flex'} justifyContent={'center'} width={"100%"} gap={2}>
             {user && user.userRole != 'admin' &&
-            <AddressModal/>}
+              <AddressModal user={user}/>
+            }
             <Box width={'60%'}>
               <SearchBar/>
             </Box>
@@ -108,7 +108,7 @@ const Header = () => {
             {!user && (
               <Login modalType={modalType} setModalType={setModalType} />
             )}
-            <ThemeToggleButton />
+            {/* <ThemeToggleButton /> */}
             {user && <AccountMenu />}
           </Box>
         </Toolbar>
