@@ -11,11 +11,12 @@ import ScrollToTop from "./ScrollToTop"; // 👈 import it
 // Create Context
 export const ColorModeContext = createContext();
 const App = () => {
-  const [mode, setMode] = useState(() => {
-  const storedTheme = localStorage.getItem("theme");
-  const defaultTheme = ['dark', 'light'].includes(storedTheme) ? storedTheme : 'light';
-  return defaultTheme;
-  });
+  // const [mode, setMode] = useState(() => {
+  // const storedTheme = localStorage.getItem("theme");
+  // const defaultTheme = ['dark', 'light'].includes(storedTheme) ? storedTheme : 'light';
+  // return defaultTheme;
+  // });
+  const [mode, setMode] = useState('light')
 
   const toggleColorMode = () => {
     setMode((prev) => {

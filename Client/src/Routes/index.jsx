@@ -18,6 +18,10 @@ import { getMe } from "../store/redux/thunks";
 // Lazy-loaded Pages
 const Home = lazy(() => import("../Pages/Home"));
 const About = lazy(() => import("../Pages/About"));
+const PrivacyPolicy = lazy(() => import("../Pages/Public/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("../Pages/Public/TermsOfService"));
+const BlogFeed = lazy(() => import("../Pages/Public/BlogFeed"));
+const FAQ = lazy(() => import("../Pages/Public/FAQ"));
 const Contact = lazy(() => import("../Pages/Contact"));
 const NotFound = lazy(() => import("../Pages/NotFound"));
 const Login = lazy(() => import("../Pages/Admin/Login"));
@@ -55,6 +59,10 @@ const AppRoutes = () => {
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path ="/privacy" element={<PrivacyPolicy/>} />
+          <Route path ="/terms" element={<TermsOfService/>} />
+          <Route path ="blog" element={<BlogFeed/>} />
+          <Route path ="faqs" element={<FAQ/>} />
           <Route path="*" element={<NotFound />} />
         </Route>
 

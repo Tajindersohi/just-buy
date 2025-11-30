@@ -10,7 +10,6 @@ const GeneralLayout = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const { userLoaded,isFetching } = useSelector((state) => state.user);
-    console.log("userLoadeduserLoaded",userLoaded);
     if (!userLoaded) {
         return <PageLoader type="circular" />;
     }
@@ -18,18 +17,15 @@ const GeneralLayout = () => {
     return (
         <Container maxWidth="xl" disableGutters>
             <Header />
-
-            <Grid container spacing={isMobile ? 1 : 2} mt={1} justifyContent="center">
-                <Grid item xs={12} minHeight="60vh">
-                    <Box px={{ xs: 2, md: 4 }}>
-                        <Outlet />
-                    </Box>
-                </Grid>
-            </Grid>
-
-            <Box mt={isMobile ? 2 : 4}>
-                <Footer />
+            <Box 
+            sx={{
+                px: { xs: 2, sm: 4, md: 8 },
+                py: { xs: 2, sm: 4 },
+            }}      
+            >
+                <Outlet />
             </Box>
+            <Footer />
         </Container>
     );
 };

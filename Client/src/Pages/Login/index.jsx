@@ -27,41 +27,69 @@ export default function Login({ modalType, setModalType }) {
   const userState = useSelector((state) => state.user);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const [number, setNumber] = useState('');
-  const [otp, setOtp] = useState('');
+  const [formattedPhone, setFormattedPhone] = useState("");
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [isOtpSent, setIsOtpSent] = useState(false);
+  const [phone, setPhone] = useState("");
 
   const handleOpen = useCallback(() => setModalType('phone'), []);
   const handleClose = useCallback(() => {
     setModalType(null);
-    setNumber('');
-    setOtp('');
+    setPhone('');
+    setOtp(["", "", "", "", "", ""]);
     setIsOtpSent(false);
   }, []);
 
-  const handleChange = (key, val) => {
-    if (key === 'number' && /^\d{0,10}$/.test(val)) setNumber(val);
-    if (key === 'otp') setOtp(val);
+  const handleOtpChange = (index, value) => {
+    if (!/^\d?$/.test(value)) return; // allow only one digit
+
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    if (value && index < 5) document.getElementById(`otp-${index + 1}`).focus();
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      document.getElementById(`otp-${index - 1}`).focus();
+    }
+  };
+
+  const handlePhoneChange = (e) => {
+    const raw = e.target.value.replace(/\D/g, "");
+    setPhone(raw);
+    setFormattedPhone(formatPhone(raw));
+  };
+
+  const formatPhone = (val) => {
+    const digits = val.replace(/\D/g, "").slice(0, 10);
+    let formatted = digits;
+
+    if (digits.length > 5) {
+      formatted = digits.slice(0, 5) + " " + digits.slice(5);
+    }
+
+    return formatted;
   };
 
   const handleSendOtp = async () => {
     setLoading(true);
     try {
       if (modalType === 'phone') {
-        if (number.length < 10) {
+        if (phone.length < 10) {
           showError('Enter a valid phone number');
           return;
         }
 
-        const res = await dispatch(sendOtp({ phoneNumber: number }));
+        const res = await dispatch(sendOtp({ phoneNumber: phone }));
         if (res.meta.requestStatus === 'fulfilled') {
           setModalType('otp');
           setIsOtpSent(true);
         }
       } else {
-        const res = await dispatch(loginWithOtp({ phoneNumber: number, otp }));
+        const res = await dispatch(loginWithOtp({ phoneNumber: phone, otp:otp.join('') }));
         if (res.meta.requestStatus === 'fulfilled') {
           handleClose();
         }
@@ -88,8 +116,7 @@ export default function Login({ modalType, setModalType }) {
   return (
     <>
       <IconButton onClick={handleOpen} size='small'>
-        
-        <LoginIcon fontSize='large' sx={{ color: appTheme.colors.primary }} />
+        <LoginIcon fontSize='large' color='primary'/>
       </IconButton>
       <CommonModal
         open={modalType === 'phone'}
@@ -104,17 +131,15 @@ export default function Login({ modalType, setModalType }) {
           <FormControl fullWidth variant="outlined">
             <InputLabel htmlFor="phone-input">Enter Mobile Number</InputLabel>
             <OutlinedInput
-              id="phone-input"
-              value={number}
-              onChange={(e) => handleChange('number', e.target.value)}
+              value={formattedPhone}
+              onChange={handlePhoneChange}
               startAdornment={<InputAdornment position="start">+91</InputAdornment>}
               label="Enter Mobile Number"
               type="tel"
+              inputMode="numeric"
               sx={{
                 borderRadius: 2,
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderRadius: 2,
-                },
+                "& input": { letterSpacing: "2px", fontSize: "18px" },
               }}
             />
           </FormControl>
@@ -131,18 +156,36 @@ export default function Login({ modalType, setModalType }) {
         loading={loading}
       >
         <Box width={isMobile ? '100%' : '400px'} px={2} py={1}>
-          <TextField
-            fullWidth
-            type="number"
-            variant="outlined"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => handleChange('otp', e.target.value)}
-            sx={{ borderRadius: 3 }}
-          />
+          <Box display="flex" gap={1} justifyContent="center" mt={2}>
+            {otp.map((digit, i) => (
+              <TextField
+                key={i}
+                id={`otp-${i}`}
+                value={digit}
+                onChange={(e) => handleOtpChange(i, e.target.value)}
+                onKeyDown={(e) => handleOtpKeyDown(i, e)}
+                inputProps={{
+                  maxLength: 1,
+                  inputMode: "numeric",
+                  style: {
+                    textAlign: "center",
+                    fontSize: "20px",
+                    padding: "0",
+                  },
+                }}
+                sx={{
+                  width: 45,
+                  borderRadius:50,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 50,
+                  },
+                }}
+              />
+            ))}
+          </Box>
           {isOtpSent && (
             <Typography variant="body2" mt={1} textAlign="center">
-              OTP sent to <strong>+91 {number}</strong>
+              OTP sent to <strong>+91 {phone}</strong>
             </Typography>
           )}
           <Box display="flex" justifyContent="center" mt={2}>

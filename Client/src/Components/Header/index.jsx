@@ -60,6 +60,7 @@ const Header = () => {
         position="sticky"
         elevation={4}
         sx={{
+          px: { xs: 2, sm: 4, md: 8 },
           backgroundColor: theme.palette.background.paper,
           borderRadius:0,
           boxShadow: theme.palette.mode === 'light'
@@ -67,8 +68,7 @@ const Header = () => {
             : '0 1px 4px rgba(0,0,0,0.6)',
         }}
       >
-        <Toolbar sx={{ justifyContent: 'space-between', py: 1 }} px={{xs:2, md:4}}>
-          {/* Logo / Drawer */}
+        <Toolbar sx={{ justifyContent: 'space-between', py: 1, p:'0px !important' }}>
           <Box display="flex" alignItems="center">
               <>
                 <Link to="/" style={{ textDecoration: 'none' }}>
@@ -76,16 +76,14 @@ const Header = () => {
                 </Link>
               </>
           </Box>
-          {isMobile && user && user.userRole != 'admin' &&
+          {isMobile &&
           <Box display={'flex'} justifyContent={'center'} width={"100%"} gap={2}>
             <AddressModal user={user}/>
           </Box>
           }
           {!isMobile  && 
           <Box display={'flex'} justifyContent={'center'} width={"100%"} gap={2}>
-            {user && user.userRole != 'admin' &&
               <AddressModal user={user}/>
-            }
             <Box width={'60%'}>
               <SearchBar/>
             </Box>

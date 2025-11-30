@@ -34,7 +34,6 @@ const Footer = () => {
   return (
     <Box
       sx={{
-        mt: 8,
         px: { xs: 2, sm: 4, md: 8 },
         py: { xs: 4, sm: 6 },
         backgroundColor:
@@ -53,7 +52,7 @@ const Footer = () => {
           </Typography>
           <Box display="flex" flexDirection="column" gap={1}>
             {usefulLinks.map((link, idx) => (
-              renderLink("/", link, 300)
+              renderLink(`/${link.toLocaleLowerCase()}`, link, 300)
             ))}
           </Box>
         </Grid>
