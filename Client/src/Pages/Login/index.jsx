@@ -184,9 +184,14 @@ export default function Login({ modalType, setModalType }) {
             ))}
           </Box>
           {isOtpSent && (
-            <Typography variant="body2" mt={1} textAlign="center">
-              OTP sent to <strong>+91 {phone}</strong>
-            </Typography>
+            <>
+              <Typography variant="body2" mt={1} textAlign="center">
+                OTP sent to <strong>+91 {phone}</strong>
+              </Typography>
+              <Typography variant="body2" mt={1} textAlign="center">
+                This is for demo purposes. Use <strong>123456</strong> as OTP.
+              </Typography>
+            </>
           )}
           <Box display="flex" justifyContent="center" mt={2}>
             <Button variant="text" onClick={handleChangeNumber}>

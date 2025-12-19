@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import { showWarning } from "../../Assets/Constants/showNotifier";
+import WatchLaterIcon from '@mui/icons-material/WatchLater';
 
 const Product = ({ product, handleAddItem, handleSubItem }) => {
   const [productCount, setProductCount] = useState(0);
@@ -22,7 +23,6 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
-
   useEffect(() => {
     const added = cartItems.items.find((item) => item._id === product._id);
     setProductCount(added ? added.count : 0);
@@ -64,6 +64,7 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
             alignItems: "center",
             justifyContent: "center",
             position: "relative",
+
             bgcolor: "#f9f9f9",
             overflow: "hidden",
           }}
@@ -87,7 +88,7 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
             }}
           />
 
-          {product.discount >= 10 && (
+          {/* {product.discount >= 10 && (
             <Chip
               label={`${product.discount}% OFF`}
               color="error"
@@ -100,7 +101,7 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
                 height: 20,
               }}
             />
-          )}
+          )} */}
         </Box>
 
         {/* ---------- Product Info ---------- */}
@@ -110,6 +111,23 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
             flexGrow: 1,
           }}
         >
+          <Box 
+           sx={{
+                color: "text.secondary",
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.3,
+                fontSize: "11px",
+              }}
+          >
+            <WatchLaterIcon sx={{fontSize:"11px"}}/>
+            <Typography
+              variant="caption"
+            >
+              {product.prepTime || "9 min"}
+            </Typography>
+          </Box>
+          <Box sx={{display:'flex', justifyContent:'space-between'}}>
           <Typography
             variant="body2"
             noWrap
@@ -122,7 +140,21 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
           >
             {product.name}
           </Typography>
-
+            {product.discount >= 10 && (
+              <Chip
+                label={`${product.discount}% OFF`}
+                color="error"
+                size="small"
+                sx={{
+                  // position: "absolute",
+                  top: 6,
+                  left: 6,
+                  fontSize: "10px",
+                  height: 20,
+                }}
+              />
+            )}
+          </Box>
           <Typography
             variant="caption"
             sx={{

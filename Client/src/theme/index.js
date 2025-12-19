@@ -172,7 +172,7 @@ export const getTheme = (mode = 'light') =>
       MuiTextField: {
         styleOverrides: {
           root: {
-            borderRadius: 8,
+            borderRadius: 16,
             backgroundColor: mode === 'light' ? '#fff' : '#252525',
           },
         },

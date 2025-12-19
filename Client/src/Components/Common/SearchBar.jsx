@@ -84,6 +84,7 @@ const SearchBar = ({ onFocusRemove, placeholder = "Search for products or catego
       <TextField
         fullWidth
         size="small"
+        className="home-search-bar"
         value={searchQuery}
         onChange={handleChange}
         onFocus={() => setShowSearchResult(true)}

@@ -9,6 +9,8 @@ import {
   IconButton,
   Modal,
   CircularProgress,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 
 import MyLocationIcon from "@mui/icons-material/MyLocation";
@@ -48,11 +50,11 @@ const AddressModal = ({ user }) => {
   const [loadingDetect, setLoadingDetect] = useState(false);
   const [errors, setErrors] = useState({});
   const userState = useSelector((state) => state.user);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   
   useEffect(() => {
-    console.log("authStateauthState",userState.isFetching);
     if (!user && !userState.isFetching) {
-      console.log("useruseruseruseruser",user);
       const saved = localStorage.getItem("guest_location");
 
       if (saved) {
@@ -211,24 +213,28 @@ const AddressModal = ({ user }) => {
   return (
     <>
       <Button
-        variant="outlined"
+        variant="text"
         onClick={() => setOpen(true)}
         sx={{
-          borderRadius: 99,
           textTransform: "none",
-          px: 2,
+          px: 1,
           py: 1,
           display: "flex",
           alignItems: "center",
-          gap: 1,
+          gap: 0.1,
           maxWidth: 300,
           overflow: "hidden",
         }}
       >
-        <LocationOnIcon fontSize="small" />
-        <Typography variant="body2" noWrap maxWidth={150}>
-          {landmark || "Set Delivery Address"}
-        </Typography>
+        <LocationOnIcon fontSize="large" />
+        <Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'}>
+          <Typography variant="subtitle2" fontWeight={600} noWrap maxWidth={150}>
+            Delivered in 9 min
+          </Typography>
+          <Typography variant="body2" noWrap maxWidth={150} fontSize={'11px'}>
+            {isMobile ? (landmark.slice(0,7) + (landmark.length > 7 ? '...' : '')) : landmark || "Set Delivery Address"}
+          </Typography>
+        </Box>
       </Button>
 
       <Modal open={open} onClose={handleModalClose}>
