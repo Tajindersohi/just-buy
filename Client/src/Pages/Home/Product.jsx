@@ -40,7 +40,7 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
   };
 
   return (
-    <Grid item xs={6} sm={4} md={3} lg={2}>
+    <Grid item xs={4} sm={4} md={3} lg={2}>
       <Card
         variant="outlined"
         sx={{
@@ -171,10 +171,12 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
           <Box
             display="flex"
             alignItems="center"
-            justifyContent="space-between"
+            flexDirection={isMobile ? 'column' : 'row'}
+            justifyContent= "space-between"
+            gap={2}
             mt={0.7}
           >
-            <Box>
+            <Box display={isMobile ? 'flex' : 'block'} justifyContent={isMobile ? 'space-between' : ''} width={isMobile ? '100%' : ''}>
               {product.discount > 0 && (
                 <Typography
                   variant="caption"

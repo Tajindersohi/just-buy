@@ -55,7 +55,7 @@ const CategoryProduct = ({ list, handleAddItem, handleSubItem }) => {
                 </Typography>
               </Link>
             </Box>
-            <Grid container spacing={2} rowGap={3}>
+            <Grid container spacing={1} rowGap={1}>
               {item.products.map((product) => (
                 <Product
                   key={product._id}
