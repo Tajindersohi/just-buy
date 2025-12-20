@@ -80,7 +80,7 @@ const CategoryProductsPage = () => {
       {products.length === 0 ? (
         <NoDataFound message={`No products available in "${categoryName}"`} icon="📦" />
       ) : (
-        <Grid container spacing={2}>
+        <Grid container spacing={1}>
           {products.map((product) => (
             <Product
               key={product._id}
