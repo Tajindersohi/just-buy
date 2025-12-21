@@ -197,7 +197,7 @@ const Home = () => {
           {searchLoading ? (
             <ProductSkeleton count={4} />
           ) : searchResults.length > 0 ? (
-            <Grid container spacing={2}>
+            <Grid container spacing={0.1}>
               {searchResults.map((product) => (
                 <Product
                   key={product._id}

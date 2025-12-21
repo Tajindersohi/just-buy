@@ -88,26 +88,27 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
             }}
           />
 
-          {/* {product.discount >= 10 && (
+          {product.discount > 0 && (
             <Chip
               label={`${product.discount}% OFF`}
-              color="error"
+              color="secondary"
               size="small"
               sx={{
                 position: "absolute",
-                top: 6,
-                left: 6,
+                top: 0,
+                left: 4,
                 fontSize: "10px",
                 height: 20,
               }}
             />
-          )} */}
+          )}
         </Box>
 
         {/* ---------- Product Info ---------- */}
         <CardContent
           sx={{
             p: isMobile ? 1 : 1,
+            pb:"8px !important",
             flexGrow: 1,
           }}
         >
@@ -140,7 +141,7 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
           >
             {product.name}
           </Typography>
-            {product.discount >= 10 && (
+            {/* {product.discount > 0 && (
               <Chip
                 label={`${product.discount}% OFF`}
                 color="error"
@@ -153,7 +154,7 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
                   height: 20,
                 }}
               />
-            )}
+            )} */}
           </Box>
           <Typography
             variant="caption"
@@ -173,7 +174,7 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
             alignItems="center"
             flexDirection={isMobile ? 'column' : 'row'}
             justifyContent= "space-between"
-            gap={2}
+            gap={1}
             mt={0.7}
           >
             <Box display={isMobile ? 'flex' : 'block'} justifyContent={isMobile ? 'space-between' : ''} width={isMobile ? '100%' : ''}>

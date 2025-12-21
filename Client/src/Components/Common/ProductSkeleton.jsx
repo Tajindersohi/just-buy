@@ -16,7 +16,7 @@ const ProductSkeleton = ({ count = 6 }) => {
   return (
     <Grid container spacing={2}>
       {Array.from({ length: count }).map((_, i) => (
-        <Grid item xs={6} sm={4} md={3} lg={2} key={i}>
+        <Grid item xs={4} sm={4} md={3} lg={2} key={i}>
           <Card
             elevation={2}
             sx={{
