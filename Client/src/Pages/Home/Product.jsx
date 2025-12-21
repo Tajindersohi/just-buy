@@ -84,6 +84,7 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
               objectFit: "contain",
               maxHeight: "100%",
               transition: "transform 0.25s ease",
+              pt:3,
               "&:hover": { transform: "scale(1.05)" },
             }}
           />
@@ -96,7 +97,7 @@ const Product = ({ product, handleAddItem, handleSubItem }) => {
               sx={{
                 position: "absolute",
                 top: 0,
-                left: 4,
+                left: 0,
                 fontSize: "10px",
                 height: 20,
               }}
