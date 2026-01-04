@@ -82,7 +82,7 @@ const Header = () => {
           </Box>
           }
           {!isMobile  && 
-          <Box display={'flex'} justifyContent={'center'} width={"100%"} gap={2}>
+          <Box display={'flex'} justifyContent={'center'} width={"100%"} gap={2} alignItems={'center'}>
               <AddressModal user={user}/>
             <Box width={'60%'}>
               <SearchBar/>

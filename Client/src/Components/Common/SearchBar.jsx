@@ -53,6 +53,7 @@ const SearchBar = ({ onFocusRemove, placeholder = "Search for products or catego
     setSearchQuery,
     suggestions,
     handleSuggestionClick,
+    showSearchResult,
     setShowSearchResult,
     searchLoading,
   } = useSearch();
@@ -95,7 +96,7 @@ const SearchBar = ({ onFocusRemove, placeholder = "Search for products or catego
               <SearchIcon sx={{ color: isDark ? "#cbd5e1" : "#64748b" }} />
             </InputAdornment>
           ),
-          endAdornment: searchQuery && (
+          endAdornment:     showSearchResult && (
             <InputAdornment position="end">
               <IconButton onClick={handleClear} edge="end" size="small">
                 <CloseIcon sx={{ color: isDark ? "#cbd5e1" : "#64748b", fontSize: 20 }} />

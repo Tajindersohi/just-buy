@@ -104,7 +104,7 @@ const Home = () => {
   const handleSubItem = (id) => dispatch(removeCartProduct(id));
 
   return (
-    <Box position="relative">
+    <Box position="relative" minHeight={'100vh'}>
       {isMobile && (
         <Box maxWidth="600px" mx="auto" px={2} mb={4}>
           <SearchBar />

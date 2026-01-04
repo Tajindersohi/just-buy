@@ -126,6 +126,7 @@ const AddressModal = ({ user }) => {
           setQuery(data.display_name);
           setLandmark(data.display_name);
           setFullAddress(data.display_name);
+          setSuggestions([]);
         }
 
         // Save guest location
@@ -248,6 +249,8 @@ const AddressModal = ({ user }) => {
             maxWidth: 450,
             bgcolor: "white",
             borderRadius: 2,
+            border: "2px solid",
+            borderColor: theme.palette.primary.main,
             p: 3,
             boxShadow: 10,
             maxHeight: "90vh",
@@ -265,7 +268,21 @@ const AddressModal = ({ user }) => {
           </Box>
 
           {/* Detect + OR + Search */}
-          <Box display="flex" alignItems="center" gap={2}>
+          <Box display="flex" alignItems="center" flexDirection={'column'} gap={1}>
+            <TextField
+              label="Search Address"
+              size="small"
+              value={query}
+              error={!!errors.query}
+              helperText={errors.query}
+              onChange={(e) => setQuery(e.target.value)}
+              InputProps={{
+                startAdornment: <SearchIcon sx={{ mr: 1 }} />,
+              }}
+              sx={{ flex: 1, width: "100%" }}
+            />
+            <Typography sx={{ fontWeight: 600, opacity: 0.6 }}>OR</Typography>
+
             <Button
               variant="contained"
               size="small"
@@ -282,20 +299,7 @@ const AddressModal = ({ user }) => {
               {loadingDetect ? "Detecting..." : "Detect My Location"}
             </Button>
 
-            <Typography sx={{ fontWeight: 600, opacity: 0.6 }}>OR</Typography>
 
-            <TextField
-              label="Search Address"
-              size="small"
-              value={query}
-              error={!!errors.query}
-              helperText={errors.query}
-              onChange={(e) => setQuery(e.target.value)}
-              InputProps={{
-                startAdornment: <SearchIcon sx={{ mr: 1 }} />,
-              }}
-              sx={{ flex: 1 }}
-            />
           </Box>
 
           {/* Suggestions */}
@@ -336,8 +340,20 @@ const AddressModal = ({ user }) => {
                   value={phone}
                   error={!!errors.phone}
                   helperText={errors.phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                    setPhone(value);
+                  }}
+                  InputProps={{
+                    startAdornment: <span style={{ marginRight: 6 }}>+91</span>,
+                  }}
+                  inputProps={{
+                    maxLength: 10,
+                    inputMode: 'numeric',
+                    pattern: '[6-9]{1}[0-9]{9}',
+                  }}
                 />
+
 
                 <TextField
                   label="Landmark"
