@@ -38,6 +38,7 @@ L.Icon.Default.mergeOptions({
 
 const AddressModal = ({ user }) => {
   const [open, setOpen] = useState(false);
+  const [forceOpen, setForceOpen] = useState(false); // 🔒 prevents closing
 
   const [query, setQuery] = useState("");
   const [coords, setCoords] = useState({ lat: 28.61, lon: 77.23 });
@@ -52,40 +53,40 @@ const AddressModal = ({ user }) => {
   const userState = useSelector((state) => state.user);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  
-  useEffect(() => {
-    if (!user && !userState.isFetching) {
-      const saved = localStorage.getItem("guest_location");
 
+  /* -------------------- INITIAL LOGIC -------------------- */
+  useEffect(() => {
+    if (user) {
+      fetchAddresses();
+    } else {
+      const saved = localStorage.getItem("guest_location");
       if (saved) {
         const parsed = JSON.parse(saved);
         setLandmark(parsed.addressLine);
         setFullAddress(parsed.addressLine);
         setCoords({ lat: parsed.lat, lon: parsed.lon });
-        return; // Do NOT open modal
+      } else {
+        setOpen(true);
+        setForceOpen(true); // 🔒 guest with no address → must select
       }
-
-      setOpen(true);
-    }else{
-      fetchAddresses();
     }
   }, []);
 
   const fetchAddresses = async () => {
     const res = await apiConstants.address.getAll();
-    const list = res.data.data || [];
-    if(list.length > 0){
+    const list = res?.data?.data || [];
+
+    if (list.length > 0) {
       setLandmark(list[0].addressLine);
       setFullAddress(list[0].addressLine);
-      const lat = list[0].lat
-      const lon = list[0].lon
-      localStorage.setItem("guest_location", JSON.stringify(list[0]));
-      setCoords({ lat: lat, lon: lon });
-    }else{
+      setCoords({ lat: list[0].lat, lon: list[0].lon });
+    } else {
       setOpen(true);
+      setForceOpen(true); // 🔒 logged-in user with no addresses → must add
     }
   };
 
+  /* -------------------- SEARCH SUGGESTIONS -------------------- */
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (query.length < 3) {
@@ -97,13 +98,13 @@ const AddressModal = ({ user }) => {
         `https://nominatim.openstreetmap.org/search?format=json&q=${query}`
       );
       const data = await res.json();
-
       setSuggestions(data);
     }, 300);
 
     return () => clearTimeout(timer);
   }, [query]);
 
+  /* -------------------- LOCATION DETECT -------------------- */
   const handleDetectLocation = () => {
     setLoadingDetect(true);
 
@@ -116,7 +117,6 @@ const AddressModal = ({ user }) => {
 
         setCoords(pos);
 
-        // Fetch readable address
         const res = await fetch(
           `https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.lat}&lon=${pos.lon}`
         );
@@ -129,7 +129,6 @@ const AddressModal = ({ user }) => {
           setSuggestions([]);
         }
 
-        // Save guest location
         if (!user) {
           const guestData = {
             name: "User",
@@ -140,12 +139,12 @@ const AddressModal = ({ user }) => {
             lat: pos.lat,
             lon: pos.lon,
           };
-
           localStorage.setItem("guest_location", JSON.stringify(guestData));
         }
 
         setLoadingDetect(false);
         setOpen(false);
+        setForceOpen(false);
       },
       () => {
         showError("Location access denied");
@@ -154,21 +153,23 @@ const AddressModal = ({ user }) => {
     );
   };
 
+  /* -------------------- SELECT SUGGESTION -------------------- */
   const selectSuggestion = (s) => {
     setQuery(s.display_name);
     setCoords({ lat: +s.lat, lon: +s.lon });
     setLandmark(s.display_name);
     setFullAddress(s.display_name);
     setSuggestions([]);
-    if(!user){
-      setOpen(false);
-    }
+    setOpen(false);
+    setForceOpen(false);
   };
 
+  /* -------------------- VALIDATION -------------------- */
   const validate = useCallback(() => {
     const e = {};
     if (!query) e.query = "Required";
 
+    // 🔒 Required only for logged-in user
     if (user) {
       if (!house) e.house = "Required";
       if (!phone) e.phone = "Required";
@@ -178,6 +179,7 @@ const AddressModal = ({ user }) => {
     return Object.keys(e).length === 0;
   }, [query, house, phone, user]);
 
+  /* -------------------- SAVE -------------------- */
   const handleSave = async () => {
     if (!validate()) return;
 
@@ -198,16 +200,15 @@ const AddressModal = ({ user }) => {
     }
 
     setOpen(false);
+    setForceOpen(false);
   };
 
+  /* -------------------- MODAL CLOSE CONTROL -------------------- */
   const handleModalClose = () => {
-    if (!fullAddress && !query) {
-      showError(
-        "Please select address so that we can check delivery items and time."
-      );
-      return; // STOP closing
+    if (forceOpen) {
+      showError("Please select your delivery address first.");
+      return;
     }
-
     setOpen(false);
   };
 
@@ -228,17 +229,25 @@ const AddressModal = ({ user }) => {
         }}
       >
         <LocationOnIcon fontSize="large" />
-        <Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'}>
+        <Box display="flex" flexDirection="column" alignItems="flex-start">
           <Typography variant="subtitle2" fontWeight={600} noWrap maxWidth={150}>
             Delivered in 9 min
           </Typography>
-          <Typography variant="body2" noWrap maxWidth={150} fontSize={'11px'}>
-            {isMobile ? (landmark.slice(0,7) + (landmark.length > 7 ? '...' : '')) : landmark || "Set Delivery Address"}
+          <Typography variant="body2" noWrap maxWidth={150} fontSize="11px">
+            {isMobile
+              ? landmark?.slice(0, 7) + (landmark?.length > 7 ? "..." : "")
+              : landmark || "Set Delivery Address"}
           </Typography>
         </Box>
       </Button>
 
-      <Modal open={open} onClose={handleModalClose}>
+      <Modal
+        open={open}
+        onClose={(e, reason) => {
+          if (reason !== "backdropClick") handleModalClose();
+        }}
+        disableEscapeKeyDown={forceOpen}
+      >
         <Box
           sx={{
             position: "absolute",
@@ -246,15 +255,17 @@ const AddressModal = ({ user }) => {
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: "95%",
-            maxWidth: 450,
+            maxWidth: 500,
             bgcolor: "white",
             borderRadius: 2,
-            border: "2px solid",
+            border: "3px solid",
             borderColor: theme.palette.primary.main,
             p: 3,
             boxShadow: 10,
+            outline: "none",
             maxHeight: "90vh",
             overflowY: "auto",
+            scrollbarWidth:'none'
           }}
         >
           {/* Header */}
@@ -267,8 +278,8 @@ const AddressModal = ({ user }) => {
             </IconButton>
           </Box>
 
-          {/* Detect + OR + Search */}
-          <Box display="flex" alignItems="center" flexDirection={'column'} gap={1}>
+          {/* Search + Detect */}
+          <Box display="flex" alignItems="center" flexDirection="column" gap={1}>
             <TextField
               label="Search Address"
               size="small"
@@ -281,6 +292,7 @@ const AddressModal = ({ user }) => {
               }}
               sx={{ flex: 1, width: "100%" }}
             />
+
             <Typography sx={{ fontWeight: 600, opacity: 0.6 }}>OR</Typography>
 
             <Button
@@ -298,8 +310,6 @@ const AddressModal = ({ user }) => {
             >
               {loadingDetect ? "Detecting..." : "Detect My Location"}
             </Button>
-
-
           </Box>
 
           {/* Suggestions */}
@@ -321,58 +331,55 @@ const AddressModal = ({ user }) => {
             </Paper>
           )}
 
-          {/* User-only fields */}
-          <Stack spacing={2} mt={2}>
-            {user && (
-              <>
-                <TextField
-                  label="House / Flat *"
-                  size="small"
-                  value={house}
-                  error={!!errors.house}
-                  helperText={errors.house}
-                  onChange={(e) => setHouse(e.target.value)}
-                />
+          {/* Logged-in user fields */}
+          {user && (
+            <Stack spacing={2} mt={2}>
+              <TextField
+                label="House / Flat *"
+                size="small"
+                value={house}
+                error={!!errors.house}
+                helperText={errors.house}
+                onChange={(e) => setHouse(e.target.value)}
+              />
 
-                <TextField
-                  label="Phone Number *"
-                  size="small"
-                  value={phone}
-                  error={!!errors.phone}
-                  helperText={errors.phone}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, '').slice(0, 10);
-                    setPhone(value);
-                  }}
-                  InputProps={{
-                    startAdornment: <span style={{ marginRight: 6 }}>+91</span>,
-                  }}
-                  inputProps={{
-                    maxLength: 10,
-                    inputMode: 'numeric',
-                    pattern: '[6-9]{1}[0-9]{9}',
-                  }}
-                />
+              <TextField
+                label="Phone Number *"
+                size="small"
+                value={phone}
+                error={!!errors.phone}
+                helperText={errors.phone}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                  setPhone(value);
+                }}
+                InputProps={{
+                  startAdornment: <span style={{ marginRight: 6 }}>+91</span>,
+                }}
+                inputProps={{
+                  maxLength: 10,
+                  inputMode: "numeric",
+                  pattern: "[6-9]{1}[0-9]{9}",
+                }}
+              />
 
+              <TextField
+                label="Landmark"
+                size="small"
+                value={landmark}
+                onChange={(e) => setLandmark(e.target.value)}
+              />
 
-                <TextField
-                  label="Landmark"
-                  size="small"
-                  value={landmark}
-                  onChange={(e) => setLandmark(e.target.value)}
-                />
-
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{ borderRadius: 10 }}
-                  onClick={handleSave}
-                >
-                  Save Address
-                </Button>
-              </>
-            )}
-          </Stack>
+              <Button
+                variant="contained"
+                fullWidth
+                sx={{ borderRadius: 10 }}
+                onClick={handleSave}
+              >
+                Save Address
+              </Button>
+            </Stack>
+          )}
         </Box>
       </Modal>
     </>

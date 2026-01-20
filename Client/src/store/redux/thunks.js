@@ -54,7 +54,6 @@ export const loginWithOtp = createAsyncThunk(
     try {
       const response = await apiConstants.user.login(credentials);
       if(response.status == 200){
-        localStorage.clear();
         const { token, user} = response.data;
         localStorage.setItem('token', token);
         dispatch(loginOrSignup(user)); 

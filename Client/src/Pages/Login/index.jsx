@@ -146,7 +146,6 @@ export default function Login({ modalType, setModalType }) {
         </Box>
       </CommonModal>
 
-      {/* 🔐 OTP Modal */}
       <CommonModal
         open={modalType === 'otp'}
         handleClose={handleClose}
