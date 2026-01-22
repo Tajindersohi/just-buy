@@ -36,7 +36,7 @@ const getCartProducts = async (req, res) => {
       items: result,
       total_cost: parseFloat(total_cost.toFixed(2)),
       delivery_charges: 0,
-      handling_charges: 0
+      handling_charges: 10
     };
 
     res.status(200).json({ data: response, success: true, message: "Cart fetched successfully" });

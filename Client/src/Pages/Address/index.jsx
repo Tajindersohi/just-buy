@@ -53,38 +53,26 @@ const AddressModal = ({ user }) => {
   const userState = useSelector((state) => state.user);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
+  console.log("User in AddressModal:", user);
   /* -------------------- INITIAL LOGIC -------------------- */
   useEffect(() => {
+    let saved = null;
     if (user) {
-      fetchAddresses();
-    } else {
-      const saved = localStorage.getItem("guest_location");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        setLandmark(parsed.addressLine);
-        setFullAddress(parsed.addressLine);
-        setCoords({ lat: parsed.lat, lon: parsed.lon });
-      } else {
-        setOpen(true);
-        setForceOpen(true); // 🔒 guest with no address → must select
-      }
+      saved = user.addresses?.[0];
+    } 
+    if(!saved) {
+       saved = localStorage.getItem("guest_location");
+       saved = JSON.parse(saved);
     }
-  }, []);
-
-  const fetchAddresses = async () => {
-    const res = await apiConstants.address.getAll();
-    const list = res?.data?.data || [];
-
-    if (list.length > 0) {
-      setLandmark(list[0].addressLine);
-      setFullAddress(list[0].addressLine);
-      setCoords({ lat: list[0].lat, lon: list[0].lon });
+    if (saved) {
+      setLandmark(saved.addressLine);
+      setFullAddress(saved.addressLine);
+      setCoords({ lat: saved.lat, lon: saved.lon });
     } else {
       setOpen(true);
-      setForceOpen(true); // 🔒 logged-in user with no addresses → must add
+      setForceOpen(true); 
     }
-  };
+  }, []);
 
   /* -------------------- SEARCH SUGGESTIONS -------------------- */
   useEffect(() => {
@@ -97,8 +85,12 @@ const AddressModal = ({ user }) => {
       const res = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${query}`
       );
+      
       const data = await res.json();
-      setSuggestions(data);
+      const uniqueData = Array.from(
+        new Map(data.map(item => [item.display_name, item])).values()
+      );
+      setSuggestions(uniqueData);
     }, 300);
 
     return () => clearTimeout(timer);
@@ -123,7 +115,7 @@ const AddressModal = ({ user }) => {
         const data = await res.json();
 
         if (data?.display_name) {
-          setQuery(data.display_name);
+          // setQuery(data.display_name);
           setLandmark(data.display_name);
           setFullAddress(data.display_name);
           setSuggestions([]);
@@ -155,12 +147,25 @@ const AddressModal = ({ user }) => {
 
   /* -------------------- SELECT SUGGESTION -------------------- */
   const selectSuggestion = (s) => {
-    setQuery(s.display_name);
+    console.log("Selected suggestion:", s); 
+    // setQuery(s.display_name);
     setCoords({ lat: +s.lat, lon: +s.lon });
     setLandmark(s.display_name);
     setFullAddress(s.display_name);
     setSuggestions([]);
-    setOpen(false);
+     const guestData = {
+      name: "User",
+      addressLine: s.display_name,
+      house: "",
+      mobile: "",
+      landmark: "",
+      lat: s.lat,
+      lon: s.lon,
+    };
+    localStorage.setItem("guest_location", JSON.stringify(guestData));
+    if(!user){
+      setOpen(false);
+    }
     setForceOpen(false);
   };
 
@@ -216,7 +221,7 @@ const AddressModal = ({ user }) => {
     <>
       <Button
         variant="text"
-        onClick={() => setOpen(true)}
+        onClick={() => {setOpen(true); setQuery("")}}
         sx={{
           textTransform: "none",
           px: 1,
@@ -254,13 +259,13 @@ const AddressModal = ({ user }) => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "95%",
-            maxWidth: 500,
             bgcolor: "white",
-            borderRadius: 2,
+            width: isMobile ? "90%" : 600,
+            borderRadius: 1,
             border: "3px solid",
             borderColor: theme.palette.primary.main,
             p: 3,
+            pb: 4,
             boxShadow: 10,
             outline: "none",
             maxHeight: "90vh",
@@ -269,7 +274,7 @@ const AddressModal = ({ user }) => {
           }}
         >
           {/* Header */}
-          <Box display="flex" justifyContent="space-between" mb={2}>
+          <Box display="flex" justifyContent="space-between" mb={2} alignItems="center">
             <Typography variant="h6" fontWeight={700}>
               Location
             </Typography>
@@ -279,7 +284,7 @@ const AddressModal = ({ user }) => {
           </Box>
 
           {/* Search + Detect */}
-          <Box display="flex" alignItems="center" flexDirection="column" gap={1}>
+          <Box display="flex" alignItems="center" flexDirection="row" gap={1}>
             <TextField
               label="Search Address"
               size="small"
@@ -302,7 +307,7 @@ const AddressModal = ({ user }) => {
               sx={{ borderRadius: 10, whiteSpace: "nowrap" }}
               startIcon={
                 loadingDetect ? (
-                  <CircularProgress size={18} />
+                  <CircularProgress color="white" size={18} />
                 ) : (
                   <MyLocationIcon />
                 )
@@ -332,7 +337,7 @@ const AddressModal = ({ user }) => {
           )}
 
           {/* Logged-in user fields */}
-          {user && (
+          {/* {user && (
             <Stack spacing={2} mt={2}>
               <TextField
                 label="House / Flat *"
@@ -379,7 +384,7 @@ const AddressModal = ({ user }) => {
                 Save Address
               </Button>
             </Stack>
-          )}
+          )} */}
         </Box>
       </Modal>
     </>

@@ -2,6 +2,7 @@ const productUser = require('../../models/productUser');
 const User = require('../../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcryptjs"); // If you're using bcrypt
+const { default: mongoose } = require('mongoose');
 
 const handleLogin = async (req, res) => {
   try {
@@ -106,14 +107,36 @@ const sentLoginOtp = async (req, res) => {
 
 const handleGetMe = async (req, res) => {
   try {
-     const user = await User.findById(req.user.id).select('-password,-lastOtp'); 
-     if (!user) {
-         return res.status(404).json({ message: 'User not found' });
-     }
-     res.json({ user, message: "User fetched successfully" });
-    } catch (error) {
-     res.status(500).json({ message: 'Server error' });
-   }
+    const user = await User.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(req.user.id) },
+      },
+      {
+        $lookup: {
+          from: "addresses", 
+          localField: "_id",
+          foreignField: "userId", 
+          as: "addresses",
+        },
+      },
+      {
+        $project: {
+          password: 0,
+          lastOtp: 0,
+          isRootAdmin: 0,
+        },
+      },
+    ]);
+
+    if (!user.length) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ user: user[0], message: "User fetched successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
+
 
 module.exports = {handleLogin, createUser, handleLoginWithOtp, sentLoginOtp, handleGetMe}

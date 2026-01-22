@@ -6,7 +6,7 @@ const initialState = {
   isLoading: false,
   total_cost: 0,
   delivery_charges: 0,
-  handeling_charges: 0,
+  handling_charges: 0,
   detailsFetched: false,
   error: null,
 };
@@ -46,7 +46,7 @@ const cartSlice = createSlice({
       state.items = action.payload.items;
       state.total_cost = action.payload.total_cost;
       state.delivery_charges = action.payload.delivery_charges;
-      state.handeling_charges = action.payload.handeling_charges;
+      state.handling_charges = action.payload.handling_charges;
     },
     getCartFailed(state, action) {
       state.isLoading = false;
